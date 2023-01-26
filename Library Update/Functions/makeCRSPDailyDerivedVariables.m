@@ -288,7 +288,7 @@ load ddates
 load dret
 load dff
 load ret
-load nyse
+load NYSE
 load me
 
 % Only leave the announcement dates

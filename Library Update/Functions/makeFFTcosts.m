@@ -38,11 +38,11 @@ load dates
 load tcosts
 load ff
 load AT
-load revt
-load cogs
-load xint
-load xsga
-load be
+load REVT
+load COGS
+load XINT
+load XSGA
+load BE
 load FinFirms
 
 % Book-to-market
@@ -210,14 +210,6 @@ rmw_rep = resRMW.pret(:, end);
 cma_rep = resCMA.pret(:, end);
 umd_rep = resUMD.pret(:, end);
 
-
-% Check the replication quality (should see >95% R2)
-prt(nanols(smb, [const smb_rep]))
-prt(nanols(hml, [const hml_rep]))
-prt(nanols(rmw, [const rmw_rep]))
-prt(nanols(cma, [const cma_rep]))
-prt(nanols(umd, [const umd_rep]))
-
 % Create the factor model tcost matrices
 ff3_tc = [mkt_tc smb_tc hml_tc];
 ff4_tc = [ff3 umd_tc];
@@ -225,6 +217,12 @@ ff5_tc = [ff3_tc rmw_tc cma_tc];
 ff6_tc = [ff5_tc umd_tc];
 
 % Save the replicated factors, tcosts, and dWs in the /Data/ folder
-save data/ff_rep mkt smb_rep hml_rep rmw_rep cma_rep umd_rep
-save data/ff_tc mkt_tc hml_tc smb_tc rmw_tc cma_tc umd_tc  hml_TO smb_TO rmw_TO cma_TO umd_TO ff3_tc ff4_tc ff5_tc ff6_tc
+save Data/ff_rep mkt smb_rep hml_rep rmw_rep cma_rep umd_rep
+save Data/ff_tc mkt_tc hml_tc smb_tc rmw_tc cma_tc umd_tc  hml_TO smb_TO rmw_TO cma_TO umd_TO ff3_tc ff4_tc ff5_tc ff6_tc
 
+% Check the replication quality (should see >95% R2)
+prt(nanols(smb, [const smb_rep]))
+prt(nanols(hml, [const hml_rep]))
+prt(nanols(rmw, [const rmw_rep]))
+prt(nanols(cma, [const cma_rep]))
+prt(nanols(umd, [const umd_rep]))

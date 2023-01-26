@@ -80,8 +80,11 @@ if strcmp(Params.tcostsType,'full')
     else
         fileName = hfFileStruct.name;
     end    
-    effSpreadStruct.hf_spreads = makeHighFreqEffSpreads(fileName);
-    vars = [vars {'hf_spreads.ave','hf_spreads.monthend'}];
+    hf_spreads = makeHighFreqEffSpreads(fileName);
+    effSpreadStruct.hf_spreads_ave = hf_spreads.ave;
+    effSpreadStruct.hf_spreads_monthend = hf_spreads.monthend;
+    effSpreadStruct.hf_spreads_n = hf_spreads.n;
+    vars = [vars {'hf_spreads_ave','hf_spreads_monthend'}];
 end
 
 % Store the effective spreads structure
@@ -158,10 +161,10 @@ else
     % Check if we also have the high-frequency costs
     if strcmp(Params.tcostsType, 'full')
         % Reshape these too
-        reshapedHF = reshape(effSpreadStruct.hf_spreads.ave, nObs, 1);        
+        reshapedHF = reshape(effSpreadStruct.hf_spreads_ave, nObs, 1);        
         
         % Assign high-frequency spreads wherever we have it
-        reshapedEffSpreadRaw(isfinite(reshapedHF))=reshapedHF(isfinite(reshapedHF));         
+        reshapedEffSpreadRaw(isfinite(reshapedHF)) = reshapedHF(isfinite(reshapedHF));         
     end
     
     % Turn back into a matrix

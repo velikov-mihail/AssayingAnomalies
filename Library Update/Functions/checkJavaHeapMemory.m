@@ -26,19 +26,28 @@ function checkJavaHeapMemory()
 %  References
 %  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
 
-% Check the total RAM
-[~, systemview] = memory;
-totalRAM = systemview.PhysicalMemory.Total/(1024^2);
+% Check if PC
+if ispc
+    % Check the total RAM
+    [~, systemview] = memory;
+    totalRAM = systemview.PhysicalMemory.Total/(1024^2);
 
-% Check the Java Heap memory size
-oldMaxHeapSize = com.mathworks.services.Prefs.getIntegerPref('JavaMemHeapMax');  % MB
+    % Check the Java Heap memory size
+    oldMaxHeapSize = com.mathworks.services.Prefs.getIntegerPref('JavaMemHeapMax');  % MB
 
-% If Java Heap Memory is not set to 1/4 the total RAM, set it and return an
-% prompting the user to restart MATLAB
-if abs((totalRAM/4)-oldMaxHeapSize)>1    
-    com.mathworks.services.Prefs.setIntegerPref('JavaMemHeapMax', totalRAM/4); % MB
-    errorMessage = ['Java Heap Memory was set to ', ...
-                    char(num2str(totalRAM/4)), ' MB.', ...
-                    'Please restart MATLAB and run setup_library.m again\n\n'];
-    error(errorMessage);
+    % If Java Heap Memory is not set to 1/4 the total RAM, set it and return an
+    % prompting the user to restart MATLAB
+    if abs((totalRAM/4)-oldMaxHeapSize)>1    
+        com.mathworks.services.Prefs.setIntegerPref('JavaMemHeapMax', totalRAM/4); % MB
+        errorMessage = ['Java Heap Memory was set to ', ...
+                        char(num2str(totalRAM/4)), ' MB.', ...
+                        'Please restart MATLAB and run setup_library.m again\n\n'];
+        error(errorMessage);
+    end
+elseif isunix
+    fprintf(['Java Heap Memory check cannot be run on UNIX/LINUX systems. ', ...
+            'Java Heap Memory needs to be set to maximum available.\n\n\n']);
+elseif ismac
+    fprintf(['Java Heap Memory check cannot be run on Mac systems. ', ...
+            'Java Heap Memory needs to be set to maximum available.\n\n\n']);        
 end

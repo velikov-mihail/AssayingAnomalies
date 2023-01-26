@@ -90,6 +90,6 @@ end
 
 % Store the raw WRDS table into a .csv file
 fprintf('Now exporting the WRDS table %s into .csv. Export started at %s.\n', tableName, char(datetime('now')));
-fileName = [dirPath,libname,'_',memname,'.csv'];
+fileName = [dirPath,lower(libname),'_',lower(memname),'.csv'];
 writetable(wrdsTable, fileName);
 fprintf('%s export ended at %s.\n', tableName, char(datetime('now')));

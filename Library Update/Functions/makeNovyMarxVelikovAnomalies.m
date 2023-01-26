@@ -213,7 +213,7 @@ clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 
 % Return on book equity
-load ibq
+load IBQ
 load BEQ
 roe = IBQ./lag(BEQ,3,nan);
 anoms(:,:,10) = roe;
@@ -403,9 +403,9 @@ clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 
 % IRRLowVOl
-load ivol
+load IVOL
 load ireta
-load nyse
+load NYSE
 ind = makeUnivSortInd(IVOL,2,NYSE);
 IRR = tiedrank(ireta'-ret')'; 
 IRR = IRR./repmat(max(IRR')',1,cols(ret));

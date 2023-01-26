@@ -40,5 +40,10 @@ filePath = regexprep([functionPath(1:dirSepIndex-1),'Data\Anomalies\'], '\', '/'
 fileName = 'signed_predictors_dl_wide.zip';
 getGoogleDriveData(fileName, signalFileID, filePath);
 
-fileName = 'SignalDocumentation.xlsx';
+if strcmp(docFileID, '18DvZPscKsD0_ZeeUMjyXhF1qn0emDVaj')
+    fileName = 'SignalDocumentation.xlsx';
+elseif strcmp(docFileID, '1PDFl3pKwbY8DH5S9PWH_Op16HPo2wZL1')
+    fileName = 'SignalDoc.csv';
+end
+
 getGoogleDriveData(fileName, docFileID, filePath);

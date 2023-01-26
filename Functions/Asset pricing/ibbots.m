@@ -14,7 +14,7 @@ function [cumRets] = ibbots(rets,dates,varargin)
 %                        format indicating sample start or sample range (default is first 
 %                        element in dates)
 %        -'linPlotInd' - a flag indicating whether to plot the cumulative
-%                        returns on a log or linear (default) scale
+%                        returns on a linear or log (default) scale
 %        -'legendLabels' - a cell array of legend labels
 %------------------------------------------------------------------------------------------
 % Output:

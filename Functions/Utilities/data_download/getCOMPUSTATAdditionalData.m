@@ -65,7 +65,7 @@ crsp_ccmxpf_lnkhist.linkenddt(isnat(crsp_ccmxpf_lnkhist.linkenddt)) = datetime(f
 % Update/ folder
 [functionDir,~,~] = fileparts(mfilename('fullpath'));
 functionDir = strrep(functionDir, '\', '/');
-[startIndex,~] = regexp(functionDir, '/Library Update/');
+[startIndex,~] = regexp(functionDir, '/Functions/');
 Params.directory = functionDir(1:startIndex);
 
 % Choose the COMPUSTAT update frequency (annual or qurterly)

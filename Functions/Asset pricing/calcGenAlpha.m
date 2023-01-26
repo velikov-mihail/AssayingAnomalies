@@ -57,7 +57,9 @@ function [alpha_res, w_x_y, w_x] = calcGenAlpha(anomRet, anomTcosts, factorRets,
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2016, A Taxonomy of Anomalies and Their
+%  Trading Costs, Review of Financial Studies, 29 (1): 104-147
+%  2. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
 
 
 
@@ -76,11 +78,11 @@ tcostsAnomFactors = [factorTcosts anomTcosts];
                      -factorRets - factorTcosts);
                    
 if w_x_y(end) ~= 0    
-    y = (grossAnomFactors * w_x_y - tcostsAnomFactors * abs(w_x_y)) / w_x_y(end);
+    y = (grossAnomFactors * w_x_y - tcostsAnomFactors * abs(w_x_y)) / abs(w_x_y(end));
     x = factorRets * w_x - factorTcosts * abs(w_x);
     alpha_res = nanols(100*y,[ones(size(y)) x]);
 else
-    alpha_res = nanols(ones(size(anomRet)), ones(size(anomRet)));
+    alpha_res =  ols(ones(size(anomRet)), nan(size(anomRet)));
 end
 
 if printRes~=0 

@@ -42,7 +42,7 @@ fprintf('\n\n\nNow working on making variables from daily CRSP. Let''s read the 
 dailyCRSPPath = [Params.directory, 'Data/CRSP/daily/'];
 
 % Store the daily CRSP directory contents and number of files
-dailyCrspFiles = dir([Params.directory, '/Data/CRSP/daily/CRSP_DSF*.csv']);
+dailyCrspFiles = dir([Params.directory, '/Data/CRSP/daily/crsp_dsf*.csv']);
 nFiles = length(dailyCrspFiles);
 
 % Initiate the crsp_dsf table
