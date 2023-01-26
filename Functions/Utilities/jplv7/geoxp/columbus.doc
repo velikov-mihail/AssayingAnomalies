@@ -1,0 +1,36 @@
+Contents of columbus data files:
+
+Columbus.shp, shx, dbf: ArcView shape files
+
+Source:
+Anselin, Luc.  1988.  Spatial econometrics: methods and
+models.  Dordrecht: Kluwer Academic, Table 12.1 p. 189.
+
+Unit of analysis: 49 neighborhoods in Columbus, OH, 1980 data.
+
+Variables in columbus.dbf:
+SHAPE:   polygon (ArcView default)
+AREA:  computed by ArcView
+PERIMETER:   computed by ArcView
+COLUMBUS_:   internal polygon ID (ignore)
+COLUMBUS_I:   another internal polygon ID (ignore)
+POLYID:   yet another polygon ID
+NEIG:   neighborhood id value (1-49);
+             conforms to id value used in Spatial Econometrics book.
+HOVAL:  housing value (in $1,000)
+INC:    household income (in $1,000)
+CRIME:  residential burglaries and vehicle thefts per thousand
+        households in the neighborhood
+OPEN:   open space in neighborhood
+PLUMB:  % housing units without plumbing
+DISCBD: distance to CBD
+X:      x coordinate (in arbitrary digitizing units)
+Y:      y coordinate (in arbitrary digitizing units)
+AREA:   neighborhood area (computed by SpaceStat)
+NSA:    north-south dummy (North=1)
+NSB:    north-south dummy (North=1)
+EW:     east-west dummy (East=1)
+CP:     core-periphery dummy (Core=1)
+THOUS:  constant=1,000
+NEIGNO: NEIG+1,000, alternative neighborhood id value
+PERIM:  polygon perimeter (computed by SpaceStat)

@@ -1,0 +1,109 @@
+function prt_bmao(results,vnames,fid)
+% PURPOSE: print results from ols_gcbma function
+% -------------------------------------------------
+% usage: prt_bmao(results,vnames)
+% where results is a structure returned by ols_gcbma
+%       vnames is a vector of variable names
+
+
+[nmodels,nvar] = size(results.models);
+if nargin < 3
+fid = 1;
+end;
+
+fprintf(fid,'OLS MC^3 Model information \n');
+fprintf(fid,'# of unique models found = %10d \n',results.munique);
+fprintf(fid,'Only the top %6d models are being printed \n',nmodels);
+if (nmodels < nvar); % the # of variables that the user wants printed is large
+                     % relative to the # of models
+pflag = 1;
+else % the # of models that the user wants printed is large
+     % relative to the # of variables
+pflag = 0;
+end;
+
+% pull out just the top nmodels probs, freqs, vprobs
+mprob = results.mprob(end-nmodels+1:end,1);
+vprob = results.vprob;
+freqs = results.freq;
+
+
+switch pflag;
+
+case {0}     % we have a large # of variables so we print differently
+  varnames = strvcat('Variables');
+ [nnames,junk] = size(vnames);
+     for i=3:nnames; % we skip the y-variable and constant term here
+             varnames = strvcat(varnames,vnames(i,:));
+     end;
+     
+  modnames = strvcat('Models');
+    for i=1:nmodels
+            m = ['model ' num2str(i)];
+           modnames = strvcat(modnames,m);
+    end;
+     
+  % we print the variable names as columns
+  % we print the model names as rows
+   
+  fmt = '%8.5f';
+  for i=1:nvar;
+      fmt = strvcat(fmt,'%6d');
+  end;
+  
+  cnames = strvcat('model Probs',varnames(2:end,:));
+  
+  in.cnames = cnames;
+  in.rnames = modnames;
+  in.fmt = fmt;
+  in.width = 5000;
+  
+  mprint([mprob results.models],in);
+  
+case {1} % we have more variables than models so we print in this format
+ rnames = [];
+ [nnames,junk] = size(vnames);
+
+ for i=3:nnames;
+ rnames = strvcat(rnames,vnames(i,:)); 
+ end;
+
+cnames = [];
+for i=1:nmodels;
+ cnames = strvcat(cnames,['model' num2str(i)]);
+end;
+in.cnames = cnames;
+ 
+fprintf(fid,'%16s','Variables');
+for i=1:nmodels
+fprintf(fid,'%6s',['m' num2str(i)]);
+end;
+vstring = '    Var Prbs';
+fprintf(fid,'%10s',strjust(vstring,'right'));
+fprintf(fid,'\n');
+
+for i=1:nvar
+fprintf(fid,'%16s',rnames(i,:));
+for j=1:nmodels;
+fprintf(fid,'%6d',results.models(j,i));
+end;
+fprintf(fid,'%12.6f',vprob(1,i));
+fprintf(fid,'\n');
+end;
+
+mstring = 'Model Prbs';
+
+fprintf(fid,'%16s',mstring);
+fprintf(fid,'%s',' ');
+for i=1:nmodels
+fprintf(fid,'%5.3f ',mprob(i,1));
+end;
+fprintf(fid,'\n');
+
+otherwise
+error('prt_bmao: problem with switch statement');
+
+end;
+
+
+

@@ -1,0 +1,1069 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3c.org/TR/1999/REC-html401-19991224/loose.dtd">
+<!-- saved from url=(0058)http://www.ruidaiwrds.info/data/linking-crsp-and-compustat -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><HTML 
+itemtype="http://schema.org/WebPage" itemscope="" xmlns="http://www.w3.org/1999/xhtml"><HEAD><META 
+content="IE=11.0000" http-equiv="X-UA-Compatible">
+ 
+<META http-equiv="content-type" content="text/html; charset=UTF-8"> 
+<META http-equiv="X-UA-Compatible" content="chrome=1"> 
+<SCRIPT src="Linking%20CRSP%20and%20Compustat%20-%20Rui%20Dai_files/main.js" type="text/javascript" charset="UTF-8"></SCRIPT>
+
+<SCRIPT type="text/javascript">/* Copyright 2008 Google. */ (function() { (function(){function e(a){this.t={};this.tick=function(a,c,b){this.t[a]=[void 0!=b?b:(new Date).getTime(),c];if(void 0==b)try{window.console.timeStamp("CSI/"+a)}catch(h){}};this.tick("start",null,a)}var a;if(window.performance)var d=(a=window.performance.timing)&&a.responseStart;var f=0<d?new e(d):new e;window.jstiming={Timer:e,load:f};if(a){var c=a.navigationStart;0<c&&d>=c&&(window.jstiming.srt=d-c)}if(a){var b=window.jstiming.load;0<c&&d>=c&&(b.tick("_wtsrt",void 0,c),b.tick("wtsrt_","_wtsrt",
+d),b.tick("tbsd_","wtsrt_"))}try{a=null,window.chrome&&window.chrome.csi&&(a=Math.floor(window.chrome.csi().pageT),b&&0<c&&(b.tick("_tbnd",void 0,window.chrome.csi().startE),b.tick("tbnd_","_tbnd",c))),null==a&&window.gtbExternal&&(a=window.gtbExternal.pageT()),null==a&&window.external&&(a=window.external.pageT,b&&0<c&&(b.tick("_tbnd",void 0,window.external.startE),b.tick("tbnd_","_tbnd",c))),a&&(window.jstiming.pt=a)}catch(g){}})(); })()
+</SCRIPT>
+ <LINK href="//www.google.com/images/icons/product/sites-16.ico" rel="shortcut icon" 
+type="image/x-icon"> <LINK href="http://www.gstatic.com/sites/p/47228d/system/app/images/apple-touch-icon.png" 
+rel="apple-touch-icon" type="image/png"> 
+<SCRIPT type="text/javascript">/* Copyright 2008 Google. */ (function() { function d(a){return document.getElementById(a)}window.byId=d;function g(a){return a.replace(/^\s+|\s+$/g,"")}window.trim=g;var h=[],k=0;window.JOT_addListener=function(a,b,c){var f=new String(k++);a={eventName:a,handler:b,compId:c,key:f};h.push(a);return f};window.JOT_removeListenerByKey=function(a){for(var b=0;b<h.length;b++)if(h[b].key==a){h.splice(b,1);break}};window.JOT_removeAllListenersForName=function(a){for(var b=0;b<h.length;b++)h[b].eventName==a&&h.splice(b,1)};
+window.JOT_postEvent=function(a,b,c){var f={eventName:a,eventSrc:b||{},payload:c||{}};if(window.JOT_fullyLoaded)for(b=h.length,c=0;c<b&&c<h.length;c++){var e=h[c];e&&e.eventName==a&&(f.listenerCompId=e.compId||"",(e="function"==typeof e.handler?e.handler:window[e.handler])&&e(f))}else window.JOT_delayedEvents.push({eventName:a,eventSrc:b,payload:c})};window.JOT_delayedEvents=[];window.JOT_fullyLoaded=!1;
+window.JOT_formatRelativeToNow=function(a,b){a=((new Date).getTime()-a)/6E4;if(1440<=a||0>a)return null;var c=0;60<=a&&(a/=60,c=2);2<=a&&c++;return b?window.JOT_siteRelTimeStrs[c].replace("__duration__",Math.floor(a)):window.JOT_userRelTimeStrs[c].replace("__duration__",Math.floor(a))}; })()
+</SCRIPT>
+ 
+<SCRIPT>
+
+  
+
+  var breadcrumbs = [{"path":"/data","deleted":false,"title":"Data","dir":"ltr"},{"path":"/data/linking-crsp-and-compustat","deleted":false,"title":"Linking CRSP and Compustat","dir":"ltr"}];
+  var JOT_clearDotPath = 'http://www.gstatic.com/sites/p/47228d/system/app/images/cleardot.gif';
+
+  
+  var JOT_userRelTimeStrs = ["a minute ago","__duration__ minutes ago","an hour ago","__duration__ hours ago"];
+
+  
+  
+
+  
+
+  var webspace = {"gvizGstaticVersion":"current","enableAnalytics":true,"pageSharingId":"jotspot_page","enableUniversalAnalytics":false,"sharingPolicy":"OPENED","siteTitle":"Rui Dai","onepickUrl":"https://docs.google.com/picker","adsensePublisherId":null,"features":{"oAuthForChartsApi":true,"contactStoreMigrationPollForGapi":true,"gapiLoaderUtil":true,"moreMobileStyleImprovements":null,"googleChartsOverGstatic":false,"picasaAlbumInsert":false,"pageDrafts":false,"plusBadge":false,"pdfEmbedSupport":false},"isPublic":true,"isConsumer":true,"serverFlags":{"cajaBaseUrl":"//www.gstatic.com/caja","cajaDebugMode":false},"domainAnalyticsAccountId":"","plusPageId":"","signInUrl":"https://accounts.google.com/AccountChooser?continue\u003dhttp://sites.google.com/site/ruidaiwrds/data/linking-crsp-and-compustat\u0026service\u003djotspot","analyticsAccountId":"UA-93020685-1","scottyUrl":"/_/upload","homePath":"/","siteNoticeUrlEnabled":false,"plusPageUrl":"","adsensePromoClickedOrSiteIneligible":true,"csiReportUri":"http://csi.gstatic.com/csi","sharingId":"jotspot","termsUrl":"//www.google.com/intl/en/policies/terms/","gvizVersion":1,"editorResources":{"sitelayout":["http://www.gstatic.com/sites/p/47228d/system/app/css/sitelayouteditor.css"],"text":["http://www.gstatic.com/sites/p/47228d/system/js/codemirror.js","http://www.gstatic.com/sites/p/47228d/system/app/css/codemirror_css.css","http://www.gstatic.com/sites/p/47228d/system/js/trog_edit__en.js","http://www.gstatic.com/sites/p/47228d/system/app/css/trogedit.css","/_/rsrc/1508399974000/system/app/css/editor.css","http://www.gstatic.com/sites/p/47228d/system/app/css/codeeditor.css","/_/rsrc/1508399974000/system/app/css/camelot/editor-jfk.css"]},"sharingUrlPrefix":"/_/sharing","isAdsenseEnabled":true,"domain":"defaultdomain","baseUri":"","name":"ruidaiwrds","siteTemplateId":false,"siteNoticeRevision":2,"siteNoticeUrlAddress":null,"siteNoticeMessage":"","page":{"isRtlLocale":false,"canDeleteWebspace":null,"isPageDraft":null,"parentPath":"/data","parentWuid":"wuid:gx:5e0bccc0aaaca466","siteLocale":"en","timeZone":"America/Los_Angeles","type":"text","title":"Linking CRSP and Compustat","locale":"en","wuid":"wuid:gx:229795a4d1b508c9","revision":24,"path":"/data/linking-crsp-and-compustat","isSiteRtlLocale":false,"pageInheritsPermissions":null,"name":"linking-crsp-and-compustat","canChangePath":true,"state":"","properties":{},"bidiEnabled":false,"currentTemplate":{"path":"/system/app/pagetemplates/text","title":"Web Page"}},"canPublishScriptToAnyone":true,"user":{"keyboardShortcuts":true,"sessionIndex":"","onePickToken":"","guest_":true,"displayNameOrEmail":"guest","userName":"guest","uid":"","renderMobile":false,"domain":"","namespace":"","hasWriteAccess":false,"namespaceUser":false,"primaryEmail":"guest","hasAdminAccess":false},"gadgets":{"baseUri":"/system/app/pages/gadgets"}};
+  webspace.page.breadcrumbs = breadcrumbs;
+
+  
+  var JOT_siteRelTimeStrs = ["a minute ago","__duration__ minutes ago","an hour ago","__duration__ hours ago"];
+
+</SCRIPT>
+ 
+<SCRIPT type="text/javascript">
+                window.jstiming.load.tick('scl');
+              </SCRIPT>
+ <LINK href="http://www.ruidaiwrds.info/data/linking-crsp-and-compustat" rel="canonical"> 
+<META name="google-site-verification" content="mXLrP-AsUHLl226erZeF_bp2x9DbhcmG4y73fe--B0w"> 
+<META name="title" content="Linking CRSP and Compustat - Rui Dai"> 
+<META content="Linking CRSP and Compustat - Rui Dai" itemprop="name"> 
+<META content="Linking CRSP and Compustat - Rui Dai" property="og:title"> 
+<META name="description" content="Rui Dai's Personal Website"> 
+<META content="Rui Dai's Personal Website" itemprop="description"> 
+<META id="meta-tag-description" content="Rui Dai's Personal Website" property="og:description"> 
+<STYLE type="text/css"></STYLE>
+ <LINK href="Linking%20CRSP%20and%20Compustat%20-%20Rui%20Dai_files/standard-css-solitudenavy-ltr-ltr.css" 
+rel="stylesheet" type="text/css"> <LINK href="Linking%20CRSP%20and%20Compustat%20-%20Rui%20Dai_files/overlay.css" 
+rel="stylesheet" type="text/css"> <LINK href="Linking%20CRSP%20and%20Compustat%20-%20Rui%20Dai_files/allthemes-view.css" 
+rel="stylesheet" type="text/css"> <!--[if IE]>
+          <link rel="stylesheet" type="text/css" href="/system/app/css/camelot/allthemes%2die.css" />
+        <![endif]--> 
+<TITLE>Linking CRSP and Compustat - Rui Dai</TITLE> 
+<META content="http://www.ruidaiwrds.info/_/rsrc/1507578915576/data/linking-crsp-and-compustat/Capture.PNG" 
+itemprop="image"> 
+<META content="http://www.ruidaiwrds.info/_/rsrc/1507578915576/data/linking-crsp-and-compustat/Capture.PNG" 
+property="og:image"> 
+<SCRIPT type="text/javascript">
+                window.jstiming.load.tick('cl');
+              </SCRIPT>
+ 
+<META name="GENERATOR" content="MSHTML 11.00.9600.18817"></HEAD> 
+<BODY class=" en            " id="body" 
+xmlns="http://www.google.com/ns/jotspot">
+<DIV class="sites-header-divider" id="sites-page-toolbar">
+<DIV class="sites-status" id="sites-status" style="display: none;" xmlns="http://www.w3.org/1999/xhtml">
+<DIV class="sites-notice" id="sites-notice" role="status" 
+aria-live="assertive"></DIV></DIV></DIV>
+<DIV id="sites-chrome-everything-scrollbar">
+<DIV id="sites-chrome-everything">
+<DIV id="sites-chrome-page-wrapper" style="direction: ltr;">
+<DIV id="sites-chrome-page-wrapper-inside">
+<DIV id="sites-chrome-header-wrapper" xmlns="http://www.w3.org/1999/xhtml">
+<TABLE class="sites-layout-hbox" id="sites-chrome-header" cellspacing="0">
+  <TBODY>
+
+ <TABLE class="sites-layout-hbox" id="sites-chrome-main" border="0" cellspacing="0" 
+cellpadding="{scmCellpadding}">
+  <TBODY>
+  <TR>
+    <TD class="sites-layout-sidebar-left" id="sites-chrome-sidebar-left" style="width: 150px; display: none;"></TD>
+    <TD id="sites-canvas-wrapper">
+ 
+      <H3 align="left" id="sites-page-title-header" xmlns="http://www.w3.org/1999/xhtml"><SPAN 
+      tabindex="-1" id="sites-page-title" style="" dir="ltr">Linking CRSP and 
+      Compustat</SPAN> </H3>
+      <DIV class="sites-canvas-main" id="sites-canvas-main">
+      <DIV id="sites-canvas-main-content">
+      <TABLE class="sites-layout-name-one-column sites-layout-hbox" cellspacing="0" 
+      xmlns="http://www.w3.org/1999/xhtml">
+        <TBODY>
+        <TR>
+          <TD class="sites-layout-tile sites-tile-name-content-1">
+            <DIV dir="ltr">
+            <DIV><SPAN style="background-color: transparent;"><FONT face="times new roman, serif" 
+            size="3">
+            <DIV class="sites-embed-align-left-wrapping-off">
+            <DIV class="sites-embed-border-off sites-embed" style="width: 100px;">
+            <DIV class="sites-embed-content sites-embed-type-plusone">
+            <DIV class="g-plusone" data-source="google:sites" data-size="standard" 
+            data-count="true"></DIV></DIV></DIV></DIV></FONT></SPAN></DIV>
+            <DIV style="text-align: right;"><SPAN style="background-color: transparent;"><FONT 
+            face="times new roman, serif" size="3">Drafted by Rui Dai in Jun 
+            2016 (Revised at Oct 2017)</FONT></SPAN></DIV>
+            <DIV><SPAN style="background-color: transparent;"><FONT face="times new roman, serif" 
+            size="3">In empirical finance and accounting literature, CRSP and 
+            Compustat have been the two most widely used database since early 
+            90’s. From 2001 to 2015, the combined web queries of those two 
+            databases together occupy more than 80% web traffic at WRDS. In this 
+            WRDS Research Application, we provide a general guidance to link 
+            those two databases at security level. This rest of this application 
+            is organized as following:</FONT></SPAN></DIV>
+            <DIV>
+            <OL>
+              <LI><FONT face="times new roman, serif" size="3">Preliminary: 
+              security identifiers</FONT></LI>
+              <LI><FONT face="times new roman, serif" size="3">Data Structure: 
+              CRSP v.s. Compustat</FONT></LI>
+              <LI><FONT face="times new roman, serif" size="3">Matching 
+              Implementation:</FONT></LI>
+              <UL>
+                <LI><FONT face="times new roman, serif" size="3">Linking by 
+                CUSIP</FONT></LI>
+                <LI><FONT face="times new roman, serif" size="3">Linking by CCM 
+                Linktable</FONT></LI></UL></OL></DIV>
+            <DIV>
+            <DIV><FONT face="times new roman, serif" size="3">1. Preliminary: 
+            Security Identifiers</FONT></DIV>
+            <DIV><FONT face="times new roman, serif" size="3">Among all commonly 
+            used security/company identifiers, TICKER and CUSIP are probably the 
+            most often mentioned ones. A stock TICKER is an abbreviation used to 
+            uniquely identify publicly traded shares of a particular stock, 
+            while CUSIP is a nine-character alphanumeric code assigned by CUSIP 
+            bureau to identify various securities. There are a few problems 
+            associated with those two identifiers for researchers to match 
+            historical records. First of all, neither identifier is permanent. A 
+            change in a security’s CUSIP, for example, could be triggered by any 
+            change in the security, including non-fundamental events such as 
+            splits and name changes. In addition, retired stock TICKER are often 
+            reused. As shown in Table below, both TICKER and CUSIP are changed 3 
+            times, while the name of the company is also changed 
+            once.&nbsp;</FONT></DIV>
+            <DIV><FONT size="3"><BR></FONT></DIV></DIV>
+            <DIV>
+            <TABLE style="border: currentColor; border-image: none; border-collapse: collapse;" 
+            border="1" cellspacing="0" cellpadding="0">
+              <TBODY>
+              <TR style="height: 17.15pt;">
+                <TD style="border-width: 1pt medium; border-style: solid none; border-color: rgb(156, 194, 229) currentColor; padding: 0in 5.4pt; height: 17.15pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><B><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">Date</FONT></SPAN></B></P></TD>
+                <TD style="border-width: 1pt medium; border-style: solid none; border-color: rgb(156, 194, 229) currentColor; padding: 0in 5.4pt; height: 17.15pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><B><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">CUSIP</FONT></SPAN></B></P></TD>
+                <TD style="border-width: 1pt medium; border-style: solid none; border-color: rgb(156, 194, 229) currentColor; padding: 0in 5.4pt; height: 17.15pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><B><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">Ticker</FONT></SPAN></B></P></TD>
+                <TD style="border-width: 1pt medium; border-style: solid none; border-color: rgb(156, 194, 229) currentColor; padding: 0in 5.4pt; height: 17.15pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><B><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">Name</FONT></SPAN></B></P></TD>
+                <TD style="border-width: 1pt medium; border-style: solid none; border-color: rgb(156, 194, 229) currentColor; padding: 0in 5.4pt; height: 17.15pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><B><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">CRSP Security  Identifier</FONT></SPAN></B></P>
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><B><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">(PERMNO)</FONT></SPAN></B></P></TD>
+                <TD style="border-width: 1pt medium; border-style: solid none; border-color: rgb(156, 194, 229) currentColor; padding: 0in 5.4pt; height: 17.15pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><B><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">S&amp;P Identifier</FONT></SPAN></B></P>
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><B><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">(GVKEY)</FONT></SPAN></B></P></TD>
+                <TD style="border-width: 1pt medium; border-style: solid none; border-color: rgb(156, 194, 229) currentColor; padding: 0in 5.4pt; height: 17.15pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><B><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">S&amp;P Security-level</FONT></SPAN></B></P>
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><B><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">Sub-Identifier (IID)</FONT></SPAN></B></P></TD></TR>
+              <TR style="height: 14.7pt;">
+                <TD style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><B><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">20060630</FONT></SPAN></B></P></TD>
+                <TD style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">67461T10</FONT></SPAN></P></TD>
+                <TD style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">RHEO</FONT></SPAN></P></TD>
+                <TD style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">Occulogix Inc</FONT></SPAN></P></TD>
+                <TD style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">90488</FONT></SPAN></P></TD>
+                <TD style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">161071</FONT></SPAN></P></TD>
+                <TD style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">01</FONT></SPAN></P></TD></TR>
+              <TR style="height: 14.7pt;">
+                <TD style="border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><B><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">20060901</FONT></SPAN></B></P></TD>
+                <TD style="border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">67461T10</FONT></SPAN></P></TD>
+                <TD style="border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">OCCX</FONT></SPAN></P></TD>
+                <TD style="border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">Occulogix Inc</FONT></SPAN></P></TD>
+                <TD style="border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">90488</FONT></SPAN></P></TD>
+                <TD style="border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">161071</FONT></SPAN></P></TD>
+                <TD style="border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">01</FONT></SPAN></P></TD></TR>
+              <TR style="height: 14.7pt;">
+                <TD style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><B><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">20081106</FONT></SPAN></B></P></TD>
+                <TD style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">67461T20</FONT></SPAN></P></TD>
+                <TD style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">OCCX</FONT></SPAN></P></TD>
+                <TD style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">Occulogix Inc</FONT></SPAN></P></TD>
+                <TD style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">90488</FONT></SPAN></P></TD>
+                <TD style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">161071</FONT></SPAN></P></TD>
+                <TD style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">01</FONT></SPAN></P></TD></TR>
+              <TR style="height: 14.7pt;">
+                <TD style="border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><B><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">20090116</FONT></SPAN></B></P></TD>
+                <TD style="border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">67461T20</FONT></SPAN></P></TD>
+                <TD style="border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">TEAR</FONT></SPAN></P></TD>
+                <TD style="border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">Occulogix Inc</FONT></SPAN></P></TD>
+                <TD style="border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">90488</FONT></SPAN></P></TD>
+                <TD style="border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">161071</FONT></SPAN></P></TD>
+                <TD style="border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 14.7pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">01</FONT></SPAN></P></TD></TR>
+              <TR style="height: 15.45pt;">
+                <TD style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 15.45pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><B><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">20100521</FONT></SPAN></B></P></TD>
+                <TD style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 15.45pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">87819310</FONT></SPAN></P></TD>
+                <TD style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 15.45pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">TEAR</FONT></SPAN></P></TD>
+                <TD style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 15.45pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">Tearlab Corp</FONT></SPAN></P></TD>
+                <TD style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 15.45pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">90488</FONT></SPAN></P></TD>
+                <TD style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 15.45pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">161071</FONT></SPAN></P></TD>
+                <TD style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; height: 15.45pt;">
+                  <P align="center" style="text-align: center; line-height: normal; margin-bottom: 0pt;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">01</FONT></SPAN></P></TD></TR></TBODY></TABLE>
+            <DIV><FONT size="3"><BR></FONT></DIV>
+            <DIV><FONT face="times new roman, serif" size="3">For those reasons, 
+            most databases create permanent identifiers to indicate the same 
+            securities and companies. For example, CRSP employs PERMNO to track 
+            stock, while Compustat uses GVKEY to follow companies and a 
+            combination of GVKEY and IID to track security. As indicated in 
+            Table above, both PERMNO and GVKEY (+IID) remain the same, 
+            regardless of changes in TICKER, CUSIP, and Company 
+            Names.&nbsp;</FONT></DIV>
+            <DIV><FONT face="times new roman, serif" size="3"><BR></FONT></DIV>
+            <DIV><FONT face="times new roman, serif" size="3">2. Data 
+            Structure:</FONT></DIV>
+            <DIV><FONT face="times new roman, serif" size="3">To understand the 
+            matching mechanism and results, researchers should keep the 
+            structural differences of two databases in mind. The Table below 
+            demonstrates four major structural differences between CRSP and 
+            Compustat:<SPAN style="text-align: justify; color: black; background-color: transparent;">&nbsp;</SPAN></FONT></DIV>
+            <TABLE style="border: currentColor; border-image: none; border-collapse: collapse;" 
+            border="1" cellspacing="0" cellpadding="0">
+              <TBODY>
+              <TR>
+                <TD valign="top" style="border-width: medium medium 1.5pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><B><SPAN 
+                  style="color: black; font-family: Times New Roman,serif;"><FONT 
+                  size="3">&nbsp;</FONT></SPAN></B></P></TD>
+                <TD width="229" valign="top" style="border-width: medium medium 1.5pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; width: 172pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><B><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">CRSP</FONT></SPAN></B></P></TD>
+                <TD width="318" valign="top" style="border-width: medium medium 1.5pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; width: 238.25pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><B><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">Compustat North American</FONT></SPAN></B></P></TD></TR>
+              <TR>
+                <TD valign="top" style="background: rgb(222, 234, 246); border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor rgb(156, 194, 229) rgb(156, 194, 229) currentColor; padding: 0in 5.4pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><B><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">Time </FONT></SPAN></B></P></TD>
+                <TD width="229" valign="top" style="background: rgb(222, 234, 246); border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor rgb(156, 194, 229) rgb(156, 194, 229) currentColor; padding: 0in 5.4pt; width: 172pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">From 1925<A name="_ftnref1" title="" href="javascript:void(0);"><SPAN><SPAN><SPAN 
+                  style="color: black; line-height: 107%;">[1]</SPAN></SPAN></SPAN></A></FONT></SPAN></P></TD>
+                <TD width="318" valign="top" style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; width: 238.25pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">From 1950</FONT></SPAN></P></TD></TR>
+              <TR>
+                <TD valign="top" style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor rgb(156, 194, 229) rgb(156, 194, 229) currentColor; padding: 0in 5.4pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><B><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">Universe</FONT></SPAN></B></P></TD>
+                <TD width="229" valign="top" style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor rgb(156, 194, 229) rgb(156, 194, 229) currentColor; padding: 0in 5.4pt; width: 172pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">Firms listed in USA Major Exchanges 
+</FONT></SPAN></P>
+                  <UL>
+                    <LI><FONT face="times new roman, serif" size="3">NYSE,  
+                    NASDAQ, AMEX, and ARCA</FONT></LI></UL></TD>
+                <TD width="318" valign="top" style="border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; width: 238.25pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">USA (10K filers) and Canada Firms </FONT></SPAN></P>
+                  <UL>
+                    <LI><SPAN style="color: black; background-color: transparent;"><FONT 
+                    face="times new roman, serif" size="3">listed  in major USA 
+                    or Canada Exchanges,</FONT></SPAN></LI>
+                    <LI><FONT face="times new roman, serif" size="3">listed  in 
+                    regional exchanges,</FONT></LI>
+                    <LI><FONT face="times new roman, serif" size="3">with  
+                    shares traded as OTC, or</FONT></LI>
+                    <LI><FONT face="times new roman, serif" size="3">with  
+                    certain amount of public bonds</FONT></LI></UL></TD></TR>
+              <TR>
+                <TD valign="top" style="background: rgb(222, 234, 246); border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor rgb(156, 194, 229) rgb(156, 194, 229) currentColor; padding: 0in 5.4pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><B><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">Frequency</FONT></SPAN></B></P></TD>
+                <TD width="229" valign="top" style="background: rgb(222, 234, 246); border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor rgb(156, 194, 229) rgb(156, 194, 229) currentColor; padding: 0in 5.4pt; width: 172pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">Daily or Monthly</FONT></SPAN></P></TD>
+                <TD width="318" valign="top" style="background: rgb(222, 234, 246); border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; width: 238.25pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">Quarterly and Annually</FONT></SPAN></P></TD></TR>
+              <TR>
+                <TD valign="top" style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor rgb(156, 194, 229) rgb(156, 194, 229) currentColor; padding: 0in 5.4pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><B><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">Inclusion</FONT></SPAN></B></P></TD>
+                <TD width="229" valign="top" style="border-width: medium 1pt 1pt medium; border-style: none solid solid none; border-color: currentColor rgb(156, 194, 229) rgb(156, 194, 229) currentColor; padding: 0in 5.4pt; width: 172pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">Securities are included since 
+IPO</FONT></SPAN></P></TD>
+                <TD width="318" valign="top" style="border-width: medium medium 1pt; border-style: none none solid; border-color: currentColor currentColor rgb(156, 194, 229); padding: 0in 5.4pt; border-image: none; width: 238.25pt;">
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-justify: inter-ideograph;"><SPAN 
+                  style="color: black;"><FONT face="times new roman, serif" 
+                  size="3">Traditional, Compustat includes a firm only  after a 
+                  few years the firm publicly disclose its financial 
+                  statement.<A name="_ftnref2" title="" href="javascript:void(0);"><SPAN 
+                  style="color: black; line-height: 107%;">[2]</SPAN></A></FONT></SPAN></P></TD></TR></TBODY></TABLE>
+            <P 
+            style="text-align: justify; -ms-text-justify: inter-ideograph;"><SPAN 
+            style="color: black; background-color: transparent;"><FONT face="times new roman, serif" 
+            size="3">Those differences typically create three kinds of 
+            unmatchable scenarios.</FONT></SPAN></P>
+            <OL>
+              <LI><SPAN 
+              style="color: black; background-color: transparent;"><FONT face="times new roman, serif" 
+              size="3">Prior to 1950, trading records (CRSP) cannot be matched 
+              to fundamental items (Compustat).</FONT></SPAN></LI>
+              <LI><FONT face="times new roman, serif" size="3">The fundamental 
+              items cannot be matched to trading records, when firms are listed
+               in regional exchanges, are traded as OTC, and/or only have bonds 
+              publicly traded.</FONT></LI>
+              <LI><FONT face="times new roman, serif" size="3">The trading 
+              records cannot be matched to fundamental items, when those stocks 
+              did not survive long enough (e.g. M&amp;A) for Compustat to 
+              include its fundamental items.</FONT></LI></OL>
+            <P 
+            style="text-align: justify; -ms-text-justify: inter-ideograph;"><SPAN 
+            style="color: black;"><FONT face="times new roman, serif" 
+            size="3">3. Matching Implementation:</FONT></SPAN></P>
+            <P 
+            style="text-align: justify; -ms-text-justify: inter-ideograph;"><I><SPAN 
+            style="color: black;"><FONT face="times new roman, serif" 
+            size="3">Merge by CUSIP</FONT></SPAN></I></P>
+            <P 
+            style="text-align: justify; -ms-text-justify: inter-ideograph;"><SPAN 
+            style="color: black;"><FONT face="times new roman, serif" 
+            size="3">CUSIP is a nine-character alphanumeric identifier for 
+            publicly traded securities, and is created by CUSIP Service Bureau 
+            in 1968.Unlike TICKER, CUSIP is not a reusable security identifier, 
+            so that it has been widely used to match different databases. CRSP 
+            and Compustat used slightly different approach to keep CUSIP 
+            records. CRSP drops the 9<SUP>th</SUP> checksum digit in CUSIP and
+             keeps historical CUSIPs, while Compustat use full CUSIP and keep 
+            only the most current CUSIP.<A name="_ftnref3" title="" href="javascript:void(0);"><SPAN><SPAN><SPAN 
+            style="color: black; line-height: 107%;">[3]</SPAN></SPAN></SPAN></A>
+             The following is a SAS sample code to match CRSP and Compustat at 
+            security level by CUSIP:</FONT></SPAN></P>
+            <DIV>
+            <TABLE style="border: currentColor; border-image: none; border-collapse: collapse;" 
+            border="1" cellspacing="0" cellpadding="0">
+              <TBODY>
+              <TR>
+                <TD valign="top" style="padding: 0in 5.4pt; border: currentColor; border-image: none; width: 747.6px; height: 557px;">
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><B><SPAN 
+                  style="color: navy; font-family: Courier New; font-size: 10pt;">proc</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><B><SPAN style="color: navy; font-family: Courier New; font-size: 10pt;">sql</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">;</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">create</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">table</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  cusip_link </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">as</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">select</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">distinct</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  a.permno, intnx(</SPAN><SPAN style="color: purple; font-family: Courier New; font-size: 10pt;">'month'</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">,date,</SPAN><B><SPAN 
+                  style="color: teal; font-family: Courier New; font-size: 10pt;">0</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">,</SPAN><SPAN 
+                  style="color: purple; font-family: Courier New; font-size: 10pt;">'e'</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">) 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">as</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  date </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">format</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">=</SPAN><SPAN 
+                  style="color: teal; font-family: Courier New; font-size: 10pt;">date9.</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">,</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  round(abs(prc), </SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">0.01</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">) 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">as</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  prc, c.gvkey, c.iid</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">from</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">
+                   crsp.msf </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">as</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  a </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">inner</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">join</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  crsp.msenames(</SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">where</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">=(shrcd 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">in</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  (</SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">10</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">11</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">12</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">30</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">31</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">32</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">))) 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">as</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">
+                   b</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: green; font-family: Courier New; font-size: 10pt;">/*Keep 
+                  All Possible Common Stocks and ARDs*/</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">on</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">
+                   a.permno=b.permno</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">inner</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">join</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  comp.security </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">as</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">
+                   c</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">on</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">
+                   substr(c.cusip,</SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">1</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">,</SPAN><B><SPAN 
+                  style="color: teal; font-family: Courier New; font-size: 10pt;">8</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">)=substr(b.ncusip,</SPAN><B><SPAN 
+                  style="color: teal; font-family: Courier New; font-size: 10pt;">1</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">,</SPAN><B><SPAN 
+                  style="color: teal; font-family: Courier New; font-size: 10pt;">8</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">) 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">and</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  lengthn(strip(ncusip))&gt;</SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">6</SPAN></B></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">inner</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">join</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  (</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">select</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">distinct</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  gvkey, datadate </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">from</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">
+                   comp.funda</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">where</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">
+                   sale&gt;</SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">.</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  or at&gt;</SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">.</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp; 
+                  </SPAN><SPAN style="color: green; font-family: Courier New; font-size: 10pt;">/*Keep 
+                  company with valid Total Asset or Sales Figure*/</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  ) </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">as</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">
+                   d</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">on</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">
+                   d.gvkey=c.gvkey </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">and</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  intnx(</SPAN><SPAN style="color: purple; font-family: Courier New; font-size: 10pt;">'month'</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">,
+                   datadate, -</SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">24</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">, 
+                  </SPAN><SPAN style="color: purple; font-family: Courier New; font-size: 10pt;">'e'</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">)&lt;a.date&lt;=intnx(</SPAN><SPAN 
+                  style="color: purple; font-family: Courier New; font-size: 10pt;">'month'</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">,
+                   datadate, </SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">12</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">, 
+                  </SPAN><SPAN style="color: purple; font-family: Courier New; font-size: 10pt;">'e'</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">);</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: green; font-family: Courier New; font-size: 10pt;">/*Keep 
+                  valid CUSIP linked PERMNO and GVKEY pairs around fiscal year 
+                  ends*/</SPAN></P>
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-autospace:; -ms-text-justify: inter-ideograph;"></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><B><SPAN 
+                  style="color: navy; font-family: Courier New; font-size: 10pt;">quit</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">;</SPAN></P></TD></TR></TBODY></TABLE>
+            <P 
+            style="text-align: justify; -ms-text-justify: inter-ideograph;"><FONT 
+            size="3"><SPAN style="color: black; font-family: Times New Roman,serif;">&nbsp;</SPAN><SPAN 
+            style="color: black; background-color: transparent;"><FONT face="times new roman, serif">There
+             are three major limitations to match CRSP and Compustat by 
+            CUSIP:</FONT></SPAN></FONT></P>
+            <OL>
+              <LI><FONT face="times new roman, serif" size="3"><SPAN style="line-height: normal; font-stretch: normal;">&nbsp;</SPAN><SPAN 
+              style="background-color: transparent;"><FONT color="#000000">Prior
+               to 1968, CUSIP does not exist, so that the CUSIP-based match is 
+              only reliable from 1968 onward.</FONT></SPAN></FONT></LI>
+              <LI><FONT face="times new roman, serif" size="3">CRSP only keep 
+              historical CUSIPs when the securities are traded in major 
+              exchanges. If the most recent CUSIP in Compustat is from regional 
+              or OTC market, CRSP and Compustat records would not be matched 
+              properly.</FONT></LI>
+              <LI><FONT face="times new roman, serif" size="3">CRSP and 
+              Compustat has different data refreshing frequency. The most recent 
+              CUSIP in one databases may not be synchronized with the most 
+              recent CUSIP in the other, which may in term creates certain miss 
+              matchings as well.</FONT></LI></OL>
+            <P 
+            style="text-align: justify; -ms-text-justify: inter-ideograph;"><I><SPAN 
+            style="color: black;"><FONT face="times new roman, serif" 
+            size="3">Merge by CCM Linktable</FONT></SPAN></I></P>
+            <P 
+            style="text-align: justify; -ms-text-justify: inter-ideograph;"><SPAN 
+            style="color: black;"><FONT face="times new roman, serif" 
+            size="3">The CRSP/Compustat Merged Database (CCM) is comprised of 
+            CRSP and Compustat data together with the link and link-history
+             references between these two databases. The key product of CCM is 
+            merely a permanent identifier linking table (PERMNO to GVKEY+IID), 
+            though CCM is often wrongly considered as merged product of CRSP 
+            stock market data with Compustat accounting data. From an end user’s 
+            perspective, CCM only adds a link of PERMNO and PERMCO to Compustat 
+            database, so that Compustat items can be searched by CRSP's 
+            identifiers. In the link table (Ccmxpf_linktable), there are a few
+             indicators for the quality of matching:</FONT></SPAN></P>
+            <P 
+            style="text-align: justify; -ms-text-justify: inter-ideograph;"><FONT 
+            face="times new roman, serif" size="3"><SPAN 
+            style="color: black;"><SPAN style="line-height: normal; font-stretch: normal;">&nbsp;</SPAN></SPAN><SPAN 
+            style="color: black;">LinkType: A code describing the connection
+             between the CRSP and Compustat data. </SPAN></FONT></P>
+            <UL>
+              <LI><FONT face="times new roman, serif" size="3">LU: Link research 
+              complete. Standard connection between databases.</FONT></LI>
+              <LI><FONT face="times new roman, serif" size="3">LC: Un-researched 
+              link to issue by CUSIP.</FONT></LI>
+              <LI><FONT face="times new roman, serif" size="3">LD: Duplicate 
+              link to a security. Another GVKEY/IID is a better link to that 
+              CRSP record</FONT></LI>
+              <LI><FONT face="times new roman, serif" size="3"><SPAN style="line-height: normal; font-stretch: normal;">&nbsp;</SPAN><SPAN 
+              style="color: black; background-color: transparent;">…</SPAN></FONT></LI></UL>
+            <P 
+            style="text-align: justify; -ms-text-justify: inter-ideograph;"><FONT 
+            face="times new roman, serif" size="3"><SPAN 
+            style="color: black;"><SPAN style="line-height: normal; font-stretch: normal;">&nbsp;</SPAN></SPAN><SPAN 
+            style="color: black;">LinkPrim: Primary issue indicator for the
+             link</SPAN></FONT></P>
+            <UL>
+              <LI><FONT face="times new roman, serif" size="3">P: Primary, 
+              identified by Compustat in monthly security data.</FONT></LI>
+              <LI><FONT face="times new roman, serif" size="3">C: Primary, 
+              assigned by CRSP to resolve ranges of overlapping or missing 
+              primary markers from Compustat in order to produce one primary 
+              security throughout the company history.</FONT></LI>
+              <LI><FONT face="times new roman, serif" size="3"><SPAN style="line-height: normal; font-stretch: normal;">&nbsp;&nbsp;</SPAN><SPAN 
+              style="color: black; background-color: transparent;">...</SPAN></FONT></LI></UL>
+            <P 
+            style="text-align: justify; -ms-text-justify: inter-ideograph;"><SPAN 
+            style="color: black;"><FONT face="times new roman, serif" 
+            size="3">UsedFlag: Flag marking whether link is used in building 
+            composite record</FONT></SPAN></P>
+            <UL>
+              <LI><FONT face="times new roman, serif" size="3">1: this link is 
+              applicable to the selected PERMNO and used to identify ranges of 
+              Compustat data from a GVKEY used to build a composite GVKEY record 
+              corresponding to the PERMNO.</FONT></LI>
+              <LI><FONT face="times new roman, serif" size="3">-1 = this link is 
+              informational, indirectly related to the PERMNO, but not 
+              used.</FONT></LI>
+              <LI><FONT face="times new roman, serif" size="3">USEDFLAG is a 
+              legacy indicator which is kept for programing and data consistency 
+              at WRDS.</FONT></LI></UL>
+            <P 
+            style="text-align: justify; -ms-text-justify: inter-ideograph;"><FONT 
+            face="times new roman, serif" size="3"><SPAN 
+            style="color: black;">LINKDT: The first effective date of the 
+            link</SPAN></FONT></P>
+            <P 
+            style="text-align: justify; -ms-text-justify: inter-ideograph;"><SPAN 
+            style="color: black;"><FONT face="times new roman, serif" 
+            size="3">LINKENDDT: The last date when the link is valid. For 
+            current valid link, LINKENDDT is set a NULL value (.E in SAS 
+            Format).</FONT></SPAN></P>
+            <P 
+            style="text-align: justify; -ms-text-justify: inter-ideograph;"><FONT 
+            face="times new roman, serif" size="3"><SPAN 
+            style="color: black;">The following is a sample SAS code to match 
+            CRSP and C</SPAN><SPAN style="color: black;">ompustat at security 
+            level by CCM Linktable:</SPAN></FONT></P>
+            <TABLE style="border: currentColor; border-image: none; border-collapse: collapse;" 
+            border="1" cellspacing="0" cellpadding="0">
+              <TBODY>
+              <TR>
+                <TD width="623" valign="top" style="padding: 0in 5.4pt; border: currentColor; border-image: none; width: 467.5pt;">
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><B><SPAN 
+                  style="color: navy; font-family: Courier New; font-size: 10pt;">proc</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><B><SPAN style="color: navy; font-family: Courier New; font-size: 10pt;">sql</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">;</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">create</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">table</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  ccm_link </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">as</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">select</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">distinct</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">a.</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">*,
+                   c.gvkey, liid </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">as</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  iid</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">from</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">
+                   crsp.msf </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">as</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  a </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">inner</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">join</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  crsp.msenames(</SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">where</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">=(shrcd 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">in</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  (</SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">10</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">11</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">12</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">30</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">31</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">32</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">))) 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">as</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">
+                   b</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">on</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">
+                   a.permno=b.permno</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">inner</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">join</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  crsp.Ccmxpf_linktable(</SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">where</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">=(linktype 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">in</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  (</SPAN><SPAN style="color: purple; font-family: Courier New; font-size: 10pt;">'LC'</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><SPAN style="color: purple; font-family: Courier New; font-size: 10pt;">'LU'</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">) 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">and</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  linkprim </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">in</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">
+                   (</SPAN><SPAN style="color: purple; font-family: Courier New; font-size: 10pt;">'P'</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><SPAN style="color: purple; font-family: Courier New; font-size: 10pt;">'C'</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><SPAN style="color: purple; font-family: Courier New; font-size: 10pt;">'J'</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">) 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">and</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  USEDFLAG=</SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">1</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">)) 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">as</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  c</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: green; font-family: Courier New; font-size: 10pt;">/*Both 
+                  Primary and Secondary Shares*/</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">on</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">
+                   a.permno=c.lpermno </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">and</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">
+                   linkdt&lt;=date&lt;=coalesce(linkenddt, today())</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">inner</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">join</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  (</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">select</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">distinct</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  gvkey </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">from</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">
+                   comp.funda</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">where</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">
+                   sale&gt;</SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">.</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;"> 
+                  or at&gt;</SPAN><B><SPAN style="color: teal; font-family: Courier New; font-size: 10pt;">.</SPAN></B><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp; 
+                  </SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  ) </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">as</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">
+                   d</SPAN></P>
+                  <P style="line-height: normal; margin-bottom: 0pt; -ms-text-autospace:;"><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                  </SPAN><SPAN style="color: blue; font-family: Courier New; font-size: 10pt;">on</SPAN><SPAN 
+                  style="color: black; font-family: Courier New; font-size: 10pt;">
+                   c.gvkey=d.gvkey;</SPAN></P>
+                  <P style="text-align: justify; line-height: normal; margin-bottom: 0pt; -ms-text-autospace:; -ms-text-justify: inter-ideograph;"></P>
+                  <P><B><SPAN style="color: navy; line-height: 107%; font-family: Courier New; font-size: 10pt;">quit</SPAN></B><SPAN 
+                  style="color: black; line-height: 107%; font-family: Courier New; font-size: 10pt;">;</SPAN></P></TD></TR></TBODY></TABLE>
+            <P style="text-align: left;"><SPAN style="color: black; background-color: transparent;"><FONT 
+            face="times new roman, serif" size="3">Numbers of companies from 
+            stock level matching by CCM Linktable and CUSIP through years are 
+            plotted in graph below. Due to various limitations of CUSIP matching 
+            mentioned above, CCM always provides greater numbers of matched 
+            results, and the two results converge in most recent years. In 
+            addition, I provides a code (<A href="http://www.ruidaiwrds.info/pccm">PCCM.sas</A>) 
+            that generates a combination of CUSIP match 
+            and&nbsp;</FONT></SPAN><SPAN style="text-align: left; background-color: transparent;"><FONT 
+            color="#000000" face="times new roman, serif" size="3">successive 
+            price matching. As mentioned above, this approach 
+            is&nbsp;</FONT></SPAN><SPAN style="text-align: left; background-color: transparent;"><FONT 
+            color="#000000" face="times new roman, serif" 
+            size="3">inspirited&nbsp;by the CCM LinkType variable. The code is 
+            in Alpha version stage, certain cautions are required when use. The 
+            numbers of companies matched by using the linking table generated by 
+            using this code is also reported in the figure below. As shown in 
+            the picture, the price matching does improve the quality of security 
+            matching, though CCM still provide the best results, especially in 
+            late 80's and early 90's.&nbsp;</FONT></SPAN></P>
+            <P 
+            style="text-align: justify; -ms-text-justify: inter-ideograph;"><SPAN 
+            style="color: black; font-family: Times New Roman,serif;"><FONT 
+            size="3">&nbsp;</FONT></SPAN></P>
+            <DIV style="text-align: left; display: block;"><FONT size="3"><A 
+            href="http://www.ruidaiwrds.info/data/linking-crsp-and-compustat/Capture.PNG?attredirects=0" 
+            imageanchor="1"><IMG src="Linking%20CRSP%20and%20Compustat%20-%20Rui%20Dai_files/Capture.png" 
+            border="0"></A></FONT></DIV>
+            <DIV style="text-align: left; display: block;"></DIV><FONT 
+            size="3"><A href="http://www.ruidaiwrds.info/"></A></FONT> 
+            <P 
+            style="text-align: justify; -ms-text-justify: inter-ideograph;"><FONT 
+            color="#000000" face="times new roman, serif" size="3">It is worth 
+            to notice one company may have multiple classes of common equities. 
+            And at company level, CRSP and Compustat occasionally disagree on 
+            the surviving company from merges. In these cases, a researcher 
+            could disagree with the stand taken by the CCM set in resolving the 
+            disagreement or ambiguity about a surviving company.</FONT></P>
+            <HR width="33%" size="1" align="left">
+
+            <DIV>
+            <P 
+            style="text-align: justify; -ms-text-justify: inter-ideograph;"><FONT 
+            size="3"><A name="_ftn1" title="" 
+            href="javascript:void(0);"><SPAN><SPAN style="font-family: Times New Roman,serif;"><SPAN><SPAN 
+            style="line-height: 107%;">[1]</SPAN></SPAN></SPAN></SPAN></A><SPAN 
+            style="font-family: Times New Roman,serif;"> In fact, CRSP includes 
+            stocks listed in different exchanges through stages. In particular, 
+            CRSP adds stocks listed NYSE, NYSE MKT (AMEX), NASDAQ, and ARCA in 
+            1925, 1962, 1972, and 2006 respectively. </SPAN></FONT></P></DIV>
+            <DIV>
+            <P 
+            style="text-align: justify; -ms-text-justify: inter-ideograph;"><FONT 
+            size="3"><A name="_ftn2" title="" 
+            href="javascript:void(0);"><SPAN><SPAN style="font-family: Times New Roman,serif;"><SPAN><SPAN 
+            style="line-height: 107%;">[2]</SPAN></SPAN></SPAN></SPAN></A><SPAN 
+            style="font-family: Times New Roman,serif;"> Early researches, for 
+            example Kothari, Shanken and Sloan (1995), find a selection bias 
+            (survivorship bias) to the way in which firms are added to the 
+            COMPUSTAT database. In particular, Compustat adds a new firm into 
+            its system only when the firm has reported its financial statement 
+            for multiple years, which is sometimes called backfilling bias. 
+            &nbsp;</SPAN></FONT></P></DIV>
+            <DIV>
+            <P 
+            style="text-align: justify; -ms-text-justify: inter-ideograph;"><FONT 
+            size="3"><A name="_ftn3" title="" 
+            href="javascript:void(0);"><SPAN><SPAN style="font-family: Times New Roman,serif;"><SPAN><SPAN 
+            style="line-height: 107%;">[3]</SPAN></SPAN></SPAN></SPAN></A><SPAN 
+            style="font-family: Times New Roman,serif;"> Compustat also provides 
+            historical CUSIPs, TICKERs, etc. in its Snapshot product, though 
+            historical identifiers are not available in their standard 
+            fundamental data 
+            feed.&nbsp;&nbsp;</SPAN></FONT></P></DIV></DIV></DIV>
+            <DIV><BR></DIV>
+            <DIV></DIV></DIV></TD></TR></TBODY></TABLE></DIV></DIV>
+      <DIV id="sites-canvas-bottom-panel">
+      <DIV id="COMP_page-subpages" xmlns="http://www.w3.org/1999/xhtml"></DIV>
+      <DIV 
+id="sites-attachments-container"></DIV></DIV></DIV></TD></TR></TBODY></TABLE></DIV></DIV>
+<DIV id="sites-chrome-onebar-footer"></DIV>
+<SCRIPT type="text/javascript" xmlns="http://www.w3.org/1999/xhtml">
+    window.jstiming.load.tick('sjl');
+  </SCRIPT>
+ 
+<SCRIPT src="Linking%20CRSP%20and%20Compustat%20-%20Rui%20Dai_files/jot_min_view__en.js" xmlns="http://www.w3.org/1999/xhtml"></SCRIPT>
+ 
+<SCRIPT type="text/javascript" xmlns="http://www.w3.org/1999/xhtml">
+    window.jstiming.load.tick('jl');
+  </SCRIPT>
+ 
+<SCRIPT xmlns="http://www.w3.org/1999/xhtml">
+      
+          sites.core.Analytics.createTracker();
+          sites.core.Analytics.trackPageview();
+        
+    </SCRIPT>
+ 
+<SCRIPT type="text/javascript" xmlns="http://www.w3.org/1999/xhtml">
+      gsites.HoverPopupMenu.createSiteDropdownMenus('sites-header-nav-dropdown', false);
+    </SCRIPT>
+ 
+<SCRIPT type="text/javascript" xmlns="http://www.w3.org/1999/xhtml">
+  setTimeout(function() {
+    var fingerprint = gsites.date.TimeZone.getFingerprint([1109635200000, 1128902400000, 1130657000000, 1143333000000, 1143806400000, 1145000000000, 1146380000000, 1152489600000, 1159800000000, 1159500000000, 1162095000000, 1162075000000, 1162105500000]);
+    gsites.Xhr.send('http://www.ruidaiwrds.info/_/tz', null, null, 'GET', null, null, { afjstz: fingerprint });
+  }, 500);
+</SCRIPT>
+ 
+<SCRIPT xmlns="http://www.w3.org/1999/xhtml">
+                    window.onload = function() {
+                      if (false) {
+                        JOT_setMobilePreview();
+                      }
+                      var loadTimer = window.jstiming.load;
+                      loadTimer.tick("ol");
+                      loadTimer["name"] = "load," + webspace.page.type + ",user_page";
+                      window.jstiming.report(loadTimer, {}, 'http://csi.gstatic.com/csi');
+                    }
+                  </SCRIPT>
+ 
+<SCRIPT type="text/javascript" xmlns="http://www.w3.org/1999/xhtml">
+        JOT_insertAnalyticsCode(false,
+            false);
+      </SCRIPT>
+ 
+<SCRIPT type="text/javascript" xmlns="http://www.w3.org/1999/xhtml">
+    var maestroRunner = new gsites.pages.view.SitesMaestroRunner(
+        webspace, "en");
+    maestroRunner.initListeners();
+    maestroRunner.installEditRender();
+  </SCRIPT>
+ 
+<SCRIPT defer="true" type="text/javascript" xmlns="http://www.w3.org/1999/xhtml">
+  //<![CDATA[
+    // Decorate any fastUI buttons on the page with a class of 'goog-button'.
+    if (webspace.user.hasWriteAccess) {
+      JOT_decorateButtons();
+    }
+
+    // Fires delayed events.
+    (function() {
+      JOT_fullyLoaded = true;
+      var delayedEvents = JOT_delayedEvents;
+      for (var x = 0; x < delayedEvents.length; x++) {
+        var event = delayedEvents[x];
+        JOT_postEvent(event.eventName, event.eventSrc, event.payload);
+      }
+      JOT_delayedEvents = null;
+      JOT_postEvent('pageLoaded');
+    })();
+  //]]>
+</SCRIPT>
+ 
+<SCRIPT type="text/javascript" xmlns="http://www.w3.org/1999/xhtml">
+    JOT_postEvent('decorateGvizCharts');
+  </SCRIPT>
+ 
+<SCRIPT type="text/javascript">
+          JOT_setupPostRenderingManager();
+        </SCRIPT>
+ 
+<SCRIPT type="text/javascript">
+          JOT_postEvent('renderPlus', null, 'sites-chrome-main');
+        </SCRIPT>
+ 
+<DIV id="server-timer-div" style="display: none;"></DIV>
+<SCRIPT type="text/javascript">
+          window.jstiming.load.tick('render');
+          JOT_postEvent('usercontentrendered', this);
+        </SCRIPT>
+ </BODY></HTML>
