@@ -13,22 +13,24 @@ function R = makePastPerformance(ret,from,to)
 %        -R - a matrix with the cumulative returns
 %------------------------------------------------------------------------------------------
 % Examples:
-% R = makePastPerformance(ret,12,1); % Classic momentum: from 12 month ago to one month ago (NOT including 
-%                       last month)
-% R3613 = makePastPerformance(ret,36,12); % DeBont and Thaler long run reversals: from 36 month ago to 12 
-%                           months ago
-% R127 = makePastPerformance(ret,12,6); % Intermediate horizon momentum: from 12 month ago to 6 months ago 
-% R62 = makePastPerformance(ret,6,1); % Recent horizon momentum: from 6 month ago to 1 month ago
+% R = makePastPerformance(ret,12,1);      % Classic momentum: from 12 month
+%                                           ago to one month ago (NOT including last month)
+% R62 = makePastPerformance(ret,6,1);     % Recent horizon momentum: from 6 month ago to 1 
+%                                           month ago
+% R127 = makePastPerformance(ret,12,6);   % Intermediate horizon momentum: from 12 month 
+%                                           ago to 6 months ago 
+% R3613 = makePastPerformance(ret,36,12); % DeBont and Thaler long run reversals: from 36 
+%                                           months ago to 12 months ago
 %------------------------------------------------------------------------------------------
 % Dependencies:
 %       N/A
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2021 All rights reserved. 
+% Copyright (c) 2022 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2021, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
 
 % calculates cumulative returns 
 if from-to==1

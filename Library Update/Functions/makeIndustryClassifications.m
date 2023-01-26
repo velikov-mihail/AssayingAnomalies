@@ -1,6 +1,6 @@
 function makeIndustryClassifications(Params)
 % PURPOSE: This function creates vand stores various industry
-% classifications. Those include FF10, FF17, and FF49
+% classifications. Those include 4-digit SIC code, FF10, FF17, and FF49
 %------------------------------------------------------------------------------------------
 % USAGE:   
 % makeIndustryClassifications(Params)              
@@ -27,25 +27,30 @@ function makeIndustryClassifications(Params)
 % Dependencies:
 %       Uses makeFF10Indus(), makeFF17Indus(), makeFF49Indus()
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2021 All rights reserved. 
+% Copyright (c) 2022 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2021, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
 
+% Timekeeping
+fprintf('Now working on industry classifications at %s.\n', char(datetime('now')));
 
+% Store the Data directory path
 dataPath=[Params.directory,'Data/'];
 
+% Load the SIC code variable
 load siccd
-SIC=siccd;
+
+% Make the industry classifications
+SIC = siccd;
 [FF10, FF10Names] = makeFF10Indus(SIC); 
 [FF17, FF17Names] = makeFF17Indus(SIC); 
 [FF49, FF49Names] = makeFF49Indus(SIC); 
 
-save([dataPath,'SIC.mat'],'SIC');
-save([dataPath,'FF10.mat'],'FF10','FF10Names');
-save([dataPath,'FF17.mat'],'FF17','FF17Names');
-save([dataPath,'FF49.mat'],'FF49','FF49Names');
-
-fprintf('Industry classifications complete.\n');
+% Store the industry classification matrices
+save([dataPath,'SIC.mat'],  'SIC');
+save([dataPath,'FF10.mat'], 'FF10', 'FF10Names');
+save([dataPath,'FF17.mat'], 'FF17', 'FF17Names');
+save([dataPath,'FF49.mat'], 'FF49', 'FF49Names');

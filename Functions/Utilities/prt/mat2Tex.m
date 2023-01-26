@@ -57,12 +57,15 @@ addOptional(p,'sigstats',coeffs,validNum);
 addOptional(p,'rowHeaders',{},validCellstr);
 addOptional(p,'decimals',2,validNum);
 addOptional(p,'bracketsType','[',validBracketType);
+addOptional(p,'colFormatSpec',{},validCellstr);
 parse(p,coeffs,varargin{:});
+
 
 sigstats=p.Results.sigstats;
 rowHeaders=p.Results.rowHeaders;
 decimals=p.Results.decimals;
 bracketsType=p.Results.bracketsType;
+colFormatSpec=p.Results.colFormatSpec;
 
 indSigStats=(nansum(nansum(coeffs-sigstats))~=0);
 
@@ -72,10 +75,15 @@ for i=1:size(coeffs,1)
         fprintf('%s',char(rowHeaders(i)));
     end
     for j=1:size(coeffs,2)
+        if isempty(colFormatSpec)
+            formatSpec=['%.',char(num2str(decimals)),'f'];
+        else 
+            formatSpec=char(colFormatSpec(j));
+        end
         if isnan(coeffs(i,j))
            fprintf(' & ');
         else
-            eval(['fprintf('' & %.',char(num2str(decimals)),'f'',coeffs(i,j));']);
+            eval(['fprintf('' & ',formatSpec,''',coeffs(i,j));']);
         end
     end
     if indSigStats
@@ -85,20 +93,28 @@ for i=1:size(coeffs,1)
     end        
     if indSigStats
         for j=1:size(coeffs,2)
+
+            if isempty(colFormatSpec)
+                formatSpec=['%.',char(num2str(decimals)),'f'];
+            else 
+                formatSpec=char(colFormatSpec(j));
+            end
+                                    
             if isnan(sigstats(i,j))
                 fprintf(' & ');
             else
                 switch bracketsType
                     case '['
-                        eval(['fprintf('' & [%.',char(num2str(decimals)),'f]'',sigstats(i,j));']);                        
+                        eval(['fprintf('' & [',formatSpec,']'',sigstats(i,j));']);                        
                     case '('
-                        eval(['fprintf('' & (%.',char(num2str(decimals)),'f)'',sigstats(i,j));']);
+                        eval(['fprintf('' & (',formatSpec,')'',sigstats(i,j));']);
                     case '{'
-                        eval(['fprintf('' & {%.',char(num2str(decimals)),'f}'',sigstats(i,j));']);
+                        eval(['fprintf('' & {',formatSpec,'}'',sigstats(i,j));']);
                 end
             end
         end
         fprintf('\\\\[2pt]\n');       
     end
 end
+fprintf('\n\n');
 

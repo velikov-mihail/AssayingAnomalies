@@ -54,7 +54,6 @@ The code asks the user to select the unzipped library directory as well as to in
 * SAMPLE_START - sample start date, default is 1925 (recommended to start in 1962 if short on memory)
 * SAMPLE_END - sample end date, default is 2020
 * COMPUSTATVariablesFileName - file with names of COMPUSTAT annual & quarterly variables to download (default included with code - COMPUSTAT Variable Names.csv) or 'All' to download all variables (not recommended as there are ~1,000 variables)
-* driverLocation - location of the PostgreSQL JDBC driver (included in the code and set as default)
 * tcosts - parameters specifying the choice of transaction costs 
      * 'gibbs' - Gibbs effective spread measure from Hasbrouck (2009) 
      * 'lf_combo' (default) - low-frequency combination measure from Chen and Velikov (2021) 
@@ -69,9 +68,11 @@ SETUP
 
 Order of operations:
 1) Download the code from this repository 
-2) (Optionally) run the Gibbs code either locally (need to download through ftp crsp.dsf & crsp.dse) or on WRDS cloud. Store the file (crspgibbsYYYY.csv) in the working directory to use as an input when creating the trading costs measure. 
+2) Set the Java Heap Memory in your MATLAB settings to 48GB or the maximum available.
+    * Home -> Preferences -> General -> Java Heap Memory
+3) (Optionally) run the Gibbs code either locally (need to download through ftp crsp.dsf & crsp.dse) or on WRDS cloud. Store the file (crspgibbsYYYY.csv) in the working directory to use as an input when creating the trading costs measure. 
      * Input file containing Gibbs effective spreads through 2020 is included in the repository. 
-3) (Optionally) download the code and follow the instructions for calculating the high-frequency effective spreads from TAQ and ISSM from https://github.com/chenandrewy/hf-spreads-all
+4) (Optionally) download the code and follow the instructions for calculating the high-frequency effective spreads from TAQ and ISSM from https://github.com/chenandrewy/hf-spreads-all
      * This step is required to use the combination transaction costs measure from Chen and Velikov (2021)
      * After running the code on the WRDS cloud, you should download the output file, hf_monthly.csv
 5) Enter the parameters at the beginning of setup_library.m script.

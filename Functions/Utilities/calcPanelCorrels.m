@@ -24,12 +24,12 @@ function [rhoS,rhoP]=calcPanelCorrels(var1,var2)
 % Dependencies:
 %       N/A
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2021 All rights reserved. 
+% Copyright (c) 2022 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2021, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
 
 n=size(var1,1)*size(var1,2);
 

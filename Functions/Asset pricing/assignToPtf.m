@@ -1,4 +1,4 @@
-function ind = assignToPtf(x,pp)
+function ind = assignToPtf(x, bPtsMat)
 % PURPOSE: Function that assigns each firm-month to the bin it belongs to in the
 % particular month. It assigns a zero if a firm-month is not held in any
 % portfolio.
@@ -8,7 +8,7 @@ function ind = assignToPtf(x,pp)
 %------------------------------------------------------------------------------------------
 % Inputs
 %        -x -matrix based on which we want to assign the bins 
-%        -pp -a matrix with the breakpoints (values) for each time period
+%        -bPtsMat -a matrix with the breakpoints (values) for each time period
 % Output
 %        -ind -a matrix that indicates the bin each stock-time is in
 %------------------------------------------------------------------------------------------
@@ -19,27 +19,32 @@ function ind = assignToPtf(x,pp)
 % Dependencies:
 %       Uses N/A
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2021 All rights reserved. 
+% Copyright (c) 2022 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2021, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
 
+% Store several dimensions
+nStocks = size(x, 2);
+nPeriods = size(x, 1);
+nBPoints = size(bPtsMat, 2);
 
-ind = zeros(size(x));                        % Create a matrix with the same dimensions as x
-L1 = pp(:,1);                                % Take the first column of pp - the first bp values for all time periods
-L1 = repmat(L1,1,size(x,2));                 % Make it a matrix with as many col's as the number of firms                  
-ind(x<L1)=1;                                 % Note all the firms in the first bin
+% Create a matrix with the same dimensions as x
+ind = zeros(nPeriods, nStocks);                        
 
-for j = 1:size(pp,2)-1                       % Repeat the same for all the breakpoints without the last one
-    L = repmat(pp(:,j),1,size(x,2));
-    ind(x>=L) = j+1;
+% Assign the indicator for the first portfolio
+bPtsPtfOne = bPtsMat(:,1);                                
+rptdBPtsPtfOne = repmat(bPtsPtfOne, 1, nStocks);                 
+ind(x < rptdBPtsPtfOne) = 1;                            
+
+% Repeat the same for all the other breakpoints 
+for j = 1:nBPoints
+    bPtsPtfJ = bPtsMat(:,j);
+    rptdBPtsPtfJ = repmat(bPtsPtfJ, 1, nStocks);                 
+    ind(x >= rptdBPtsPtfJ) = j+1;
 end
-
-Uend = repmat(pp(:,end),1,size(x,2));
-ind(x>=Uend)=size(pp,2)+1;
-
 
 
 

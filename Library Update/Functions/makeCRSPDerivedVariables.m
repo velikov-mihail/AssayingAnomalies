@@ -29,36 +29,74 @@ function makeCRSPDerivedVariables(Params)
 %       Uses makeIndustryClassifications(), getFFFactors(),
 %       makeIndustryReturns(), makeUniverses(), mpp(), testCRSPData()
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2021 All rights reserved. 
+% Copyright (c) 2022 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2021, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
 
-fprintf('\n\n\nNow working on making variables from CRSP. Run started at %s.\n',char(datetime('now')));
+% Timekeeping
+fprintf('\n\n\nNow working on making variables from CRSP. Run started at %s.\n', char(datetime('now')));
 
-dataPath = [Params.directory,'Data/'];
-crspDirPath = [Params.directory,'Data/CRSP/'];
+% Store the general data and CRSP paths
+dataPath = [Params.directory, 'Data/'];
+crspDirPath = [Params.directory, 'Data/CRSP/'];
 
 % Adjust the returns for delisting
 load ret_x_dl
 load permno
 load dates
+
 % Read the CRSP delist returns file
 opts = detectImportOptions([crspDirPath,'crsp_msedelist.csv']);
 crsp_msedelist = readtable([crspDirPath,'crsp_msedelist.csv'],opts);
-crsp_msedelist(~ismember(crsp_msedelist.permno,permno) | crsp_msedelist.dlstdt==datetime(Params.SAMPLE_END,12,31),:) = [];
 
+% Drop the observations we don't need 
+idxToDrop = ~ismember(crsp_msedelist.permno,permno) | ...
+            crsp_msedelist.dlstdt == max(crsp_msedelist.dlstdt);
+crsp_msedelist(idxToDrop,:) = [];
+
+% Turn the date into yyyymm format & drop the observations outside of
+% sample
+crsp_msedelist.yyyymm = 100 * year(crsp_msedelist.dlstdt) + ...
+                              month(crsp_msedelist.dlstdt);
+crsp_msedelist(crsp_msedelist.yyyymm > dates(end),:) = [];
+
+% Fill in the delisting returns
 ret = ret_x_dl;
 for i = 1:height(crsp_msedelist)       
-    c = find(permno==crsp_msedelist.permno(i));
-    r = find(isfinite(ret(:,c)),1,'last')+1;
-    ret(r,c) = crsp_msedelist.dlret(i);        
+    % Find the column for this permno
+    c = find(permno == crsp_msedelist.permno(i));
+    
+    % Find the delisting month and the last month with a return observation
+    r_dt = find(dates == crsp_msedelist.yyyymm(i));
+    r_last = find(isfinite(ret(:,c)),1,'last')+1;
+    
+    % Choose where to assign the delisting return. If the return for this
+    % permno (c) in the delisting month (r_dt) is NaN, and the previous
+    % month return is finite, assign it to r_dt.
+    if ~isempty(r_dt) && isnan(ret(r_dt,c)) && isfinite(ret(r_dt-1,c))
+        r = r_dt;
+    % Otherwise assign to the observation following the last non-NaN
+    % observation we have for this permno
+    elseif ~isempty(r_last) && r_last<length(dates)
+        r = r_last;
+    else
+        r=[];
+    end
+            
+    if ~isempty(r)
+        ret(r,c) = crsp_msedelist.dlret(i);        
+    end
 end
+
+% Save the retun matrix adjsuted for delisting
 save([dataPath,'ret.mat'],'ret');
-c = find(permno==11754);
-r = find(dates==201201);
+
+% Print out the Kodak delisting return
+c = find(permno == 11754);
+r = find(dates == 201201);
 fprintf('Adjusting for delisting complete. Kodak''s delisting return was %2.4f in %d\n',ret(r,c),dates(r));
 clear c r  dates dd dlret i index MM permno ret ret_x_dl retdl1 tt
 
@@ -104,17 +142,18 @@ save([dataPath,'dashrout.mat'],'dashrout');
 
 % Make Momentum variables
 load ret
-R = makePastPerformance(ret,12,1); % "R" = gross returns (past perfromance)-- cumulates returns (gross) from 12 month ago to one month ago (NOT including last month)
-R3613 = makePastPerformance(ret,36,12); % Cumulates gross returns from 36 month ago to 12 months ago (for DeBont and Thaler long run reversals)
-R127 = makePastPerformance(ret,12,6); % Cumulates gross returns from 12 month ago to 6 months ago ("intermediate horizon past perfromance")
-R62 = makePastPerformance(ret,6,1); % Cumulates gross returns from 6 month ago to 1 month ago ("recent horizon past perfromance")
+R     = makePastPerformance(ret, 12, 1);                                   % "R" = gross returns (past perfromance)-- cumulates returns (gross) from 12 month ago to one month ago (NOT including last month)
+R62   = makePastPerformance(ret, 6,  1);                                   % Cumulates gross returns from 6 month ago to 1 month ago ("recent horizon past perfromance")
+R127  = makePastPerformance(ret, 12, 6);                                   % Cumulates gross returns from 12 month ago to 6 months ago ("intermediate horizon past perfromance")
+R3613 = makePastPerformance(ret, 36, 12);                                  % Cumulates gross returns from 36 month ago to 12 months ago (for DeBont and Thaler long run reversals)
 
-save([dataPath,'R.mat'],'R'); % worth saving, as it takes awhile to run
-save([dataPath,'R3613.mat'],'R3613');
-save([dataPath,'R127.mat'],'R127');
-save([dataPath,'R62.mat'],'R62');
+save([dataPath, 'R.mat'], 'R'); 
+save([dataPath, 'R62.mat'], 'R62');
+save([dataPath, 'R127.mat'], 'R127');
+save([dataPath, 'R3613.mat'], 'R3613');
 
 % Test that your data matches up with some reference data 
 testCRSPData(Params);
 
+% Timekeeping
 fprintf('CRSP monthly variables run ended at %s.\n', char(datetime('now')));

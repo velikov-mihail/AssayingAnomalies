@@ -28,25 +28,29 @@ function testCRSPData(Params)
 % Dependencies:
 %       Uses makeBivSortInd(), runBivSort()
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2021 All rights reserved. 
+% Copyright (c) 2022 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2021, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
 
 
-% test that your data matches up with some reference data (you'll never see a t-stat this high again)
+% Test that your data matches up with some reference data 
 load me
 load ret
 load ff
 fprintf('\n\n\nRegress the Fama-French mkt on our mkt:\n');
-MKT = nansum(lag(me,1,nan)'.*ret')'./nansum(lag(me,1,nan)'.*isfinite(ret)')' - rf;
+lagMe = lag(me, 1, nan);
+sumLagMe = sum(lagMe .* isfinite(ret), 2, 'omitnan');
+MKT = sum(lagMe .* ret, 2, 'omitnan') ./ sumLagMe - rf;
 prt(nanols(mkt,[.01*ones(size(mkt)) MKT]));
 
 load ret_x_dl
 fprintf('\n\n\nRegress the Fama-French mkt on our mkt, constructed using returns that are not adjusted for delisting:\n');
-MKT = nansum(lag(me,1,nan)'.*ret_x_dl')'./nansum(lag(me,1,nan)'.*isfinite(ret_x_dl)')' - rf;
+lagMe = lag(me, 1, nan);
+sumLagMe = sum(lagMe .* isfinite(ret_x_dl), 2, 'omitnan');
+MKT = sum(lagMe .* ret_x_dl, 2, 'omitnan') ./ sumLagMe - rf;
 prt(nanols(mkt,[.01*ones(size(mkt)) MKT]));
 
 % Replicate umd factor
@@ -54,18 +58,21 @@ load R
 load dates
 load NYSE
 load ret
-ind = makeBivSortInd(me,2,R,[30 70],'breaksFilter',NYSE);      
-[res,~] = runBivSort(ret,ind,2,3,dates,me); % Carries over all {'Name','Value'} optional inputs from runUnivSort without 'addLongShort'
+ind = makeBivSortInd(me, 2, R, [30 70], 'sortType', 'unconditional', ...
+                                        'breaksFilter', NYSE);      
+[res, ~] = runBivSort(ret, ind, 2, 3, dates, me); 
 
-umdrep = (res.pret(:,3)+res.pret(:,6)-res.pret(:,1)-res.pret(:,4))/2; % HML is made from the "corner" portfolios
+% Replicate UMD
+umdrep = (res.pret(:,3) + res.pret(:,6) - ...
+         (res.pret(:,1) + res.pret(:,4)) )/2;
 
 fprintf('\n\nLook at the correlation between UMD from Ken French and replicated UMD:\n');
-index = isfinite(sum([umdrep umd],2));
-corrcoef([umdrep(index) umd(index)]) % correlation shoud be ~95%
+indFin = isfinite(sum([umdrep umd], 2));
+corrcoef([umdrep(indFin) umd(indFin)]) % correlation shoud be > 99%
 
 fprintf('\n\nCompare the average return UMD from Ken French and replicated UMD:\n');
-prt(nanols(umd,[const])) % mean return to either factor should be ~0.41 %/mo.
-prt(nanols(umdrep,[const]))
+prt(nanols(umd(indFin),[const(indFin)])) 
+prt(nanols(umdrep(indFin),[const(indFin)]))
 
 fprintf('\n\nRegress the two on each other:\n');
 prt(nanols(umd,[const umdrep]))

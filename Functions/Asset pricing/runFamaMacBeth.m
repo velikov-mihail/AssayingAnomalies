@@ -1,5 +1,6 @@
 function results = runFamaMacBeth(y,x,dates,varargin)
-% PURPOSE: Estimates Fama-MacBeth cross-sectional regressions of y on x
+% PURPOSE: Estimates Fama-MacBeth cross-sectional regressions of y on x.
+% Note that the function lags the x variables by one period by default.
 %------------------------------------------------------------------------------------------
 % USAGE: 
 %       results = runFamaMacBeth(y, x, dates);                   
@@ -7,9 +8,12 @@ function results = runFamaMacBeth(y,x,dates,varargin)
 %------------------------------------------------------------------------------------------
 % Required Inputs:
 %       -y - matrix with LHS variable (usually 100*ret)        
-%       -x - a matrix with concatenated RHS variables
+%       -x - a matrix with concatenated RHS variables. By default, the
+%            function lags these variables 1 period.
 %       -dates - a vector of dates
 % Optional Name-Value Pair Arguments:
+%        -'numLags' - a number (1 by default) indicating the number of
+%                    periods used to lag the x variables
 %        -'minObs' - a number (100 by default) of minimum observations
 %                    required for each cross-sectional regression
 %        -'weightMatrix' - a weighting matrix which is used to estimate
@@ -41,11 +45,12 @@ function results = runFamaMacBeth(y,x,dates,varargin)
 %------------------------------------------------------------------------------------------
 % Examples: 
 %         runFamaMacBeth(100*ret,[log(me) R],dates);
+%         runFamaMacBeth(100*ret,[lag(log(me),1,nan)],dates,'numLags',0);
+%         runFamaMacBeth(100*ret,[log(me) R],dates,'timePeriod',196307);
+%         runFamaMacBeth(100*ret,[log(me) R],dates,'timePeriod',[192807 196306]);
 %         runFamaMacBeth(100*ret,[log(me) R],dates,'minObs',1000);
 %         runFamaMacBeth(100*ret,[log(me) R],dates,'weightMatrix',me);
 %         runFamaMacBeth(100*ret,[log(me) R],dates,'neweyWestLags',12);
-%         runFamaMacBeth(100*ret,[log(me) R],dates,'timePeriod',196307);
-%         runFamaMacBeth(100*ret,[log(me) R],dates,'timePeriod',[192807 196306]);
 %         runFamaMacBeth(100*ret,[log(me) R],dates,'winsorTrimPctg',5);
 %         runFamaMacBeth(100*ret,[log(me) R],dates,'noConst',1);
 %         runFamaMacBeth(100*ret,[log(me) log(bm) R],dates);
@@ -70,14 +75,16 @@ validWinsorTrimPctg=@(x) isnumeric(x) && isscalar(x) && x>=0 && x<50;
 validTrimIndicator=@(x) (x==0) || (x==1);
 validStartingDatesInput=@(x) isnumeric(x) && sum(ismember(dates,x))==length(x);
 validCell=@(x) iscell(x);
+addRequired(p,'y',validNum);
 addRequired(p,'x',validNum);
 addRequired(p,'dates',validNum);
+addOptional(p,'numLags',1,validNum);
 addOptional(p,'timePeriod',[dates(1) dates(end)],validStartingDatesInput);
+addOptional(p,'minObs',100,validScalarNum);
+addOptional(p,'weightMatrix',ones(size(y)),validNum);
 addOptional(p,'trimIndicator',0,validTrimIndicator);
 addOptional(p,'winsorTrimPctg',1,validWinsorTrimPctg);
 addOptional(p,'printResults',1,validScalarNum);
-addOptional(p,'weightMatrix',ones(size(y)),validNum);
-addOptional(p,'minObs',100,validScalarNum);
 addOptional(p,'neweyWestLags',0,validScalarNum);
 addOptional(p,'noConst',0,validScalarNum);
 addOptional(p,'keepWarnings',0,validScalarNum);
@@ -138,7 +145,9 @@ for i=1:k
     thisX(indFinite(end):T,:)=repmat(thisX(indFinite(end),:),T-indFinite(end)+1,1);
     
     % Lag it 
-    x(:,colsCurrentX)=lag(thisX,1,nan);
+    if p.Results.numLags > 0
+        x(:,colsCurrentX)=lag(thisX,p.Results.numLags,nan);
+    end
 end
 
 % Check if different time period entered

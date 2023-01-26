@@ -16,10 +16,9 @@ NOTE: RollGibbsLibrary02.sas must be run prior to this program, to compile the I
 ____________________________________________________________________________________________________;
 options nocenter number ps=70 ls=130 nomprint notes;
 options mautosource sasautos=('!SASROOT/sasautos',"$HOME/sasmacros",'.');
-libname this "/scratch/psu/Gibbs1/";
-*libname temp "/sastemp14/agora";
-libname temp "/scratch/psu/Gibbs2/";
-libname crsp "/wrdslin/crsp/sasdata/a_stock/";
+libname this "D:\Gibbs 2022 update\This\";
+libname temp "D:\Gibbs 2022 update\Temp\";
+libname crsp "D:\Gibbs 2022 update\CRSP\";
 
 
 *____________________________________________________________________________________________________
@@ -44,7 +43,7 @@ title " ";
 %mend printds;
 
 
-%let startPermno=14328;	*	If you need to restart the run from somewhere other than the first permno;
+%let startPermno=0;	*	If you need to restart the run from somewhere other than the first permno;
 
 *proc datasets lib=crsp;
 *	quit;
@@ -256,7 +255,7 @@ options notes;
 proc print data=this.gibbsOut (obs=50);
 run;
 
-data this.crspGibbs2021;
+data this.crspGibbs;
 	set this.gibbsOut;
 run;
 	
@@ -266,16 +265,16 @@ run;
 	Compute descriptive statistics on the estimates.
 _____________________________________________________________________________________________________;
 
-proc means data=this.crspGibbs2021;;
-title "crspGibbs2021";
+proc means data=this.crspGibbs;
+title "crspGibbs";
 run;
 
 *____________________________________________________________________________________________________
 
 	Merge in supplementary descriptive data
 _____________________________________________________________________________________________________;
-data this.crspGibbs2021v01;
-	merge this.crspGibbs2021 this.pys;
+data this.crspGibbsv01;
+	merge this.crspGibbs temp.pys;
 	by permno year ksample;
 	label 
 		permno='CRSP permno' year='Sample year' kSample='Sample number within year'
@@ -288,10 +287,73 @@ data this.crspGibbs2021v01;
 	format permno 7. year 4. kSample 2. c 7.5 beta 8.4 varu 10.8 sdu 10.8 exchcd shrcd 2. 
 		nDays 3. nTradeDays 3. cfacpr 8.6;
 run;
-proc contents data=this.crspGibbs2021v01 order=varnum;
+proc contents data=this.crspGibbsv01 order=varnum;
 run;
 data _null_;
-	set this.crspGibbs2021v01;
-	file 'crspGibbs2021v01.txt';
-	put permno year ksample c beta varu sdu exchcd shrcd cfacpr firstdate lastdate ndays ntradedays;
+file 'crspgibbs.csv' delimiter=',' DSD DROPOVER lrecl=32767;
+if _n_ = 1 then        /* write column names or labels */
+do;
+put
+   "permno"
+	','
+   "year"
+	','
+   "kSample"
+	','
+    "c"
+	','
+   "beta"
+	','
+   "varu"
+	','
+   "sdu"
+	','
+   "exchcd"
+	','
+   "shrcd"
+	','
+   "CFACPR"
+	','
+   "firstDate"
+	','
+   "lastDate"
+	','
+   "nDays"
+	','
+   "nTradeDays";
+end;
+set  TMP1.crspgibbsv01   end=EFIEOD;
+  format permno 7. ;
+  format year 4. ;
+  format kSample 2. ;
+  format c 7.5 ;
+  format beta 8.4 ;
+  format varu 10.8 ;
+  format sdu 10.8 ;
+  format exchcd 2. ;
+  format shrcd 2. ;
+  format CFACPR 8.6 ;
+  format firstDate date7. ;
+  format lastDate date7. ;
+  format nDays 3. ;
+  format nTradeDays 3. ;
+do;
+  EFIOUT + 1;
+  put permno @;
+  put year @;
+  put kSample @;
+  put c @;
+  put beta @;
+  put varu @;
+  put sdu @;
+  put exchcd @;
+  put shrcd @;
+  put CFACPR @;
+  put firstDate @;
+  put lastDate @;
+  put nDays @;
+  put nTradeDays ;
+  ;
+end;
 run;
+

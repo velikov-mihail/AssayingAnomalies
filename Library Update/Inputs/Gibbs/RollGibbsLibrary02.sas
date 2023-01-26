@@ -25,7 +25,7 @@ ________________________________________________________________________________
 ____________________________________________________________________________________________________;
 
 options nodate nocenter nonumber ps=70 ls=120 nomprint; 
-libname this "/scratch/psu/Gibbs1/";
+libname this "D:\Gibbs 2022 update\This\";
 
 %let Infinity=1e30;
 %let eps=1e-30;

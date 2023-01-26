@@ -26,53 +26,53 @@ function getCRSPData(Params)
 % Dependencies:
 %       Uses callWRDSConnection, getWRDSTable
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2021 All rights reserved. 
+% Copyright (c) 2022 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2021, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
 
 
 % Timekeeping
 fprintf('\n\n\nNow working on downloading the raw CRSP. Run started at %s.\n',char(datetime('now')));
 
 % Check if the Data & Data\CRSP subdirectories exist. If not, make them
-if ~exist([Params.directory,'Data'], 'dir')
-  mkdir([Params.directory,'Data']);
+if ~exist([Params.directory, 'Data'], 'dir')
+  mkdir([Params.directory, 'Data']);
 end
-if ~exist([Params.directory,'Data/CRSP'], 'dir')
-    mkdir([Params.directory,'Data/CRSP'])
+if ~exist([Params.directory, 'Data/CRSP'], 'dir')
+    mkdir([Params.directory, 'Data/CRSP'])
 end
 addpath(genpath(Params.directory));
 
-
-crspDirPath=[Params.directory,'Data/CRSP/'];
+% Store the CRSP directory path
+crspDirPath = [Params.directory, 'Data/CRSP/'];
 
 % Call the WRDS connection
-WRDS=callWRDSConnection(Params.username,Params.pass);
+WRDS = callWRDSConnection(Params.username,Params.pass);
 
 % Download and save the CRSP header CRSP.MSFHDR table
-getWRDSTable(WRDS,'CRSP','MSFHDR',crspDirPath);
+getWRDSTable(WRDS, 'CRSP', 'MSFHDR', crspDirPath);
 
 % Download and save the CRSP monthly stock file CRSP.MSF table
-getWRDSTable(WRDS,'CRSP','MSF',crspDirPath);
+getWRDSTable(WRDS, 'CRSP', 'MSF', crspDirPath);
 
 % Download and save the CRSP delisting returns CRSP.MSEDELIST table
-getWRDSTable(WRDS,'CRSP','MSEDELIST',crspDirPath);
+getWRDSTable(WRDS, 'CRSP', 'MSEDELIST', crspDirPath);
 
 % Download and save the CRSP monthly stock file with share code information
-getWRDSTable(WRDS,'CRSP','MSEEXCHDATES',crspDirPath);
+getWRDSTable(WRDS, 'CRSP', 'MSEEXCHDATES', crspDirPath);
 
 % Download and save the CRSP CCM Linkhist table
-getWRDSTable(WRDS,'CRSP','CCMXPF_LNKHIST',crspDirPath);
+getWRDSTable(WRDS, 'CRSP', 'CCMXPF_LNKHIST', crspDirPath);
 
 % Download and save the CRSP CCM Linkhist table
-getWRDSTable(WRDS,'CRSP','STOCKNAMES',crspDirPath);
+getWRDSTable(WRDS, 'CRSP', 'STOCKNAMES', crspDirPath);
 
 close(WRDS);
 
-fprintf('CRSP raw data download ended at %s.\n',char(datetime('now')));
+fprintf('CRSP raw data download ended at %s.\n', char(datetime('now')));
 
 
 

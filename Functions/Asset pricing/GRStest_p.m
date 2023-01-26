@@ -7,7 +7,7 @@ pvals = ones(2,1);
 df = zeros(2, 2);
 stats = ones(2,1);
 
-nPtfs=size(results.pret,2)-1;
+nPtfs=size(results.pret,2);
 nMonths=sum(isfinite(results.pret(:,1)));
 nFactors=results.nFactors;
 
@@ -37,7 +37,6 @@ pvals(1) = 1 - fcdf(stats(1), df(1,1), df(1,2));
 
 
 % Calculate the GRS stat for the reduced model %
-
 b=[results.factorLoadings.b]';
 b=b(:,1:nPtfs);
 x=[results.factorLoadings.factor];

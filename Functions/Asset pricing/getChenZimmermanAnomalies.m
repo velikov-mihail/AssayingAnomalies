@@ -1,4 +1,4 @@
-function [anoms,labels,anomaly_summary]=getChenZimmermanAnomalies()
+function [anoms, labels, anomaly_summary]=getChenZimmermanAnomalies()
 % PURPOSE: This function runs a univariate sort and calculates portfolio
 % average returns and estimates alphas and loadings on a factor model
 %------------------------------------------------------------------------------------------
@@ -9,7 +9,7 @@ function [anoms,labels,anomaly_summary]=getChenZimmermanAnomalies()
 %------------------------------------------------------------------------------------------
 % Output:
 %        -anoms - a 3-d numeric array corredsponding to (nmonths x nstocks x nanoms)
-%        -labels - a vector of Acronyms for each anomaly
+%       -labels - a vector of Acronyms for each anomaly
 %        -anomaly_summary - a table with documentation for anomalies (publication dates, 
 %                           sample periods, etc.)
 %------------------------------------------------------------------------------------------
@@ -18,27 +18,36 @@ function [anoms,labels,anomaly_summary]=getChenZimmermanAnomalies()
 % [anoms,labels,anomaly_summary]=getChenZimmermanAnomalies();                                     
 %------------------------------------------------------------------------------------------
 % Dependencies:
-%       Uses getAnomalySignals(), 
+%       Uses getAnomalySignals(), getGoogleDriveData()
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2021 All rights reserved. 
+% Copyright (c) 2022 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2021, Assaying anomalies, Working paper.
-% The function requires that you have downloaded the following two files
-% from Andrew Chen and Tom Zimmerman's open-source asset pricing library:
+%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+% The function checks whether the following two files were downloaded: 
 % https://drive.google.com/file/d/1-1RUq2wUADu_ncvQJCYY3wxDhqhHxBow/view
 % https://docs.google.com/spreadsheets/d/18DvZPscKsD0_ZeeUMjyXhF1qn0emDVaj/edit#gid=70837236
-% Try to code this in using: http://blog.vadimfrolov.com/download-a-file-from-google-drive-programmatically/
+% If not it tries to download these programatically, although the file ID's
+% are hard coded, so they need to be updated manually every year. 
 
 % Check if the two files were downloaded
 if ~exist('signed_predictors_dl_wide.csv','file') || ~exist('SignalDocumentation.xlsx','file')
-    error('Chen-Zimmerman files not on path. Please, download files from https://www.openassetpricing.com/.');
+    
+    % These are the file IDs from the April, 2021 release. 
+    signalFileID = '1-1RUq2wUADu_ncvQJCYY3wxDhqhHxBow';
+    docFileID = '18DvZPscKsD0_ZeeUMjyXhF1qn0emDVaj';
+    downloadChenZimmermanFiles(signalFileID, docFileID)
+    
+    % Make sure we downloaded them
+    if ~exist('signed_predictors_dl_wide.csv','file') || ~exist('SignalDocumentation.xlsx','file')
+        error('\nChen-Zimmerman files not on path. Please, check their file ID numbers and/or download files from https://www.openassetpricing.com/.\n\n');
+    end
 end
 
 % Read in the anomaly signals. This requires over ~100GB of RAM if your data goes back to 1925
-[anoms, labels]=getAnomalySignals('signed_predictors_dl_wide.csv','permno','yyyymm');
+[anoms, labels]=getAnomalySignals('signed_predictors_dl_wide.csv', 'permno', 'yyyymm');
 fprintf('Done getting signals at at %s.\n',char(datetime('now')));
 
 % % Alternatively, you can download 1 at a time and store them

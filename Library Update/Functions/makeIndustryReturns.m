@@ -28,33 +28,43 @@ function makeIndustryReturns(Params)
 %       Requires makeIndustryClassifications() to have been run.
 %       Uses runUnivSort(), 
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2021 All rights reserved. 
+% Copyright (c) 2022 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2021, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
 
-dataPath = [Params.directory,'Data/'];
+% Timekeeping
+fprintf('Now working on industry return calculation at %s.\n', char(datetime('now')));
 
+% Store the Data directory path
+dataPath=[Params.directory,'Data/'];
+
+% Load the variables
 load ret
 load me
 load FF49
 load dates
 
-res = runUnivSort(ret,FF49,dates,me,'factorModel',1,'printResults',0,'plotFigure',0,'addLongShort',0); 
+% Run a univariate sort using the FF49 industry index
+res = runUnivSort(ret, FF49, dates, me, 'factorModel', 1, ...
+                                        'printResults', 0, ...
+                                        'plotFigure', 0, ...
+                                        'addLongShort',0); 
 
-% Make and store the industry portfolio returns
+% Store and save the industry portfolio returns
 iret = res.pret(:,1:49);
-save([dataPath,'iret.mat'], 'iret');
+fileName = [dataPath,'iret.mat'];
+save(fileName, 'iret');
 
-% Assign the industry portfolio returns to individual stocks & store 
+% Assign the industry portfolio returns to individual stocks 
 ireta = nan(size(ret));
 for i = 1:49
     temp = repmat(iret(:,i),1,size(ret,2));
     ireta(FF49==i) = temp(FF49==i);
 end
 
-save([dataPath,'ireta.mat'], 'ireta');
-
-fprintf('Industry returns calculation complete.\n');
+% Store the assigned industry portfolio return matrix
+fileName = [dataPath,'ireta.mat'];
+save(fileName, 'ireta');

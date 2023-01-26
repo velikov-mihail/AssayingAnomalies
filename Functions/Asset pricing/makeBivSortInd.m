@@ -14,7 +14,7 @@ function ind = makeBivSortInd(var1, ptfNumThresh1, var2, ptfNumThresh2, varargin
 % Optional Name-Value Pair Arguments:
 %       -sortType - an optional string indicating whether bivariate sort is
 %                   'unconditional' (default) or 'conditional'
-%       -breaksType - an optional string indicating whether portfolio
+%       -breaksFilterInd - an optional string indicating whether portfolio
 %                    breakpoints are based on 'name' (default), 'NYSE', or 'cap'
 %------------------------------------------------------------------------------------------
 % Output:
@@ -24,9 +24,9 @@ function ind = makeBivSortInd(var1, ptfNumThresh1, var2, ptfNumThresh2, varargin
 %       ind = makeBivSortInd(me,5,R,5);                               5x5 sort on size and momentum. Default is unconditional sort using name breaks
 %       ind = makeBivSortInd(me,2,R,[30 70]);                         2x3 (FF-style tertiles) sort on size and momentum
 %       ind = makeBivSortInd(me,5,R,5,'sortType','conditional');      5x5 sort on size and momentum. Specify conditional sort 
-%       ind = makeBivSortInd(me,5,R,5,'breaksType','NYSE');           5x5 sort on size and momentum. Specify NYSE breaks
-%       ind = makeBivSortInd(me,5,R,5,'breaksType','cap');            5x5 sort on size and momentum. Specify cap breaks
-%       ind = makeBivSortInd(me,5,R,5,'breaksType','NYSE', ...        5x5 sort on size and momentum. Specify NYSE breaks and conditional sort 
+%       ind = makeBivSortInd(me,5,R,5,'breaksFilterInd','NYSE');      5x5 sort on size and momentum. Specify NYSE breaks
+%       ind = makeBivSortInd(me,5,R,5,'breaksFilterInd','cap');       5x5 sort on size and momentum. Specify cap breaks
+%       ind = makeBivSortInd(me,5,R,5,'breaksFilterInd','NYSE', ...   5x5 sort on size and momentum. Specify NYSE breaks and conditional sort 
 %                                     'sortType','unconditional');  
 %       ind = makeBivSortInd(me,5,R,5,'NYSE','unconditional');        5x5 sort on size and momentum. Specify NYSE breaks and conditional sort 
 %------------------------------------------------------------------------------------------

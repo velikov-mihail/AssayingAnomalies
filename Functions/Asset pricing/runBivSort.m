@@ -191,11 +191,11 @@ if p.Results.printResults~=0
     % Print the average returns, number of firms, and market cap
     disp('Portfolio Average Excess Returns (%/month)');
     disp('     ') ;
-    disp(reshape(Res.xret,nPtf1,nPtf2)')
+    disp(reshape(Res.xret,nPtf2,nPtf1)')
     disp('Portfolio Average Number of Firms');
     disp('     ') ;
-    disp(reshape(nanmean(Res.nStocks,1),nPtf1,nPtf2)')
+    disp(reshape(nanmean(Res.nStocks,1),nPtf2,nPtf1)')
     disp('Portfolio Average Firm Size ($10^6)');
     disp('     ') ;
-    disp(reshape(nanmean(Res.ptfMarketCap./Res.nStocks,1),nPtf1,nPtf2)')
+    disp(reshape(nanmean(Res.ptfMarketCap./Res.nStocks,1),nPtf2,nPtf1)')
 end

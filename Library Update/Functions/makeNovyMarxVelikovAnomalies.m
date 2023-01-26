@@ -3,7 +3,7 @@ function makeNovyMarxVelikovAnomalies(Params)
 % Velikov (RFS, 2016)
 %------------------------------------------------------------------------------------------
 % USAGE:   
-% makeNovyMarxVelikovAnomalies(Params)              % Turns the CRSP daily file into matrices
+% makeNovyMarxVelikovAnomalies(Params)              % Creates anomaly signals
 %------------------------------------------------------------------------------------------
 % Required Inputs:
 %        -Params - a structure containing input parameter values
@@ -36,39 +36,47 @@ function makeNovyMarxVelikovAnomalies(Params)
 %  trading costs, Review of Financial Studies, 29 (1): 104-147
 %  2. Novy-Marx, R. and M. Velikov, 2021, Assaying anomalies, Working paper.
 
-fprintf('\n\n\nNow working on making anomaly signals from Novy-Marx and Velikov (RFS, 2016). Run started at %s.\n',char(datetime('now')));
+% Timekeeping
+fprintf('\n\n\nNow working on making anomaly signals from Novy-Marx and Velikov (RFS, 2016). Run started at %s.\n', char(datetime('now')));
 
-
+% Load a few basic variables 
 load ret
 load me
 load dates
 
-anoms=nan(size(ret,1),size(ret,2),23);
+
+% Store a few constants
+nMonths = size(ret, 1);
+nStocks = size(ret, 2);
+
+% Store the anomaly 3-d array
+anoms=nan(nMonths, nStocks, 23);
 
 % Size
-screen = repmat(dates - 10*floor(dates/10) == 6,1,cols(ret)); % rebalance end of June
-Size=-me.*screen;
-Size(Size==0)=nan;
-anoms(:,:,1)=Size;
-labels(1)={'size'};
-clearvars -except Params anoms ret me dates labels
+juneIndicator = dates - 100*floor(dates/100) == 6;
+screen = repmat(juneIndicator, 1, nStocks); 
+Size = -me.*screen;
+Size(Size == 0) = nan;
+anoms(:,:,1) = Size;
+labels(1) = {'size'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 % Value
 load bm
-value=bm;
-anoms(:,:,2)=value;
-labels(2)={'value'};
-clearvars -except Params anoms ret me dates labels
+value = bm;
+anoms(:,:,2) = value;
+labels(2) = {'value'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 %  Profitability
 load GP
 load AT
 load FinFirms
-gp = GP./AT; % this is profitability (gross profits / asset)
-gp(FinFirms == 1) = nan; % and we drop financials, because this ratio doesn't mean much for them
-anoms(:,:,3)=gp;
-labels(3)={'grossProfitability'};
-clearvars -except Params anoms ret me dates labels
+gp = GP./AT; 
+gp(FinFirms == 1) = nan; 
+anoms(:,:,3) = gp;
+labels(3) = {'grossProfitability'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 
 % ValProf
@@ -76,15 +84,15 @@ load GP
 load AT
 load FinFirms
 load bm
-gp = GP./AT; % this is profitability (gross profits / asset)
-gp(FinFirms == 1) = nan; % and we drop financials, because this ratio doesn't mean much for them
-bm(bm==0)=nan;
-rank2=tiedrank(gp')';
-rank3=tiedrank(bm')';
-valProf=rank2+rank3;
-anoms(:,:,4)=valProf;
-labels(4)={'valProf'};
-clearvars -except Params anoms ret me dates labels
+gp = GP./AT; 
+gp(FinFirms == 1) = nan; 
+bm(bm==0) = nan;
+rank2 = tiedrank(gp')';
+rank3 = tiedrank(bm')';
+valProf = rank2 + rank3;
+anoms(:,:,4) = valProf;
+labels(4) = {'valProf'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 % Accruals
 load AT
@@ -94,27 +102,27 @@ load LCT
 load TXP
 load DP
 load DLC
-dCA = ACT-lag(ACT, 12, nan);
-dCash = CHE-lag(CHE, 12, nan);
-dCL = LCT-lag(LCT, 12, nan);
-dSTD = DLC-lag(DLC, 12, nan);
-dTP = TXP-lag(TXP, 12, nan);
+dCA   = ACT - lag(ACT, 12, nan);
+dCash = CHE - lag(CHE, 12, nan);
+dCL   = LCT - lag(LCT, 12, nan);
+dSTD  = DLC - lag(DLC, 12, nan);
+dTP   = TXP - lag(TXP, 12, nan);
 Dep = DP;
-Accruals = (dCA-dCash)-(dCL-dSTD-dTP)-Dep;
-accruals= - 2*Accruals./(AT+lag(AT,12,nan));
-anoms(:,:,5)=accruals;
-labels(5)={'accruals'};
-clearvars -except Params anoms ret me dates labels
+Accruals = (dCA - dCash) - (dCL - dSTD - dTP) - Dep;
+accruals = - 2*Accruals ./ (AT + lag(AT, 12, nan));
+anoms(:,:,5) = accruals;
+labels(5) = {'accruals'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 
 % Asset growth
 load AT
 load FinFirms
-assetGrowth=-AT./lag(AT,12,nan);
-assetGrowth(FinFirms==1)=nan;
-anoms(:,:,6)=assetGrowth;
-labels(6)={'assetGrowth'};
-clearvars -except Params anoms ret me dates labels
+assetGrowth = -AT./lag(AT,12,nan);
+assetGrowth(FinFirms==1) = nan;
+anoms(:,:,6) = assetGrowth;
+labels(6) = {'assetGrowth'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 
 % Investment
@@ -122,11 +130,12 @@ load PPEGT
 load INVT
 load AT
 load FinFirms
-AT(FinFirms==1)=nan;
-investment=-(PPEGT-lag(PPEGT,12,nan)+INVT-lag(INVT,12,nan))./lag(AT,12,nan);
-anoms(:,:,7)=investment;
-labels(7)={'investment'};
-clearvars -except Params anoms ret me dates labels
+AT(FinFirms==1) = nan;
+investment = -( PPEGT - lag(PPEGT,12,nan) + ... 
+                 INVT - lag(INVT,12,nan) ) ./ lag(AT, 12, nan);
+anoms(:,:,7) = investment;
+labels(7) = {'investment'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 
 % Piotroski's F-score (JAR 2000)
@@ -148,13 +157,13 @@ load shrout
 load ADJEX
 I = sum(isfinite(bm),2) > 0;
 b = min(find((sum(isfinite(bm),2)>0)==1));
-ROA = IB./lag(AT,12,nan); % return-on-assets -- Piotroski uses this
-DTA = DLTT./AT; % long-term debt-to-assets
-ATL = ACT./LCT; % current assets-to-current liabilities
+ROA = IB./lag(AT,12,nan);           % return-on-assets -- Piotroski uses this
+DTA = DLTT./AT;                     % long-term debt-to-assets
+ATL = ACT./LCT;                     % current assets-to-current liabilities
 EqIss = nanmatsum(SCSTKC,-PRSTKCC); % note: most firms don't report anything here
 dshrout = shrout./lag(shrout,12,nan)-1;
-GM = 1 - COGS./REVT; % gross margins
-ATO = REVT./lag(AT,12,nan); % assets turnover
+GM = 1 - COGS./REVT;                % gross margins
+ATO = REVT./lag(AT,12,nan);         % assets turnover
 % alternative EqIss
 temp2 = shrout./ADJEX;
 temp2 = log(temp2./lag(temp2,12,nan));
@@ -189,29 +198,27 @@ available = a1 + a2 + a3 + a4 + a5 + a6 + a7 + a8 + a9;
 clear a1 a2 a3 a4 a5 a6 a7 a8 a9;
 temp = piotroski;
 temp(available < 9) = nan;
-piotroski=temp+tiedrank(bm)/1000;
-anoms(:,:,8)=piotroski;
-labels(8)={'piotroski'};
-clearvars -except Params anoms ret me dates labels
-
+piotroski = temp+tiedrank(bm)/1000;
+anoms(:,:,8) = piotroski;
+labels(8) = {'piotroski'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 % Issuance
 load dashrout
 screen = ones(size(ret));
-issuance=-dashrout.*screen;
-anoms(:,:,9)=issuance;
-labels(9)={'issuance'};
-clearvars -except Params anoms ret me dates labels
-
+issuance = -dashrout.*screen;
+anoms(:,:,9) = issuance;
+labels(9) = {'issuance'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 
 % Return on book equity
 load ibq
 load BEQ
-roe=IBQ./lag(BEQ,3,nan);
-anoms(:,:,10)=roe;
-labels(10)={'roe'};
-clearvars -except Params anoms ret me dates labels
+roe = IBQ./lag(BEQ,3,nan);
+anoms(:,:,10) = roe;
+labels(10) = {'roe'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 
 
@@ -233,13 +240,13 @@ mktmat = repmat(mkt+rf,1,cols(me));
 temp = nansum(me')';
 memat = repmat(temp,1,cols(me));
 coef = [-20.264;
-    1.416;
-    -7.129;
-    1.411;
-    -0.045;
-    -2.132;
-    0.075;
-    -0.058];
+         1.416;
+        -7.129;
+         1.411;
+        -0.045;
+        -2.132;
+         0.075;
+        -0.058];
 c = 2^(-1/3);
 NIfac = (1-c^3)/(1-c^12);
 NIMTAAVG = nan(size(me));
@@ -251,7 +258,7 @@ TLMTA = LTQ./(LTQ+me);
 EXRET = log(1+ret)-log(1+mktmat);
 XRfac = (1-c)/(1-c^12);
 EXRETAVG = nan(size(me));
-for i = 13:rows(me)
+for i = 13:size(me, 1)
     temp = EXRET(i-1,:);
     for j = 2:12
         temp = temp + (c^j)*EXRET(i-j,:);
@@ -286,10 +293,10 @@ DISTRESS = DISTRESS + coef(5)*winsorize(RSIZE,5);
 DISTRESS = DISTRESS + coef(6)*winsorize(CASHMTA,5);
 DISTRESS = DISTRESS + coef(7)*winsorize(MB,5);
 DISTRESS = DISTRESS + coef(8)*winsorize(PRICE,5);
-distress=-DISTRESS;
-anoms(:,:,11)=distress;
-labels(11)={'distress'};
-clearvars -except Params anoms ret me dates labels
+distress = -DISTRESS;
+anoms(:,:,11) = distress;
+labels(11) = {'distress'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 
 
@@ -301,46 +308,46 @@ load FinFirms
 load bm
 gp = GP./AT; % this is profitability (gross profits / asset)
 gp(FinFirms == 1) = nan; % and we drop financials, because this ratio doesn't mean much for them
-bm(bm==0)=nan;
-rank1=tiedrank(R')';
-rank2=tiedrank(gp')';
-rank3=tiedrank(bm')';
-valMom=rank1+FillMonths(rank2);
-valMomProf=rank1+FillMonths(rank2)+FillMonths(rank3);
-anoms(:,:,12)=valMomProf;
-labels(12)={'valMomProf'};
-anoms(:,:,13)=valMom;
-labels(13)={'valMom'};
-clearvars -except Params anoms ret me dates labels
+bm(bm==0) = nan;
+rank1 = tiedrank(R')';
+rank2 = tiedrank(gp')';
+rank3 = tiedrank(bm')';
+valMom = rank1 + FillMonths(rank3);
+valMomProf = rank1 + FillMonths(rank2) + FillMonths(rank3);
+anoms(:,:,12) = valMomProf;
+labels(12) = {'valMomProf'};
+anoms(:,:,13) = valMom;
+labels(13) = {'valMom'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 % Idiosyncratic Volatility
-load IVOL3
-idiosyncraticVolatility=-IVOL3;
-anoms(:,:,14)=idiosyncraticVolatility;
-labels(14)={'idiosyncraticVolatility'};
-clearvars -except Params anoms ret me dates labels
+load IffVOL3
+idiosyncraticVolatility = -IffVOL3;
+anoms(:,:,14) = idiosyncraticVolatility;
+labels(14) = {'idiosyncraticVolatility'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 
 % Momentum
 momentum = makePastPerformance(ret,12,1); 
-anoms(:,:,15)=momentum;
-labels(15)={'momentum'};
-clearvars -except Params anoms ret me dates labels
+anoms(:,:,15) = momentum;
+labels(15) = {'momentum'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 % PEAD (SUE)
-load SUE
-peadSUE=SUE;
-anoms(:,:,16)=peadSUE;
-labels(16)={'peadSUE'};
-clearvars -except Params anoms ret me dates labels
+load SUE2
+peadSUE = SUE2;
+anoms(:,:,16) = peadSUE;
+labels(16) = {'peadSUE'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 
 % PEAD (CAR3)
 load CAR3
-peadCAR3=CAR3;
-anoms(:,:,17)=peadCAR3;
-labels(17)={'peadCAR3'};
-clearvars -except Params anoms ret me dates labels
+peadCAR3 = CAR3;
+anoms(:,:,17) = peadCAR3;
+labels(17) = {'peadCAR3'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 
 % Industry momentum
@@ -350,18 +357,18 @@ load ireta
 industryMomentum = assignToPtf(ireta,sort(iret,2)); 
 industryMomentum(industryMomentum == 0) = nan; 
 industryMomentum = industryMomentum./repmat(max(industryMomentum')',1,size(ret,2));
-anoms(:,:,18)=industryMomentum;
-labels(18)={'industryMomentum'};
-clearvars -except Params anoms ret me dates labels
+anoms(:,:,18) = industryMomentum;
+labels(18) = {'industryMomentum'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 % Industry-Relative Reversals
 load FF49
 load ireta
 IRR = tiedrank(ireta'-ret')'; 
 industryRelativeReversal = IRR./repmat(max(IRR')',1,cols(ret));
-anoms(:,:,19)=industryRelativeReversal;
-labels(19)={'industryRelativeReversal'};
-clearvars -except Params anoms ret me dates labels
+anoms(:,:,19) = industryRelativeReversal;
+labels(19) = {'industryRelativeReversal'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 
 % High freq Combo
@@ -372,70 +379,75 @@ IRR = IRR./repmat(max(IRR')',1,cols(ret));
 IMOM = assignToPtf(ireta,sort(iret,2)); 
 IMOM(IMOM == 0) = nan; 
 IMOM = IMOM./repmat(max(IMOM')',1,size(ret,2));
-highFrequencyCombo=IRR+IMOM;
-anoms(:,:,20)=highFrequencyCombo;
-labels(20)={'highFrequencyCombo'};
-clearvars -except Params anoms ret me dates labels
+highFrequencyCombo = IRR + IMOM;
+anoms(:,:,20) = highFrequencyCombo;
+labels(20) = {'highFrequencyCombo'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 % Reversals
-reversals=-ret;
-anoms(:,:,21)=reversals;
-labels(21)={'reversals'};
-clearvars -except Params anoms ret me dates labels
+reversals = -ret;
+anoms(:,:,21) = reversals;
+labels(21) = {'reversals'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 
 % Seasonality (Heston-Sadka)
-seasonality=zeros(size(ret));
+seasonality = zeros(size(ret));
 for i =1:5
-   seasonality = seasonality + lag(ret,12*i -1,nan);
+   seasonality = seasonality + lag(ret, 12*i -1, nan);
 end
-seasonality(seasonality==0)=nan;
-anoms(:,:,22)=seasonality;
-labels(22)={'seasonality'};
-clearvars -except Params anoms ret me dates labels
+seasonality(seasonality==0) = nan;
+anoms(:,:,22) = seasonality;
+labels(22) = {'seasonality'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 
 % IRRLowVOl
 load ivol
 load ireta
 load nyse
-ind=makeUnivSortInd(IVOL,2,NYSE);
+ind = makeUnivSortInd(IVOL,2,NYSE);
 IRR = tiedrank(ireta'-ret')'; 
 IRR = IRR./repmat(max(IRR')',1,cols(ret));
-industryRelativeReversalLowVol=IRR;
-industryRelativeReversalLowVol(ind==2)=nan;
-anoms(:,:,23)=industryRelativeReversalLowVol;
-labels(23)={'industryRelativeReversalLowVol'};
-clearvars -except Params anoms ret me dates labels
+industryRelativeReversalLowVol = IRR;
+industryRelativeReversalLowVol(ind==2) = nan;
+anoms(:,:,23) = industryRelativeReversalLowVol;
+labels(23) = {'industryRelativeReversalLowVol'};
+clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 % Stack all the matrices into a table
 load permno
-npermno=length(permno);
-ndates=length(dates);
-nobs=npermno*ndates;
+nObs = nStocks * nMonths;
+nAnoms = size(anoms,3);
 
 % Start with the permno & month columns
-outputData=[reshape(repmat(permno',ndates,1),nobs,1) ...
-            reshape(repmat(dates,1,npermno),nobs,1)];
+outputData=[reshape(repmat(permno', nMonths, 1      ), nObs, 1) ...
+            reshape(repmat(dates  , 1      , nStocks), nObs, 1)];
 
 % Append all the anomaly columns
-for i=1:size(anoms,3)
-    outputData=[outputData reshape(anoms(:,:,i),nobs,1)];
+for i=1:nAnoms
+    outputData=[outputData reshape(anoms(:,:,i), nObs, 1)];
 end
 
 % Remove rows with NaNs for all 23 anomalies
-outputData(sum(isfinite(outputData),2)==2,:)=[];
+outputData(sum(isfinite(outputData),2)==2,:) = [];
 
-% Convert to a table
-outputData=array2table(outputData);
-outputData.Properties.VariableNames=[{'permno','dates'},labels];
+% Convert to a table & change variable names
+outputData = array2table(outputData);
+outputData.Properties.VariableNames = [{'permno','dates'},labels];
 
+% Store the general data path
+dataPath = [Params.directory, 'Data/'];
 
-if ~exist([Params.directory,'Data/Anomalies'], 'dir')
-    mkdir([Params.directory,'Data/Anomalies'])
+% Check if the Data/Anomalies directory exists
+if ~exist([dataPath,'Anomalies'], 'dir')
+    mkdir([dataPath,'Anomalies'])
 end
 addpath(genpath(pwd));
 
-writetable(outputData,[Params.directory,'Data/Anomalies/novyMarxVelikovAnomalies.csv']);
+% Output the data to a .csv
+fileName = [dataPath,'Anomalies/novyMarxVelikovAnomalies.csv'];
+writetable(outputData, fileName);
 
+% Timekeeping
 fprintf('Run ended, anomaly signal data exported at %s.\n', char(datetime('now')));

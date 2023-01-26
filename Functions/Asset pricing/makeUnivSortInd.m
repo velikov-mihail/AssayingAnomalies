@@ -1,4 +1,4 @@
-function ind = makeUnivSortInd(var,ptfNumThresh,varargin)
+function ind = makeUnivSortInd(var, ptfNumThresh, varargin)
 % PURPOSE: Creates a portfolio index matrix for a univariate sort indicating which 
 % portfolio each stock-month belongs to
 %------------------------------------------------------------------------------------------
@@ -21,53 +21,64 @@ function ind = makeUnivSortInd(var,ptfNumThresh,varargin)
 %       -ind -a matrix that indicates the portfolio each stock-month falls under
 %------------------------------------------------------------------------------------------
 % Examples: 
-%       ind = makeUnivSortInd(var,5);                      quintile sort based on name breaks
-%       ind = makeUnivSortInd(var,[30 70]);                tertile FF-style sort based on name breaks
-%       ind = makeUnivSortInd(var,10,'breaksFilter',NYSE); decile sort based on NYSE breaks
-%       ind = makeUnivSortInd(var,5,'portfolioMassInd',me);  quintile sort based on cap-weighted breaks
+%       ind = makeUnivSortInd(var, 5);                           quintile sort based on name breaks
+%       ind = makeUnivSortInd(var, [30 70]);                     tertile FF-style sort based on name breaks
+%       ind = makeUnivSortInd(var, 10, 'breaksFilter', NYSE);    decile sort based on NYSE breaks
+%       ind = makeUnivSortInd(var, 5, 'portfolioMassInd', me);   quintile sort based on cap-weighted breaks
 %------------------------------------------------------------------------------------------
 % Dependencies:
 %       Uses assignToPtf().
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2021 All rights reserved. 
+% Copyright (c) 2022 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2021, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
 
-% Parse the inputs
-expectedBreaksType={'name','NYSE','cap'};
+% Parse the inputs. p will be structure with the inputs
+p = inputParser;
 
-p=inputParser;
-validNum=@(x) isnumeric(x);
-validNumSize=@(x) (islogical(x) || isnumeric(x)) && (isequal(size(var),size(x)) || isequal(x,1));
-addRequired(p,'var',validNum);
-addRequired(p,'ptfNumThresh',validNum);
-addOptional(p,'breaksFilterInd',1,validNumSize);
-addOptional(p,'portfolioMassInd',1,validNumSize);
+% Define a function that validates that an input is numeric 
+validNum = @(x) isnumeric(x);
+
+% Define a function that validates that an input is the same size as the
+% required var input
+validNumSize = @(x) (islogical(x) || isnumeric(x)) && (isequal(size(var),size(x)) || isequal(x,1));
+
+% Add & parse the required and optional inputs
+addRequired(p, 'var', validNum);
+addRequired(p, 'ptfNumThresh', validNum);
+addOptional(p, 'breaksFilterInd', 1, validNumSize);
+addOptional(p, 'portfolioMassInd', 1, validNumSize);
 parse(p,var,ptfNumThresh,varargin{:});
 
-var=p.Results.var;
-ptfNumThresh=p.Results.ptfNumThresh;
-breaksFilterInd=1*p.Results.breaksFilterInd;
-portfolioMassInd=p.Results.portfolioMassInd;
+% Assign the inputs from the structure to variables
+var              = p.Results.var;
+ptfNumThresh     = p.Results.ptfNumThresh;
+breaksFilterInd  = p.Results.breaksFilterInd * 1;
+portfolioMassInd = p.Results.portfolioMassInd;
+
+nPtfThresh = length(ptfNumThresh);
 
 % Determine the breakpoints 
-if length(ptfNumThresh)>1 % User entered the breakpoints directly
-    bpts=ptfNumThresh;
-else % User entered the number of portfolios
+if nPtfThresh > 1 
+    % User entered the breakpoints directly
+    bpts = ptfNumThresh;
+else
+    % User entered the number of portfolios, so we need to create the
+    % breakpoints
     bpts = [];
     for i = 1:ptfNumThresh-1 
-        bpts = [bpts i*100/ptfNumThresh];
+        bpts = [bpts i * 100/ptfNumThresh];
     end
 end
 
-if isequal(portfolioMassInd,1)
-    breaksFilterInd(breaksFilterInd==0)=nan;
-    p=prctile(var.*breaksFilterInd,bpts,2);
-    ind = assignToPtf(var,p);    
-else
+% Check if we are doing cap-weighted breaks
+if ~isequal(portfolioMassInd,1)    
+    % In this case, the user entered a portfolio mass matrix (e.g., market
+    % cap)
+    
     portfolioMassInd(isnan(var)) = nan; 
         
     % We'll sort on the variable first & calculate the cumulative market cap
@@ -91,6 +102,23 @@ else
     for i = bpts
         ind = ind + (tempvar > i);
     end
+else        
+    % In this case we are not doing cap-weighting
+    
+    % If breaksFilterInd is a matrix, we'll assign nan to observations
+    % which we don't want to use for breakpoints (e.g., if breaksFilterInd
+    % is an indicator of NYSE stocks, we'll make non-NYSE entries nan
+    breaksFilterInd(breaksFilterInd == 0) = nan;
+    
+    % Calculate the percentiles for var by multiplying by the
+    % breaksFilterInd. By default, we'll just multiply by 1. if
+    % breaksFilterInd is NYSE, then we only use NYSE stocks for the
+    % breakpoints.
+    pctileBpointsMat = prctile(var .* breaksFilterInd, bpts, 2);
+    
+    % Pass the var matrix and the percentile breakpoints matrix to
+    % assignToPtf, which returns the indicator matrix for the portfolios
+    ind = assignToPtf(var, pctileBpointsMat);    
 end
 
 

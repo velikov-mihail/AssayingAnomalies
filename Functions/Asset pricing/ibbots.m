@@ -42,7 +42,6 @@ function [cumRets] = ibbots(rets,dates,varargin)
 
 p=inputParser;
 validNum=@(x) isnumeric(x);
-validNum=@(x) isnumeric(x);
 addRequired(p,'rets',validNum);
 addRequired(p,'dates',validNum);
 addOptional(p,'timePeriod',[dates(1) dates(end)],validNum);
@@ -93,7 +92,7 @@ end
 set(gca,'FontSize',12)
 set(gca,'FontName','Times New Roman')
 
-if ~isempty(p.Results.legendLabels(1))
+if ~isempty(p.Results.legendLabels{1})
     if size(rets,2) ~= length(p.Results.legendLabels)
         error('Wrong number of legend labels.');
     end

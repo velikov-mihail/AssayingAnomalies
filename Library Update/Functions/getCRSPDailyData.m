@@ -26,12 +26,12 @@ function getCRSPDailyData(Params)
 % Dependencies:
 %       Uses callWRDSConnection, getWRDSTable
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2021 All rights reserved. 
+% Copyright (c) 2022 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2021, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
 
 
 % Timekeeping
@@ -44,31 +44,50 @@ end
 addpath(genpath(Params.directory));
 
 % Call the WRDS connection
-WRDS=callWRDSConnection(Params.username,Params.pass);
+WRDS = callWRDSConnection(Params.username, Params.pass);
 
-yearCutoffs=[1925 1950 1975 1985:5:Params.SAMPLE_END];
-yearCutoffs(yearCutoffs<=Params.SAMPLE_START)=[];
-if yearCutoffs(1)>(Params.SAMPLE_START-1)
-    yearCutoffs=[Params.SAMPLE_START-1 yearCutoffs];
-end
-yearCutoffs(yearCutoffs>Params.SAMPLE_END)=[];
-if yearCutoffs(end)<Params.SAMPLE_END
-    yearCutoffs=[yearCutoffs Params.SAMPLE_END];
+% Determine the year cutoffs used for the download of daily data
+yearCutoffs = [1925 1950 1975 1985:5:Params.SAMPLE_END];
+
+% Check if start year is in between cutoffs, add it if yes
+yearCutoffs(yearCutoffs <= Params.SAMPLE_START) = [];
+if yearCutoffs(1) > (Params.SAMPLE_START-1)
+    yearCutoffs = [Params.SAMPLE_START-1 yearCutoffs];
 end
 
+% Check if end year is in between cutoffs, add it if yes
+yearCutoffs(yearCutoffs > Params.SAMPLE_END) = [];
+if yearCutoffs(end) < Params.SAMPLE_END
+    yearCutoffs = [yearCutoffs Params.SAMPLE_END];
+end
+
+
+% Download and save the CRSP daily stock file by looping over the cutoffs
 for i=2:length(yearCutoffs)
-    % Download and save the CRSP daily stock file CRSP.DSF`i' table
-    fprintf('Now working on %d-%d daily stock file.\n',yearCutoffs(i-1),yearCutoffs(i));
-    customQuery=['select permno, date, cfacpr, cfacshr, bidlo, askhi, prc, vol, ret, bid, ask, shrout, openprc, numtrd from CRSP.DSF where date>''',char(num2str(yearCutoffs(i-1))),'1231'' and date<=''',char(num2str(yearCutoffs(i))),'1231'''];
-    getWRDSTable(WRDS,'CRSP',['DSF',char(num2str(i-1))],'Data/CRSP/daily/','customQuery',customQuery);
+    
+    % Timekeeping
+    fprintf('Now working on %d-%d daily stock file.\n', yearCutoffs(i-1), yearCutoffs(i));
+    
+    % Create a custom query
+    customQuery = ['select permno, date, cfacpr, cfacshr, bidlo, askhi, ', ...
+                   'prc, vol, ret, bid, ask, shrout, openprc, numtrd ', ...
+                   'from CRSP.DSF where date>''', char(num2str(yearCutoffs(i-1))), '1231'' ', ...
+                                   'and date<=''', char(num2str(yearCutoffs(i))), '1231'''];
+    
+    % Pass the customQuery to WRDS and download the current daily stock
+    % file
+    getWRDSTable(WRDS, 'CRSP', ['DSF', char(num2str(i-1))], 'dirPath', 'Data/CRSP/daily/', ...
+                                                            'customQuery', customQuery);
 end
 
 % Download and save the CRSP delisting returns CRSP.DSEDELIST table
-getWRDSTable(WRDS,'CRSP','DSEDELIST','Data/CRSP/daily/');
+getWRDSTable(WRDS, 'CRSP', 'DSEDELIST', 'dirPath', 'Data/CRSP/daily/');
 
+% Close the WRDS connection
 close(WRDS);
 
-fprintf('Daily CRSP raw data download ended at %s.\n',char(datetime('now')));
+% Timekeeping
+fprintf('Daily CRSP raw data download ended at %s.\n', char(datetime('now')));
 
 
 

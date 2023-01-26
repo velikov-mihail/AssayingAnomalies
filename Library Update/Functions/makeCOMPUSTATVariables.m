@@ -34,56 +34,92 @@ function makeCOMPUSTATVariables(Params,comp_data,quarterlyIndicator)
 % Dependencies:
 %       N/A
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2021 All rights reserved. 
+% Copyright (c) 2022 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2021, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
 
+% Store the COMPUSTAT directory path
 compustatDirPath=[Params.directory,'Data/COMPUSTAT/'];
 
+% Load a few variables
 load permno
 load dates
 load ret
 
-n=length(permno)*length(dates);
-crsp_mat_link=array2table([reshape(repmat(permno',length(dates),1),n,1) reshape(repmat(dates,1,length(permno)),n,1)],'VariableNames',{'permno','dates'});
+% Store a few constants
+nStocks = length(permno);
+nMonths = length(dates);
+nObs = nStocks * nMonths;
 
-varNames=comp_data.Properties.VariableNames';
-indVarNames=find(~ismember(varNames,{'permno','dates'}));
+% Create the linking table with CRSP
+rptdDates = repmat(dates, 1, nStocks);
+rptdPermno = repmat(permno', nMonths, 1);
+crspMatLink = [reshape(rptdPermno, nObs, 1) ...
+               reshape(rptdDates, nObs, 1)];
+crspMatLinkTab = array2table(crspMatLink, 'VariableNames', {'permno', 'dates'});           
 
-for i=1:length(indVarNames)
-    thisVarName=char(varNames(indVarNames(i)));   
-    fprintf('Now working on COMPUSTAT variable %s, which is %d/%d.\n',upper(thisVarName),i,length(indVarNames));
-    tic;
-    tempTable=comp_data(:,{'permno','dates',thisVarName});
-    mergedTable=outerjoin(crsp_mat_link,tempTable,'Type','Left','MergeKeys',1);
-    thisVar=unstack(mergedTable,thisVarName,'dates');
-    thisVar.permno=[];
-    thisVar=table2array(thisVar)';
+% Store the variable names & & drop the permno and dates
+varNames = comp_data.Properties.VariableNames';
+idxToDrop = ismember(varNames,{'permno','dates'});
+varNames(idxToDrop) = [];
+
+% Store the numer of variable names
+nVarNames = length(varNames);
+
+for i = 1:nVarNames
+    % Store the current variable name & print for timekeeping
+    thisVarName = char(varNames(i));   
+    fprintf('Now working on COMPUSTAT variable %s, which is %d/%d.\n', upper(thisVarName), i, nVarNames);
     
+    % Store the temporary table for this variable
+    tempTab = comp_data(:,{'permno','dates',thisVarName});
+    mergedTab = outerjoin(crspMatLinkTab, tempTab, 'Type', 'Left', ...
+                                                   'MergeKeys', 1);
+    % Unstack the table and turn it into a matrix
+    thisVar = unstack(mergedTab, thisVarName, 'dates');
+    thisVar.permno = [];
+    thisVar = table2array(thisVar)';
+    
+    % If it's a quarterly COMPUSTAT variable, we need to fill in the months
+    % in between the RDQ announcements. We'll only leave the FQTR variable
+    % to have observations only during the announcement months
     if nargin==3
-        if quarterlyIndicator==1
-            for c = find(sum(isfinite(thisVar),1) > 0)
-                mm = find(isfinite(thisVar(:,c)),1,'first');
-                MM = find(isfinite(thisVar(:,c)),1,'last');
-                for r = mm+1:min(rows(thisVar),MM+2)
+        if quarterlyIndicator == 1 && ~strcmp(thisVarName, 'FQTR')
+            % Find all the columns with data
+            stocksWithDataInd = find(sum(isfinite(thisVar),1) > 0);
+            nStocksWithData = length(stocksWithDataInd);
+            % Loop through them
+            for j = 1:nStocksWithData
+                % Store the current column/stock
+                c = stocksWithDataInd(j);
+                
+                % Find the first and last rows
+                firstR = find(isfinite(thisVar(:,c)), 1, 'first');
+                lastR = find(isfinite(thisVar(:,c)), 1, 'last');
+                
+                % Loop throught the rows/months
+                for r = firstR+1 : min(nMonths, lastR + 2)
                     if isnan(thisVar(r,c))
-                        thisVar(r,c) = thisVar(r-1,c);
+                        % Fill in the missing ones
+                        thisVar(r, c) = thisVar(r-1, c);
                     end
                 end
             end
         end
     end
-
-    if isequal(size(ret),size(thisVar))
-        tempStruct.(upper(thisVarName))=thisVar;
-        save([compustatDirPath,upper(thisVarName),'.mat'],'-struct','tempStruct',upper(thisVarName));
+    
+    % Make sure the matrix is the same size as the return matrix
+    if isequal(size(ret), size(thisVar))
+        % Store the variable
+        tempStruct.(upper(thisVarName)) = thisVar;
+        fileName = [compustatDirPath, upper(thisVarName),'.mat'];
+        save(fileName, '-struct', 'tempStruct', upper(thisVarName));
     else 
-        error('COMPUSTAT variables wrong size.');
+        error('COMPUSTAT variables wrong size.\n');
     end
     clear tempStruct
-    toc;
 end
     

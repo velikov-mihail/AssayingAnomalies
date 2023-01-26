@@ -28,15 +28,20 @@ function makeCRSPDailyDerivedVariables(Params)
 %       Requires makeCRSPDailyData() to have been run.
 %       Uses getFFDailyFactors()
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2021 All rights reserved. 
+% Copyright (c) 2022 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2021, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
 
-
+% Timekeeping
 fprintf('\n\n\nNow working on creating some variables derived from daily CRSP. Run started at %s.\n',char(datetime('now')));
+
+
+% Store the general and daily CRSP data path
+dataPath = [Params.directory, 'Data/'];
+dailyCRSPPath = [Params.directory, 'Data/CRSP/daily/'];
 
 % Create daily market cap
 % Make market capitalization
@@ -44,29 +49,64 @@ load dprc
 load dshrout
 dme = abs(dprc).*dshrout/1000;
 dme(dme == 0) = nan;
-save data/CRSP/daily/dme dme -v7.3
-clear dprc dshrout dme
+save([dailyCRSPPath,'dme.mat'], 'dme', '-v7.3');
+clearvars -except dataPath dailyCRSPPath Params
 
 
 % Adjust for delisting
 load dret_x_dl
 load permno
 load ddates
-opts=detectImportOptions('Data/CRSP/daily/crsp_dsedelist.csv');
-crsp_dsedelist=readtable('crsp_dsedelist.csv',opts);
-crsp_dsedelist=crsp_dsedelist(ismember(crsp_dsedelist.permno,permno),:);
-crsp_dsedelist(crsp_dsedelist.dlstcd==100,:)=[];
-crsp_dsedelist.ddates=10000*year(crsp_dsedelist.dlstdt)+100*month(crsp_dsedelist.dlstdt)+day(crsp_dsedelist.dlstdt);
+
+% Read the CRSP delist returns file
+opts = detectImportOptions('Data/CRSP/daily/crsp_dsedelist.csv');
+crsp_dsedelist = readtable('crsp_dsedelist.csv',opts);
+
+
+% Drop the observations we don't need
+idxToDrop = ~ismember(crsp_dsedelist.permno,permno) | ...
+            crsp_dsedelist.dlstdt == max(crsp_dsedelist.dlstdt) | ...
+            crsp_dsedelist.dlstcd == 100;
+crsp_dsedelist(idxToDrop,:)=[];
+
+% Turn the date into yyyymmdd format & drop the observations outside of
+% sample
+crsp_dsedelist.yyyymmdd = 10000 * year(crsp_dsedelist.dlstdt) + ...
+                            100 * month(crsp_dsedelist.dlstdt) + ...
+                                  day(crsp_dsedelist.dlstdt);
+crsp_dsedelist(crsp_dsedelist.yyyymmdd > ddates(end),:) = [];
+
+% Fill in the delisting returns
+dret = dret_x_dl;
 for i=1:height(crsp_dsedelist)
-    c=find(permno==crsp_dsedelist.permno(i));
-    r=find(isfinite(dret(:,c)),1,'last');
-    if isfinite(r) & r<length(ddates)
-        dret(r+1,c)=crsp_dsedelist.dlret(i); % Assumption is that we assign to the day after it last trades
+
+    % Find the column for this permno
+    c = find(permno == crsp_dsedelist.permno(i));
+    
+    % Find the delisting day and the last day with a return observation   
+    r_dt = find(ddates == crsp_dsedelist.yyyymmdd(i));
+    r_last = find(isfinite(dret(:,c)), 1, 'last') + 1;
+    
+    
+    % Choose where to assign the delisting return. If the return for this
+    % permno (c) in the delisting day (r_dt) is NaN, and the previous
+    % day return is finite, assign it to r_dt.
+    if ~isempty(r_dt) && isnan(dret(r_dt,c)) && isfinite(dret(r_dt-1,c))
+        r = r_dt;
+    % Otherwise assign to the observation following the last non-NaN
+    % observation we have for this permno
+    elseif ~isempty(r_last) && r_last<length(ddates)
+        r = r_last;
+    else
+        r = [];
+    end
+            
+    if ~isempty(r)    
+        dret(r+1,c) = crsp_dsedelist.dlret(i); 
     end
 end
-save data/CRSP/daily/dret dret -v7.3
-clear dret permno ddates opts crsp_dsedelist i r c 
-
+save([dailyCRSPPath,'dret.mat'],'dret','-v7.3');
+clearvars -except dataPath dailyCRSPPath Params
 
 % Download, clean up, and save the Fama-French Factors from Ken French's website
 getFFDailyFactors(Params);
@@ -80,59 +120,38 @@ load ddates
 load prc
 load dprc
 
-amihud=nan(size(ret));
-years=unique(floor(dates/100));
+% Initialize the matrix for the Amihud measure 
+amihud = nan(size(ret));
 
-dvol(dvol==0)=nan;
-dvol=abs(dvol).*abs(dprc);
+% Remove zero-volume observations and calculate dollar volume
+zeroVolInd = (dvol == 0);
+dvol(zeroVolInd) = nan;
+dvol = abs(dvol) .* abs(dprc);
 
-a=abs(dret)./dvol;
-prc=abs(prc);
+% Calculate the daily price impact
+priceImpact = abs(dret) ./ dvol;
 
-for i=1:length(years)
-    indexYear=find(floor(ddates/10000)==years(i)); 
-    indexLastMonth=find(floor(dates/100)==years(i),1,'last');
-    b=a(indexYear,:);
-    ind=(  sum( (b>=0),1)>200  )   &   prc(indexLastMonth,:)>5 ;
-    b(:,~ind)=nan;    
-    ind=(b>=0);
-    temp=nansum(b,1)./sum(ind,1);
-    r=find(dates==100*years(i)+12);
-    amihud(r,:)=temp;
+% Take absolute value of the monthly price & store the number of months
+prc = abs(prc);
+nMonths = size(ret,1);
+
+for i=12:nMonths
+    % Find the days in the last year
+    indexYear = (floor(ddates/100) >= dates(i-11) &  ...
+                 floor(ddates/100) <= dates(i));   
+    
+    % Store last year's price impact
+    lastYrPI = priceImpact(indexYear,:);
+    
+    % Apply the filters (200 obs & price>$5)
+    idxToDrop= sum(isfinite(lastYrPI),1) < 200 | ...
+                    prc(i,:) <= 5;
+    lastYrPI(:,idxToDrop) = nan;    
+    
+    amihud(i,:) = mean(lastYrPI, 1, 'omitnan');
 end
-save data/amihud amihud
-clear amihud dret dvol dates ret ddates prc years a i indexYear indexLastMonth b ind temp r 
-
-
-% Now the monthly Amihud measure
-load dret
-load dvol
-load dates
-load ret
-load ddates
-load prc
-load dprc
-
-amihud=nan(size(ret));
-
-dvol(dvol==0)=nan;
-dvol=abs(dvol).*abs(dprc);
-
-a=abs(dret)./dvol;
-prc=abs(prc);
-
-for i=12:size(ret,1)
-    indexYear=find(floor(ddates/100)>=dates(i-11) & floor(ddates/100)<=dates(i));   
-    b=a(indexYear,:);
-    ind=(  sum( isfinite(b),1)>200     &   prc(i,:)>5 );
-    b(:,~ind)=nan;    
-    ind=isfinite(b);
-    temp=nansum(b,1)./sum(ind,1);
-    amihud(i,:)=temp;
-end
-
-save data/monthlyAmihud amihud
-clear amihud dret dvol dates ret ddates prc years a i indexYear b ind temp r dprc 
+save([dataPath,'amihud.mat'],'amihud');
+clearvars -except dataPath dailyCRSPPath Params
 
 % Make other measures from the daily data
 load dates
@@ -142,58 +161,61 @@ load ret
 load dvol
 
 % Realized volatilities
-RVOL1 = nan(size(ret));
-RVOL3 = nan(size(ret));
-RVOL6 = nan(size(ret));
+RVOL1  = nan(size(ret));
+RVOL3  = nan(size(ret));
+RVOL6  = nan(size(ret));
 RVOL12 = nan(size(ret));
 RVOL36 = nan(size(ret));
 RVOL60 = nan(size(ret));
 
 % Daily share volume at the monthly level
-dshvol = nan(size(ret));
+dshvol  = nan(size(ret));
 dshvolM = nan(size(ret));
 
 % Max/min daily returns during the month
 dretmax = nan(size(ret));
 dretmin = nan(size(ret));
 
-
 % Monthly loop range
-FirstMonth=find(dates==floor(ddates(1)/100)); % Assumption is that the monthly data starts earlier than the daily data
-LastMonth=length(dates);
+FirstMonth = find(dates == floor(ddates(1)/100)); % Assumption is that the monthly data starts earlier than the daily data
+LastMonth = length(dates);
 
 for i = FirstMonth:LastMonth
-    ind1=find(floor(ddates/100)==dates(i));
-    ind3=find(floor(ddates/100)>=dates(max(i-2,1)) & floor(ddates/100)<=dates(i));
-    ind6=find(floor(ddates/100)>=dates(max(i-2,1)) & floor(ddates/100)<=dates(i));
-    ind12=find(floor(ddates/100)>=dates(max(i-2,1)) & floor(ddates/100)<=dates(i));
-    ind36=find(floor(ddates/100)>=dates(max(i-2,1)) & floor(ddates/100)<=dates(i));
-    ind60=find(floor(ddates/100)>=dates(max(i-2,1)) & floor(ddates/100)<=dates(i));
+    % Find the relevant days
+    ind1  = (floor(ddates/100) == dates(i));
+    ind3  = (floor(ddates/100) >= dates(max(i-2,1))  & floor(ddates/100) <= dates(i));
+    ind6  = (floor(ddates/100) >= dates(max(i-5,1))  & floor(ddates/100) <= dates(i));
+    ind12 = (floor(ddates/100) >= dates(max(i-11,1)) & floor(ddates/100) <= dates(i));
+    ind36 = (floor(ddates/100) >= dates(max(i-35,1)) & floor(ddates/100) <= dates(i));
+    ind60 = (floor(ddates/100) >= dates(max(i-59,1)) & floor(ddates/100) <= dates(i));
        
-    RVOL1(i,:) = std(dret(ind1,:),0,1); % daily std
-    RVOL3(i,:) = std(dret(ind3,:),0,1); % daily std
-    RVOL6(i,:) = std(dret(ind6,:),0,1); % daily std
-    RVOL12(i,:) = std(dret(ind12,:),0,1); % daily std
-    RVOL36(i,:) = std(dret(ind36,:),0,1); % daily std
-    RVOL60(i,:) = std(dret(ind60,:),0,1); % daily std
-
-    dshvol(i,:) = sum(dvol(ind1,:),1); % sum of daily volume
+    % Calculate the volatility
+    RVOL1(i,:)  = std(dret(ind1,:), 0, 1); 
+    RVOL3(i,:)  = std(dret(ind3,:), 0, 1); 
+    RVOL6(i,:)  = std(dret(ind6,:), 0, 1); 
+    RVOL12(i,:) = std(dret(ind12,:), 0, 1); 
+    RVOL36(i,:) = std(dret(ind36,:), 0, 1); 
+    RVOL60(i,:) = std(dret(ind60,:), 0, 1); 
+        
+    % Calculate the monthly volume
+    dshvol(i,:) = sum(dvol(ind1,:),1);     % sum of daily volume
     dshvolM(i,:) = max(dvol(ind1,:),[],1); % max of daily volume
 
+    % Calculate the max/min daily returns
     dretmax(i,:) = max(dvol(ind1,:),[],1); % max daily ret
     dretmin(i,:) = min(dvol(ind1,:),[],1); % min daily ret    
 end
-save data/RVOL1 RVOL1
-save data/RVOL3 RVOL3
-save data/RVOL6 RVOL6
-save data/RVOL12 RVOL12
-save data/RVOL36 RVOL36
-save data/RVOL60 RVOL60
-save data/dshvol dshvol
-save data/dshvolM dshvolM
-save data/dretmax dretmax
-save data/dretmin dretmin
-clear dretmax dretmin ind1 ind3 ind6 ind12 ind36 ind60 dates ddates dret i FirstMonth ret RVOL1 RVOL3 RVOL6 RVOL12 RVOL36 RVOL60 LastMonth dvol dshvol dshvolM
+save([dataPath,'RVOL1.mat'],'RVOL1');
+save([dataPath,'RVOL3.mat'],'RVOL3');
+save([dataPath,'RVOL6.mat'],'RVOL6');
+save([dataPath,'RVOL12.mat'],'RVOL12');
+save([dataPath,'RVOL36.mat'],'RVOL36');
+save([dataPath,'RVOL60.mat'],'RVOL60');
+save([dataPath,'dshvol.mat'],'dshvol');
+save([dataPath,'dshvolM.mat'],'dshvolM');
+save([dataPath,'dretmax.mat'],'dretmax');
+save([dataPath,'dretmin.mat'],'dretmin');
+clearvars -except dataPath dailyCRSPPath Params
 
 % Make IVOLs
 load dates
@@ -202,33 +224,65 @@ load ddates
 load ret
 load dff
 
-IVOL=nan(size(ret));
-IVOL3=nan(size(ret));
-dxret=dret-repmat(drf,1,size(ret,2));
+% STore the number of stocks
+nStocks = size(ret,2);
+
+% Initialize the IVOL variables
+IVOL  = nan(size(ret));
+IVOL3 = nan(size(ret));
+IffVOL  = nan(size(ret));
+IffVOL3 = nan(size(ret));
+
+% Create the daily excess returns
+rptdRf = repmat(drf, 1, nStocks);
+dxret  = dret - rptdRf;
 
 % Monthly loop range
-FirstMonth=find(dates==floor(ddates(1)/100)); % Assumption is that the monthly data starts earlier than the daily data
-LastMonth=length(dates);
+FirstMonth = find(dates == floor(ddates(1)/100)); % Assumption is that the monthly data starts earlier than the daily data
+LastMonth  = length(dates);
 
 for i = FirstMonth:LastMonth
-    ind1=find(floor(ddates/100)==dates(i));
-    ind3=find(floor(ddates/100)>=dates(max(i-2,1)) & floor(ddates/100)<=dates(i));
-
-    hor_ind=find(isfinite(sum(dxret(ind1,:),1)));
-    for j=hor_ind
-        res=nanols(dxret(ind1,j),[ones(size(dxret(ind1,j))) dmkt(ind1)]);
-        IVOL(i,j) = sqrt(mean(res.resid.^2)); % ff residual
-        res=nanols(dxret(ind3,j),[ones(size(dxret(ind3,j))) dmkt(ind3) dsmb(ind3) dhml(ind3)]);
-        IVOL3(i,j) = sqrt(mean(res.resid.^2)); % ff residual
+    
+    % Find the 1- and 3-month daily indices 
+    ind1 = find(floor(ddates/100) == dates(i));
+    ind3 = find(floor(ddates/100) >= dates(max(i-2,1)) & floor(ddates/100) <= dates(i));
+    
+    % Store the constant terms
+    const1 = ones(length(ind1), 1);
+    const3 = ones(length(ind3), 1);    
+    
+    % Find the stocks which we need to loop through
+    hor_ind = find(isfinite(sum(dxret(ind1,:),1)));
+    for j = hor_ind
+        % CAPM 1-month residual
+        res = nanols(dxret(ind1,j), [const1 dmkt(ind1)]);
+        IVOL(i,j) = sqrt(mean(res.resid.^2)); 
+        
+        % FF3 1-month residual
+        res = nanols(dxret(ind1,j), [const1 dmkt(ind1)  dsmb(ind1) dhml(ind1)]);
+        IffVOL(i,j) = sqrt(mean(res.resid.^2)); 
+        
+         % CAPM 3-month residual
+        res=nanols(dxret(ind3,j),[const3 dmkt(ind3)]);
+        IVOL3(i,j) = sqrt(mean(res.resid.^2)); 
+               
+        % FF3 3-month residual
+        res=nanols(dxret(ind3,j),[const3 dmkt(ind3) dsmb(ind3) dhml(ind3)]);
+        IffVOL3(i,j) = sqrt(mean(res.resid.^2)); 
     end
 end
 
-save Data/IVOL IVOL
-save Data/IVOL3 IVOL3
-clear IVOL IVOL3 dxret FirstMonth LastMonth i ind1 ind3 hor_ind res j dates dret drf dmkt const dcma drmw dsmb dsmb2 dhml dff3 dff4 dff5 dff6 dffdates dumd
+% Store the IVOLs
+save([dataPath,'IVOL.mat'],'IVOL');
+save([dataPath,'IffVOL.mat'],'IffVOL');
+save([dataPath,'IVOL3.mat'],'IVOL3');
+save([dataPath,'IffVOL3.mat'],'IffVOL3');
+clearvars -except dataPath dailyCRSPPath Params
+
 
 % Make CAR3s - or relegate to anomalies?
-load rdq
+load RDQ
+load FQTR
 load dates
 load ddates
 load dret
@@ -237,30 +291,52 @@ load ret
 load nyse
 load me
 
-CAR3=nan(size(RDQ));
+% Only leave the announcement dates
+RDQ(isnan(FQTR)) = nan;
 
-dxret=1+dret-repmat(dmkt+drf,1,size(dret,2)); % Add the rf to the mkt? Probably doesn't matter.
-clear dret drf dmkt const dcma drmw dsmb dsmb2 dhml dff3 dff4 dff5 dff6 dffdates dumd eomflag
+% Initialize the CAR3 matrix
+CAR3 = nan(size(RDQ));
 
-s=find(sum(isfinite(RDQ),2)>0,1,'first'); % First row with finite RDQ
-e=length(dates);
+% Store the number of stocks
+nStocks = size(dret,2);
 
-for i=s:e
-    ind=find(isfinite(RDQ(i,:)));
-    for j=1:length(ind)
-        c=ind(j);
-        r=find(ddates==RDQ(i,c));
-        if isfinite(r) & r<length(ddates)
-            CAR3(i,c)=prod(dxret(r-1:r+1,c))-1;
+% Calculate the abnormal return (ret_{i,t} - ret_{mkt,t})
+rptdMkt = repmat(dmkt + drf, 1, nStocks);
+dxret = 1 + dret - rptdMkt; 
+
+% Monthly loop range
+FirstMonth = find(sum(isfinite(RDQ),2)>0, 1, 'first'); % First row with finite RDQ
+LastMonth  = length(dates);
+
+% Loop over the months
+for i = FirstMonth:LastMonth
+    
+    % Find all the announcements in the current month
+    idxAnnouncements = find(isfinite(RDQ(i,:)));
+    nAnnoncements = length(idxAnnouncements);
+    
+    % loop over the announcements
+    for j = 1:nAnnoncements
+        c = idxAnnouncements(j);
+        r = find(ddates==RDQ(i,c));
+        
+        % Calculate the CAR3 if we found a match
+        if ~isempty(r) && r < length(ddates)
+            CAR3(i,c) = prod(dxret(r-1:r+1, c)) - 1;
         end
     end
 end
 
+% Fill the observations between quarters
+CAR3 = FillMonths(CAR3);
 
-CAR3=CAR3-1;
-CAR3=FillMonths(CAR3);
-CAR3(~isfinite(ret))=nan;
+% Remove all obseravtions where ret is nan
+idxToDrop = isnan(ret);
+CAR3(idxToDrop) = nan;
 
-save Data/CAR3 CAR3
+% Store the CAR3 variable
+save([dataPath,'CAR3.mat'],'CAR3');
 
+% Timekeeping
 fprintf('CRSP daily derived variables run ended at %s.\n', char(datetime('now')));
+

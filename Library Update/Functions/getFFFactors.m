@@ -1,6 +1,6 @@
 function getFFFactors(Params)
-% PURPOSE: This function downloads and stores the Fama-French monthly factors (mkt,
-% rf, smb, hml, cma, rmw, umd)
+% PURPOSE: This function downloads and stores the Fama-French monthly 
+% factors (mkt, rf, smb, hml, cma, rmw, umd)
 %------------------------------------------------------------------------------------------
 % USAGE:   
 % getFFFactors(Params)             
@@ -32,106 +32,110 @@ function getFFFactors(Params)
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2021, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
 
+% Store the directories
+dataDirPath = [Params.directory,'Data/'];
+ffDirPath = [Params.directory,'Data/FF/'];
 
-dataDirPath=[Params.directory,'Data/'];
-ffDirPath=[Params.directory,'Data/FF/'];
-
+% Check if FF directory exists, make it if not
 if ~exist(ffDirPath, 'dir')
     mkdir(ffDirPath)
 end
-addpath(genpath(Params.directory));
+addpath(genpath(ffDirPath));
 
+% Load the dates
 load dates
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FF3 factors %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 % Unzip the FF 3-factor CSV file from the web
-ff3FileName=unzip('http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/F-F_Research_data_Factors_CSV.zip',ffDirPath);
+fileURL = 'http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/F-F_Research_data_Factors_CSV.zip';
+ff3FileName = unzip(fileURL, ffDirPath);
 
 % Read in the 3 factors
-opts=detectImportOptions(char(ff3FileName));
-FF3factors=readtable(char(ff3FileName),opts);
-FF3factors.Properties.VariableNames={'dates','MKT','SMB','HML','RF'};
+opts = detectImportOptions(char(ff3FileName));
+FF3factors = readtable(char(ff3FileName), opts);
+FF3factors.Properties.VariableNames = {'dates','MKT','SMB','HML','RF'};
 
 % Clean up the file - it also includes annual returns for the factors;
-e=find(isnan(FF3factors.dates),1,'first');
-FF3factors(e:end,:)=[];
+e = find(isnan(FF3factors.dates),1,'first');
+FF3factors(e:end,:) = [];
 
-% Save the factors
+% Save the FF dates 
 ffdates = dates;
 
 % Intersect our dates with the ones from the Ken French webiste
-[~,ia,ib] =intersect(dates,FF3factors.dates);
+[~, ia, ib] =intersect(dates,FF3factors.dates);
 
 % Store them
 mkt = nan(size(dates));
 smb = nan(size(dates));
 hml = nan(size(dates));
-rf = nan(size(dates));
+rf  = nan(size(dates));
 
-mkt(ia)=FF3factors.MKT(ib)/100;
-smb(ia)=FF3factors.SMB(ib)/100;
-hml(ia)=FF3factors.HML(ib)/100;
-rf(ia)=FF3factors.RF(ib)/100;
+mkt(ia) = FF3factors.MKT(ib)/100;
+smb(ia) = FF3factors.SMB(ib)/100;
+hml(ia) = FF3factors.HML(ib)/100;
+rf(ia)  = FF3factors.RF(ib)/100;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% UMD factor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Unzip the FF 3-factor CSV file from the web
-ffUMDFileName=unzip('http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/F-F_Momentum_Factor_CSV.zip',ffDirPath);
+% Unzip the FF UMD CSV file from the web
+fileURL = 'http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/F-F_Momentum_Factor_CSV.zip';
+ffUMDFileName = unzip(fileURL, ffDirPath);
 
 % Read UMD
-opts=detectImportOptions(char(ffUMDFileName));
-UMDFactor=readtable(char(ffUMDFileName),opts);
-UMDFactor.Properties.VariableNames={'dates','UMD'};
+opts = detectImportOptions(char(ffUMDFileName));
+UMDFactor = readtable(char(ffUMDFileName), opts);
+UMDFactor.Properties.VariableNames = {'dates','UMD'};
 
 
 % Clean up the file - it also includes annual returns for the factors;
-e=find(isnan(UMDFactor.dates),1,'first');
-UMDFactor(e:end,:)=[];
+e= find(isnan(UMDFactor.dates),1,'first');
+UMDFactor(e:end,:) = [];
 
 % Intersect our dates with the ones from the Ken French webiste
-[~,ia,ib]=intersect(dates,UMDFactor.dates);
+[~, ia ,ib]=intersect(dates,UMDFactor.dates);
 
 % Store UMD factor
 umd = nan(size(dates));
-umd(ia)=UMDFactor.UMD(ib)/100;
+umd(ia) = UMDFactor.UMD(ib)/100;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FF5 factors %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 % Unzip the FF 5-factor CSV file from the web
-ff5FileName=unzip('http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/F-F_Research_Data_5_Factors_2x3_CSV.zip',ffDirPath);
+fileURL = 'http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/F-F_Research_Data_5_Factors_2x3_CSV.zip';
+ff5FileName = unzip(fileURL, ffDirPath);
 
 % Read in the 5 factors
-opts=detectImportOptions(char(ff5FileName));
-FF5factors=readtable(char(ff5FileName),opts);
-FF5factors.Properties.VariableNames={'dates','MKT','SMB','HML','RMW','CMA','RF'};
+opts = detectImportOptions(char(ff5FileName));
+FF5factors = readtable(char(ff5FileName), opts);
+FF5factors.Properties.VariableNames = {'dates','MKT','SMB','HML','RMW','CMA','RF'};
 
 % Clean up the file - it also includes annual returns for the factors;
-e=find(isnan(FF5factors.dates),1,'first');
-FF5factors(e:end,:)=[];
+e = find(isnan(FF5factors.dates),1,'first');
+FF5factors(e:end,:) = [];
 
+% Intersect our dates with the ones from the Ken French webiste
+[~, ia, ib] = intersect(dates, FF5factors.dates);
 
-[~,ia,ib] =intersect(dates,FF5factors.dates);
-
+% Store the additional factors factor
 smb2 = nan(size(dates));
-rmw = nan(size(dates));
-cma = nan(size(dates));
+rmw  = nan(size(dates));
+cma  = nan(size(dates));
 
-smb2(ia)=FF5factors.SMB(ib)/100;
-rmw(ia)=FF5factors.RMW(ib)/100;
-cma(ia)=FF5factors.CMA(ib)/100;
+smb2(ia) = FF5factors.SMB(ib)/100;
+rmw(ia)  = FF5factors.RMW(ib)/100;
+cma(ia)  = FF5factors.CMA(ib)/100;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% Save the factors  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
+% Creat a few useful matrices first 
 const = .01*ones(size(rf));
 ff3 = [const mkt smb hml];
 ff4 = [ff3 umd];
 ff5 = [const mkt smb2 hml rmw cma];
 ff6 = [ff5 umd];
 
+% Save them in ff.mat
 save([dataDirPath,'ff.mat'], 'ffdates', 'const', 'rf', 'mkt', 'smb', 'smb2', 'hml', 'umd', 'rmw', 'cma', 'ff3', 'ff4', 'ff5', 'ff6');
 
-fprintf('FFfactors creation complete.\n');
+% Timekeeping
+fprintf('Fama-French factors creation complete @ %s.\n',char(datetime('now')));

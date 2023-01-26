@@ -27,12 +27,12 @@ function getCOMPUSTATData(Params)
 % Dependencies:
 %       Uses callWRDSConnection(), getCOMPUSTATQuery(), getWRDSTable()
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2021 All rights reserved. 
+% Copyright (c) 2022 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2021, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
 
 
 % Timekeeping
@@ -48,15 +48,22 @@ addpath(genpath(Params.directory));
 % Call the WRDS connection
 WRDS = callWRDSConnection(Params.username,Params.pass);
 
-% Get the annual COMPUSTAT data
-COMPUSTATAnnualQuery = getCOMPUSTATQuery(WRDS,Params,'annual');
-getWRDSTable(WRDS,'COMP','FUNDA',compustatDirPath,'customQuery',COMPUSTATAnnualQuery);
+% Get the annual COMPUSTAT data. 
+% First, we need to get a string with the query we want to run on the WRDS
+% server for the COMPUSTAT data. The query selects all variables we have in
+% the Excel file. 
+COMPUSTATAnnualQuery = getCOMPUSTATQuery(WRDS, Params, 'annual');
+getWRDSTable(WRDS, 'COMP', 'FUNDA', 'dirPath', compustatDirPath, ...
+                                    'customQuery', COMPUSTATAnnualQuery);
 
-% Get the quarterly COMPUSTAT data
-COMPUSTATQuarterlyQuery = getCOMPUSTATQuery(WRDS,Params,'quarterly');
-getWRDSTable(WRDS,'COMP','FUNDQ',compustatDirPath,'customQuery',COMPUSTATQuarterlyQuery);
+% Get the quarterly COMPUSTAT data. Same as the annual data above.
+COMPUSTATQuarterlyQuery = getCOMPUSTATQuery(WRDS, Params, 'quarterly');
+getWRDSTable(WRDS, 'COMP', 'FUNDQ', 'dirPath', compustatDirPath, ...
+                                    'customQuery', COMPUSTATQuarterlyQuery);
 
+% Close the WRDS connection
 close(WRDS);
 
+% Timekeeping
 fprintf('COMPUSTAT raw data download ended at %s.\n',char(datetime('now')));
 
