@@ -1,4 +1,4 @@
-function filledData = FillMonths(data,persist)
+function filledData = FillMonths(data, persist)
 % PURPOSE: Fills in data for matrices with less granular data than the one
 % indicated in the dates/ddates vector
 %------------------------------------------------------------------------------------------
@@ -13,20 +13,25 @@ function filledData = FillMonths(data,persist)
 %------------------------------------------------------------------------------------------
 % Examples:
 %
+% load bm
 % filledBM = FillMonths(bm);
 %                           
 %------------------------------------------------------------------------------------------
 % Dependencies:
 %       N/A
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
+% Initialize the output matrix
 filledData = data;
+
+% Store total number of dates
+nDates = size(data, 1);
 
 % Find the months with data & figure out the frequency
 indRowsWithData = find(sum(isfinite(data),2) > 0);
@@ -37,28 +42,35 @@ dataFreq = mode(indRowsWithData-lag(indRowsWithData, 1, nan));
 if dataFreq == 12
     for i = 1:nRowsWithData
         thisRow = indRowsWithData(i);
+        b = thisRow + 1;
+        e = min(thisRow+11, nDates);
         
-        for j = 1:11
-            if thisRow+j <= rows(data)
-                filledData(thisRow+j,:) = data(thisRow,:);
-            end
+        nRep = e-b+1;
+        if nRep>0
+            filledData(b:e, :) = repmat(data(thisRow, :), nRep, 1);
         end
     end
-% Assume quarterly    
 else
+    % Assume quarterly and loop through columns
     if nargin == 1
         persist = 2;
     end
-    indexh = sum(isfinite(filledData)) > 0;
-    index1 = find(indexh == 1);
-    for i = 1:cols(index1)
-        c = index1(i);
-        indexv = isfinite(filledData(:,c));
-        mm = min(find(indexv == 1));
-        MM = max(find(indexv == 1));
-        for j = mm+1:min(rows(filledData),MM+persist)
-            if isfinite(filledData(j,c)) == 0
-                filledData(j,c) = filledData(j-1,c);
+
+    % Find all the columns with data
+    indColsWithData = find(sum(isfinite(data), 1) > 0);
+    nColsWithData = length(indColsWithData);
+
+    % Loop through them & fill them in
+    for i = 1:nColsWithData
+        thisCol = indColsWithData(i);
+        thisColDataIsFinite = isfinite(filledData(:,thisCol));
+        
+        % Fill them in 
+        mm = find(thisColDataIsFinite, 1, 'first');
+        MM = find(thisColDataIsFinite, 1, 'last');
+        for j = mm+1:min(nDates,MM+persist)
+            if isnan(filledData(j,thisCol))
+                filledData(j,thisCol) = filledData(j-1,thisCol);
             end
         end
     end

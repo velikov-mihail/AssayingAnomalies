@@ -10,12 +10,11 @@ function makeCRSPDailyDerivedVariables(Params)
 %             -Params.directory - directory where the setup_library.m was unzipped
 %             -Params.username - WRDS username
 %             -Params.pass - WRDS password 
-%             -Params.domesticCommonEquityShareFlag - flag indicating whether to leave domestic common share equity (share code 10 or 11) only
 %             -Params.SAMPLE_START - sample start date
 %             -Params.SAMPLE_END - sample end dates
-%             -Params.COMPUSTATVariablesFileName - Either name of file ('COMPUSTAT Variable Names.csv' included with library) or 'All' to download all ~1000 COMPUSTAT variables.
-%             -Params.driverLocation - location of WRDS PostgreSQL JDBC Driver (included with library)
-%             -Params.tcosts - type of trading costs to construct: 'full' - low-freq 4-measures combo + TAQ + ISSM; 'lf_combo' - low-freq 4-measures combo; 'gibbs' - just gibbs
+%             -Params.domComEqFlag - flag indicating whether to leave domestic common share equity (share code 10 or 11) only
+%             -Params.COMPVarNames - Either name of file ('COMPUSTAT Variable Names.csv' included with library) or 'All' to download all ~1000 COMPUSTAT variables.
+%             -Params.tcostsType - type of trading costs to construct: 'full' - low-freq 4-measures combo + TAQ + ISSM; 'lf_combo' - low-freq 4-measures combo; 'gibbs' - just gibbs
 %------------------------------------------------------------------------------------------
 % Output:
 %        -None
@@ -28,20 +27,22 @@ function makeCRSPDailyDerivedVariables(Params)
 %       Requires makeCRSPDailyData() to have been run.
 %       Uses getFFDailyFactors()
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  1. Gao, X. and J. Ritter, 2010, The marketing of seasoned equity
+%  offerings, Journal of Financial Economics, 97(1), 33-52
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 % Timekeeping
-fprintf('\n\n\nNow working on creating some variables derived from daily CRSP. Run started at %s.\n',char(datetime('now')));
+fprintf('\n\n\nNow working on creating some variables derived from daily CRSP. Run started at %s.\n\n',char(datetime('now')));
 
 
 % Store the general and daily CRSP data path
-dataPath = [Params.directory, 'Data/'];
-dailyCRSPPath = [Params.directory, 'Data/CRSP/daily/'];
+dataPath = [Params.directory, 'Data', filesep];
+dailyCRSPPath = [Params.directory, 'Data', filesep, 'CRSP', filesep, 'daily', filesep];
 
 % Create daily market cap
 % Make market capitalization
@@ -59,8 +60,9 @@ load permno
 load ddates
 
 % Read the CRSP delist returns file
-opts = detectImportOptions('Data/CRSP/daily/crsp_dsedelist.csv');
-crsp_dsedelist = readtable('crsp_dsedelist.csv',opts);
+fileName = [dailyCRSPPath, 'crsp_dsedelist.csv'];
+opts = detectImportOptions(fileName);
+crsp_dsedelist = readtable(fileName,opts);
 
 
 % Drop the observations we don't need
@@ -107,6 +109,45 @@ for i=1:height(crsp_dsedelist)
 end
 save([dailyCRSPPath,'dret.mat'],'dret','-v7.3');
 clearvars -except dataPath dailyCRSPPath Params
+
+% Adjust NASDAQ volume following Gao and Ritter (2010)
+% See their Appendix B for more details
+load ddates
+load exchcd
+load dvol_x_adj
+
+% Initialize the daily exchange code
+[nDays, nStocks] = size(dvol_x_adj);
+dexchcd = nan(nDays, nStocks);
+dexchcd(eomflag,:) = exchcd;
+
+% Fill in the daily exchange code matrix
+monthEndInds = find(eomflag);
+for i = 1:length(monthEndInds)-1
+    s = monthEndInds(i);
+    e = monthEndInds(i+1);
+    dexchcd(s:e-1, :) = repmat(dexchcd(s, :), e-s, 1);
+end
+
+% Adjust the volume
+dvol = dvol_x_adj;
+
+% Divide by 2 prior to 20010201
+indToAdj = (dexchcd == 3) & (ddates < 20010201); 
+dvol(indToAdj) = dvol(indToAdj)/2;
+
+% Divide by 1.8 for most of 2001:
+indToAdj = (dexchcd == 3)  & (ddates >= 20010201) & (ddates < 20020101); 
+dvol(indToAdj) = dvol(indToAdj)/1.8;
+
+% Divide by 1.6 for 2002 and 2003
+indToAdj = (dexchcd == 3) & (ddates >= 20020101) & (ddates < 20040101); 
+dvol(indToAdj) = dvol(indToAdj)/1.6;
+
+% Store the adjusted volume
+save([dailyCRSPPath,'dvol.mat'],'dvol','-v7.3');
+clearvars -except dataPath dailyCRSPPath Params
+
 
 % Download, clean up, and save the Fama-French Factors from Ken French's website
 getFFDailyFactors(Params);

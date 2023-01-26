@@ -1,4 +1,29 @@
 function plotStrategyFigs(res)
+% PURPOSE: Utility function to plot an optional figure in runUnivSort()
+%------------------------------------------------------------------------------------------
+% USAGE:   
+% plotStrategyFigs(res)
+%------------------------------------------------------------------------------------------
+% Required Inputs:
+%        -res - a structure output by runUnivSort()
+%------------------------------------------------------------------------------------------
+% Output:
+%        -N/A
+%------------------------------------------------------------------------------------------
+% Examples:
+%
+% plotStrategyFigs(res)
+%------------------------------------------------------------------------------------------
+% Dependencies:
+%       Used by runUnivSort()
+%------------------------------------------------------------------------------------------
+% Copyright (c) 2023 All rights reserved. 
+%       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
+%       Mihail Velikov <velikov@psu.edu>
+% 
+%  References
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
+
 
 r = res.pret(:,end);
 dates = res.dates;
@@ -37,7 +62,7 @@ title('5-year rolling Sharpe ratio');
 
 
 subplot(2,2,3)
-nn = res.nStocks(ind,end);
+nn = res.ptfNumStocks(ind,end);
 plot(dt_dates,nn)
 xlabel('date');
 title('# of stocks');

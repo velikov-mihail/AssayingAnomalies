@@ -1,6 +1,6 @@
 function makeBetas(Params)
 % PURPOSE: This function creates the beta signals used in Novy-Marx and
-% Velikov's (2022) Betting Against Betting Against Beta
+% Velikov (2022) 
 %------------------------------------------------------------------------------------------
 % USAGE:   
 % makeBetas(Params)              % Turns the CRSP daily file into matrices
@@ -10,12 +10,11 @@ function makeBetas(Params)
 %             -Params.directory - directory where the setup_library.m was unzipped
 %             -Params.username - WRDS username
 %             -Params.pass - WRDS password 
-%             -Params.domesticCommonEquityShareFlag - flag indicating whether to leave domestic common share equity (share code 10 or 11) only
 %             -Params.SAMPLE_START - sample start date
 %             -Params.SAMPLE_END - sample end dates
-%             -Params.COMPUSTATVariablesFileName - Either name of file ('COMPUSTAT Variable Names.csv' included with library) or 'All' to download all ~1000 COMPUSTAT variables.
-%             -Params.driverLocation - location of WRDS PostgreSQL JDBC Driver (included with library)
-%             -Params.tcosts - type of trading costs to construct: 'full' - low-freq 4-measures combo + TAQ + ISSM; 'lf_combo' - low-freq 4-measures combo; 'gibbs' - just gibbs
+%             -Params.domComEqFlag - flag indicating whether to leave domestic common share equity (share code 10 or 11) only
+%             -Params.COMPVarNames - Either name of file ('COMPUSTAT Variable Names.csv' included with library) or 'All' to download all ~1000 COMPUSTAT variables.
+%             -Params.tcostsType - type of trading costs to construct: 'full' - low-freq 4-measures combo + TAQ + ISSM; 'lf_combo' - low-freq 4-measures combo; 'gibbs' - just gibbs
 %------------------------------------------------------------------------------------------
 % Output:
 %        -None
@@ -27,7 +26,7 @@ function makeBetas(Params)
 % Dependencies:
 %       N/A
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
@@ -35,17 +34,17 @@ function makeBetas(Params)
 %  1. Frazzini, A. and L. Pedersen, 2014, Betting against beta, Journal of
 %  Financial Economics, 111 (1): 1-25
 %  2. Novy-Marx, R. and M. Velikov, 2022, Betting against betting against
-%  eta, Journal of Financial Economics, 143 (1): 80-106.
-%  3. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  beta, Journal of Financial Economics, 143 (1): 80-106.
+%  3. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 % Timekeeping
-fprintf('\n\n\nNow working on making the betas. Run started at %s.\n',char(datetime('now')));
+fprintf('\n\n\nNow working on making the betas. Run started at %s.\n\n',char(datetime('now')));
 
 % Store the general data path
-dataPath = [Params.directory, 'Data/'];
+dataPath = [Params.directory, 'Data', filesep];
 
 % Start with the Frazzini - Pedersen betas
-fprintf('\n\n\nMaking Frazzini-Pedersen (2014) betas first.\n');
+fprintf('Making Frazzini-Pedersen (2014) betas first.\n');
 load dret
 load ff
 load dff
@@ -123,7 +122,7 @@ end
 % Apply the shrinkage towards 1
 bfp = 0.6*beta + 0.4*1; 
 
-fprintf('\n\n\nMaking the rest of the betas next.\n');
+fprintf('Making the rest of the betas next.\n');
 
 % Iniatialize the matrices for the rest of the betas 
 bols = nan(size(ret)); % Ivo's OLS benchmark - 1 year of daily data, 1 mkt lag, no shrinkage
@@ -209,5 +208,5 @@ save([dataPath,'bstd.mat'],'bstd');
 save([dataPath,'bfp.mat'],'bfp');
 
 % Timekeeping
-fprintf('\n\n\nRun ended at %s.\n',char(datetime('now')));
+fprintf('\nBeta construction run ended at %s.\n', char(datetime('now')));
 

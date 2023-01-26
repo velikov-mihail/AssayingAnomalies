@@ -10,11 +10,10 @@ function makeTradingCosts(Params)
 %             -Params.directory - directory where the setup_library.m was unzipped
 %             -Params.username - WRDS username
 %             -Params.pass - WRDS password 
-%             -Params.domesticCommonEquityShareFlag - flag indicating whether to leave domestic common share equity (share code 10 or 11) only
 %             -Params.SAMPLE_START - sample start date
 %             -Params.SAMPLE_END - sample end dates
-%             -Params.COMPUSTATVariablesFileName - Either name of file ('COMPUSTAT Variable Names.csv' included with library) or 'All' to download all ~1000 COMPUSTAT variables.
-%             -Params.driverLocation - location of WRDS PostgreSQL JDBC Driver (included with library)
+%             -Params.domComEqFlag - flag indicating whether to leave domestic common share equity (share code 10 or 11) only
+%             -Params.COMPVarNames - Either name of file ('COMPUSTAT Variable Names.csv' included with library) or 'All' to download all ~1000 COMPUSTAT variables.
 %             -Params.tcostsType - type of trading costs to construct: 'full' - low-freq 4-measures combo + TAQ + ISSM; 'lf_combo' - low-freq 4-measures combo; 'gibbs' - just gibbs
 %------------------------------------------------------------------------------------------
 % Output:
@@ -29,29 +28,32 @@ function makeTradingCosts(Params)
 %       makeKyleObizhaeva(), getHighFreqMEffSpreads(),
 %       fillMissingTcosts(), 
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Chen, A. and M. Velikov, 2022, Zeroing in on the expected return on anomalies, Journal of Financial and Quantitative Analysis, Forthcoming.
-%  2. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  1. Chen, A. and M. Velikov, 2021, Zeroing in on the expected return on anomalies, Journal of Financial and Quantitative Analysis, Forthcoming.
+%  2. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 % Timekeeping
-fprintf('\n\n\nNow working on creating the transaction costs. Run started at %s.\n', char(datetime('now')));
+fprintf('\n\n\nNow working on creating the transaction costs. Run started at %s.\n\n', char(datetime('now')));
 
 % Store the general and daily CRSP data path
-dataPath = [Params.directory, 'Data/'];
+dataPath = [Params.directory, 'Data', filesep];
+
+% Store the tcost types
+tcostsType = Params.tcostsType;
 
 % Check if correct tcosts input selected
-if ~ismember(Params.tcostsType, {'full','lf_combo','gibbs'})
+if ~ismember(tcostsType, {'full','lf_combo','gibbs'})
     error('Params.tcostsType needs to be one of the following: ''full'', ''lf_combo'', ''gibbs''.\n');
 end
 
 % Check for the Gibbs file
 gibbsFileStruct = (dir(fullfile(Params.directory, '**/crspgibbs*.csv')));
 if isempty(gibbsFileStruct)
-    error(['Gibbs input file does not exists. Gibbs trading cost estimate cannot be constructed.']);
+    error('Gibbs input file does not exists. Gibbs trading cost estimate cannot be constructed.');
 else
     fileName = gibbsFileStruct.name;
 end
@@ -62,7 +64,7 @@ effSpreadStruct.gibbs = makeGibbs(fileName); % Returns 2*c (the full spread). We
 vars = {'gibbs'};
 
 % Check if lf_combo or full costs selected
-if ismember(Params.tcostsType, {'lf_combo', 'full'}')
+if ismember(tcostsType, {'lf_combo', 'full'}')
     % Make these measures if so
     effSpreadStruct.hl  = makeCorwinSchultz();
     effSpreadStruct.chl = makeAbdiRanaldi();
@@ -71,12 +73,12 @@ if ismember(Params.tcostsType, {'lf_combo', 'full'}')
 end
 
 % Check if the full costs measure selected
-if strcmp(Params.tcostsType,'full')
+if strcmp(tcostsType,'full')
     
     % Check for the TAQ file
     hfFileStruct = (dir(fullfile(Params.directory,'**/hf_monthly.csv')));
     if isempty(hfFileStruct)
-        error(['High-frequency trading cost input file does not exists. High-frequency trading cost estimate cannot be constructed.']);
+        error('High-frequency trading cost input file does not exists. High-frequency trading cost estimate cannot be constructed.');
     else
         fileName = hfFileStruct.name;
     end    
@@ -123,7 +125,7 @@ for i = 1:nVars
 end
 
 % Check if we need to adjust some of the tcost measures
-if strcmp(Params.tcostsType,'gibbs')
+if strcmp(tcostsType,'gibbs')
     % No need to worry about the rest
     effSpreadRaw = effSpreadStruct.gibbs; 
 else
@@ -159,7 +161,7 @@ else
     reshapedEffSpreadRaw = mean(reshapedLF, 2, 'omitnan'); 
     
     % Check if we also have the high-frequency costs
-    if strcmp(Params.tcostsType, 'full')
+    if strcmp(tcostsType, 'full')
         % Reshape these too
         reshapedHF = reshape(effSpreadStruct.hf_spreads_ave, nObs, 1);        
         
@@ -180,7 +182,13 @@ save([dataPath, 'tcosts_raw.mat'], 'tcosts_raw');
 
 % Fill in the missing tcosts
 tcosts = fillMissingTcosts(tcosts_raw);
+
+% Store the costs & their type
 save([dataPath, 'tcosts.mat'], 'tcosts');
+save([dataPath, 'tcostsType.mat'], 'tcostsType');
 
 % Do the FF trading costs calculation here too
-makeFFTcosts();
+makeFFTcosts(dataPath);
+
+% Timekeeping
+fprintf('\nTrading costs construction run ended at %s.\n', char(datetime('now')));

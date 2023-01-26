@@ -31,12 +31,12 @@ function COMPUSTATQuery=getCOMPUSTATQuery(WRDS,Params,freq)
 % Dependencies:
 %       N/A
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 % First check if we want all COMPSUTAT variables
 if strcmp(Params.COMPVarNames, 'All')
@@ -61,11 +61,11 @@ else
     if strcmp(freq,'annual')
         varNames  = varNamesTable.Annual;
         tableName = 'funda';
-        COMPUSTATQuery = ['select gvkey, datadate'];
+        COMPUSTATQuery = 'select gvkey, datadate';
     elseif strcmp(freq,'quarterly')
         varNames  = varNamesTable.Quarterly;
         tableName = 'fundq';
-        COMPUSTATQuery = ['select gvkey, RDQ'];
+        COMPUSTATQuery = 'select gvkey, RDQ';
     else
         error('Wrong freq parameter for COMPUSTAT query.\n');
     end
@@ -81,7 +81,7 @@ else
     % Make sure the names from the .csv file exist in the database
     [Lia, ~] = ismember(varNames,(compVarNames));
     if sum(1-Lia)>0
-        fprintf('\nThe following variables are not on COMPUSTAT, so they will not be created:\n');
+        fprintf('The following variables are not on COMPUSTAT, so they will not be created: ');
         ind = find(1-Lia==1);
         for i = 1:length(ind)
             fprintf('%s, ',char(varNames(ind(i))));

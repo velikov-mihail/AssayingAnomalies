@@ -10,12 +10,11 @@ function makeCRSPDerivedVariables(Params)
 %             -Params.directory - directory where the setup_library.m was unzipped
 %             -Params.username - WRDS username
 %             -Params.pass - WRDS password 
-%             -Params.domesticCommonEquityShareFlag - flag indicating whether to leave domestic common share equity (share code 10 or 11) only
 %             -Params.SAMPLE_START - sample start date
 %             -Params.SAMPLE_END - sample end dates
-%             -Params.COMPUSTATVariablesFileName - Either name of file ('COMPUSTAT Variable Names.csv' included with library) or 'All' to download all ~1000 COMPUSTAT variables.
-%             -Params.driverLocation - location of WRDS PostgreSQL JDBC Driver (included with library)
-%             -Params.tcosts - type of trading costs to construct: 'full' - low-freq 4-measures combo + TAQ + ISSM; 'lf_combo' - low-freq 4-measures combo; 'gibbs' - just gibbs
+%             -Params.domComEqFlag - flag indicating whether to leave domestic common share equity (share code 10 or 11) only
+%             -Params.COMPVarNames - Either name of file ('COMPUSTAT Variable Names.csv' included with library) or 'All' to download all ~1000 COMPUSTAT variables.
+%             -Params.tcostsType - type of trading costs to construct: 'full' - low-freq 4-measures combo + TAQ + ISSM; 'lf_combo' - low-freq 4-measures combo; 'gibbs' - just gibbs
 %------------------------------------------------------------------------------------------
 % Output:
 %        -None
@@ -29,19 +28,19 @@ function makeCRSPDerivedVariables(Params)
 %       Uses makeIndustryClassifications(), getFFFactors(),
 %       makeIndustryReturns(), makeUniverses(), mpp(), testCRSPData()
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 % Timekeeping
-fprintf('\n\n\nNow working on making variables from CRSP. Run started at %s.\n', char(datetime('now')));
+fprintf('\n\n\nNow working on making variables from CRSP. Run started at %s.\n\n', char(datetime('now')));
 
 % Store the general data and CRSP paths
-dataPath = [Params.directory, 'Data/'];
-crspDirPath = [Params.directory, 'Data/CRSP/'];
+dataPath = [Params.directory, 'Data', filesep];
+crspDirPath = [Params.directory, 'Data', filesep, 'CRSP', filesep];
 
 % Adjust the returns for delisting
 load ret_x_dl
@@ -91,14 +90,41 @@ for i = 1:height(crsp_msedelist)
     end
 end
 
-% Save the retun matrix adjsuted for delisting
-save([dataPath,'ret.mat'],'ret');
 
 % Print out the Kodak delisting return
-c = find(permno == 11754);
+c = (permno == 11754);
 r = find(dates == 201201);
 fprintf('Adjusting for delisting complete. Kodak''s delisting return was %2.4f in %d\n',ret(r,c),dates(r));
-clear c r  dates dd dlret i index MM permno ret ret_x_dl retdl1 tt
+
+% Save the retun matrix adjsuted for delisting
+save([dataPath,'ret.mat'],'ret');
+clearvars -except dataPath crspDirPath Params
+
+
+% Adjust NASDAQ volume following Gao and Ritter (2010)
+% See their Appendix B for more details
+load dates
+load exchcd
+load vol_x_adj
+
+% Adjust the volume
+vol = vol_x_adj;
+
+% Divide by 2 prior to 20010201
+indToAdj = (exchcd == 3) & (dates < 200102); 
+vol(indToAdj) = vol(indToAdj)/2;
+
+% Divide by 1.8 for most of 2001:
+indToAdj = (exchcd == 3)  & (dates >= 200102) & (dates < 200201); 
+vol(indToAdj) = vol(indToAdj)/1.8;
+
+% Divide by 1.6 for 2002 and 2003
+indToAdj = (exchcd == 3) & (dates >= 200201) & (dates < 200401); 
+vol(indToAdj) = vol(indToAdj)/1.6;
+
+% Store the adjusted volume
+save([crspDirPath,'vol.mat'],'vol');
+clearvars -except dataPath crspDirPath Params
 
 % Make market capitalization
 load prc
@@ -106,28 +132,32 @@ load shrout
 me = abs(prc).*shrout/1000;
 me(me == 0) = nan;
 save([dataPath,'me.mat'],'me');
-clear prc shrout me
+clearvars -except dataPath crspDirPath Params
 
 % Make dates for plotting
 load dates
 pdates = floor(dates/100) + mod(dates,100)/12;
 save([dataPath,'pdates.mat'],'pdates');
-clear dates pdates
+clearvars -except dataPath crspDirPath Params
 
 % Make the NYSE indicator variable
 load exchcd
 NYSE = (exchcd == 1)*1;
 save([dataPath,'NYSE.mat'],'NYSE');
-clear exchcd NYSE
-
-% Rename the SIC code variable and create Fama/French industry variables 
-makeIndustryClassifications(Params);
+clearvars -except dataPath crspDirPath Params
 
 % Download, clean up, and save the Fama-French Factors from Ken French's website
 getFFFactors(Params);
 
+% Rename the SIC code variable and create Fama/French industry variables 
+makeIndustryClassifications(Params);
+
 % Make & save the industry returns, based on FF49 classification
-makeIndustryReturns(Params);
+load FF49
+[iFF49ret, iFF49reta] = makeIndustryReturns(FF49);
+save([dataPath,'iFF49ret.mat'],'iFF49ret');
+save([dataPath,'iFF49reta.mat'],'iFF49reta');
+clearvars -except dataPath crspDirPath Params
 
 % Make different universes
 makeUniverses(Params);
@@ -139,6 +169,7 @@ ashrout = shrout.*cfacshr;
 dashrout = log(ashrout./lag(ashrout,12,nan)); % percent change in split adjusted shares outstanding
 save([dataPath,'ashrout.mat'],'ashrout');
 save([dataPath,'dashrout.mat'],'dashrout');
+clearvars -except dataPath crspDirPath Params
 
 % Make Momentum variables
 load ret
@@ -151,9 +182,10 @@ save([dataPath, 'R.mat'], 'R');
 save([dataPath, 'R62.mat'], 'R62');
 save([dataPath, 'R127.mat'], 'R127');
 save([dataPath, 'R3613.mat'], 'R3613');
+clearvars -except dataPath crspDirPath Params
 
 % Test that your data matches up with some reference data 
-testCRSPData(Params);
+testCRSPData();
 
 % Timekeeping
-fprintf('CRSP monthly variables run ended at %s.\n', char(datetime('now')));
+fprintf('CRSP monthly derived variables run ended at %s.\n', char(datetime('now')));

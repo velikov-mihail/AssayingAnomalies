@@ -29,12 +29,12 @@ function ind = makeUnivSortInd(var, ptfNumThresh, varargin)
 % Dependencies:
 %       Uses assignToPtf().
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 % Parse the inputs. p will be structure with the inputs
 p = inputParser;
@@ -51,13 +51,14 @@ addRequired(p, 'var', validNum);
 addRequired(p, 'ptfNumThresh', validNum);
 addOptional(p, 'breaksFilterInd', 1, validNumSize);
 addOptional(p, 'portfolioMassInd', 1, validNumSize);
-parse(p,var,ptfNumThresh,varargin{:});
+parse(p, var, ptfNumThresh, varargin{:});
 
 % Assign the inputs from the structure to variables
 var              = p.Results.var;
 ptfNumThresh     = p.Results.ptfNumThresh;
 breaksFilterInd  = p.Results.breaksFilterInd * 1;
 portfolioMassInd = p.Results.portfolioMassInd;
+
 
 nPtfThresh = length(ptfNumThresh);
 
@@ -68,9 +69,9 @@ if nPtfThresh > 1
 else
     % User entered the number of portfolios, so we need to create the
     % breakpoints
-    bpts = [];
+    bpts = nan(1, nPtfThresh - 1);
     for i = 1:ptfNumThresh-1 
-        bpts = [bpts i * 100/ptfNumThresh];
+        bpts(i) = i * 100/ptfNumThresh;
     end
 end
 
@@ -96,7 +97,7 @@ if ~isequal(portfolioMassInd,1)
     end
 
     % Assign based on the breakpoints
-    bpts=[0 bpts]/100;        
+    bpts = [0 bpts]/100;        
 
     ind = zeros(size(var));
     for i = bpts

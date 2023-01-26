@@ -44,7 +44,7 @@ function Res = runUnivSort(ret, ind, dates, mcap, varargin)
 %         -Res.dates - a vector of dates corresponding to the pret output
 %         -Res.hperiod - a scalar indicating the holding period
 %         -Res.w - a character indicating portfolio weighting scheme ('V' or 'E')
-%         -Res.nStocks - a matrix with time-series of # of stocks in each portfolio 
+%         -Res.ptfNumStocks - a matrix with time-series of # of stocks in each portfolio 
 %         -Res.ptfMarketcap - a matrix with time-series of market cap for each portfolio 
 %------------------------------------------------------------------------------------------
 % Examples:
@@ -76,12 +76,12 @@ function Res = runUnivSort(ret, ind, dates, mcap, varargin)
 % Dependencies:
 %       Uses calcPtfRets(), estFactorRegs(), prtSortResults(), plotStrategyFigs(), TCE_sub()
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 % Optional argument 'weighting' can only take one of these
 expectedWeighting = {'V','v','E','e'};
@@ -158,7 +158,7 @@ mcap(:, ~stockIsHeld)  = [];
 % Calculate the ptf returns, # stocks, and market caps
 holdingPeriod = p.Results.holdingPeriod;
 weighting = lower(p.Results.weighting);
-[pret, nStocks, ptfMarketCap] = calcPtfRets(ret, ind, mcap, holdingPeriod, weighting);     
+[pret, ptfNumStocks, ptfMarketCap] = calcPtfRets(ret, ind, mcap, holdingPeriod, weighting);     
 
 % Estimate the factor model regressions
 factorModel = p.Results.factorModel;
@@ -212,9 +212,9 @@ Res.ptfMarketCap = ptfMarketCap;
 
 % Add the long-short portfolio time-series # of stocks
 if p.Results.addLongShort ~= 0
-    Res.nStocks = [nStocks nStocks(:,end)+nStocks(:,1)];                                       
+    Res.ptfNumStocks = [ptfNumStocks ptfNumStocks(:,end)+ptfNumStocks(:,1)];                                       
 else 
-    Res.nStocks = [nStocks];
+    Res.ptfNumStocks = [ptfNumStocks];
 end
 
 % Print the results

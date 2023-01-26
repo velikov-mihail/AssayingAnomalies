@@ -15,12 +15,30 @@ function [weights, SR] = calcNetMve(rets, rets_s)
 %        -SR - scalar indicating the Sharpe ratio of the mean-variance
 %                   efficient portfolio (1 x 1)
 % This function works by searching through all combinations of factor
-% positions being long, short, or not held. That, we calculate the Sharpe
+% positions being long, short, or not held. That is, we calculate the Sharpe
 % ratios for all 3^(nFactor-1) combinations of factor directional
 % positions. We use the highest Sharpe ratio that has positive weights on
 % the signed factors. The only exception is that we assume that we assume
 % no trading costs for the market, so any position (long, short, not held)
 % is fine. 
+%------------------------------------------------------------------------------------------
+% Examples:
+%
+% [weights, SR] = calcNetMve(rets, rets_s)
+%                     
+%------------------------------------------------------------------------------------------
+% Dependencies:
+%       N/A
+%------------------------------------------------------------------------------------------
+% Copyright (c) 2023 All rights reserved. 
+%       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
+%       Mihail Velikov <velikov@psu.edu>
+% 
+%  References
+%  1. Detzel, A., R. Novy-Marx, and M. Velikov, 2023, Model comparison with
+%  transaction costs, Journal of Finance, Forthcoming.
+%  2. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
+
 
 % Store a few constants
 nFactors = size(rets,2);

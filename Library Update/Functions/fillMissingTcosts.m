@@ -20,14 +20,14 @@ function tcosts = fillMissingTcosts(tcosts_raw)
 % Dependencies:
 %       Used by makeTCosts(), 
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
 %  1. Novy-Marx, R. and M. Velikov, 2016, A taxonomy of anomalies and their
 %  trading costs, Review of Financial Studies, 29 (1): 104-147
-%  2. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  2. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 % Assign the raw tcosts matrix to a new matrix that we will fill in 
 tcosts = tcosts_raw;

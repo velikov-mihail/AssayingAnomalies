@@ -27,13 +27,12 @@ function getFFDailyFactors(Params)
 % Dependencies:
 %       N/A
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2021 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
-
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 % Store the directories
 dataDirPath = [Params.directory,'Data/'];
@@ -59,7 +58,7 @@ FF3factors = readtable(char(ff3FileName), opts);
 FF3factors.Properties.VariableNames = {'dates','MKT','SMB','HML','RF'};
 
 % Clean up the file - if it has any NaNs at the end
-e = find(isnan(FF3factors.dates),1,'first');
+e = find(isnan(FF3factors.dates), 1, 'first');
 FF3factors(e:end,:) = [];
 
 % Save the  FF dates
@@ -115,7 +114,7 @@ e = find(isnan(FF5factors.dates), 1, 'first');
 FF5factors(e:end,:) = [];
 
 % Intersect our dates with the ones from the Ken French webiste
-[~, ia, ib] =intersect(ddates, FF5factors.dates);
+[~, ia, ib] = intersect(ddates, FF5factors.dates);
 
 % Store the additional daily factors
 dsmb2 = nan(size(ddates));

@@ -26,12 +26,12 @@ function startLogFile(directory, fileName)
 % Dependencies:
 %       None
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 % Store the current date and time
 currDateTime     = datetime('now');
@@ -48,6 +48,9 @@ currUser = getenv('USERNAME');
 
 % Start the diary
 diary(logFileName);
+
+% Turn off all warnings
+warning('off');
 
 % Print out the start time
 fprintf('Run of %s started on %s by user %s.\n', fileName, char(currDateTime), currUser);

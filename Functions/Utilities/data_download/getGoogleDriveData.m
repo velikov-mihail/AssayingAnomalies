@@ -18,12 +18,12 @@ function getGoogleDriveData(fileName, fileID, filePath)
 % Dependencies:
 %       Used in getChenZimmermanAnomalies(), 
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2021 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2021, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 try
     % Store the URL
@@ -35,15 +35,15 @@ try
     % code, which we need to check for
     response = send(request, matlab.net.URI(fileURL));
     responseText = char(response.Body.Data);
-    [startIndex, endIndex] = regexpi(responseText, 'confirm=[A-Z]"');
+    [startIndex, endIndex] = regexpi(responseText, 'confirm=\w');
 
     % If no confirmation code, no need to change the URL
     if isempty(startIndex)
         newURL = fileURL;
     else
         % If there is one, we need to add it to the URL
-        confirmCode = responseText(startIndex+8 : endIndex-1);
-        newURL = strcat(fileURL, sprintf('&confirm=%s', confirmCode));
+        confirmCode = responseText(startIndex:endIndex);
+        newURL = strcat(fileURL, sprintf('&%s', confirmCode));
     end
 
     % Download the file

@@ -1,5 +1,28 @@
 function prtSortResults(res,lsprt)
-
+% PURPOSE: Utility function to optionally print results by runUnivSort()
+%------------------------------------------------------------------------------------------
+% USAGE:   
+% plotStrategyFigs(res)
+%------------------------------------------------------------------------------------------
+% Required Inputs:
+%        -res - a structure output by runUnivSort()
+%------------------------------------------------------------------------------------------
+% Output:
+%        -N/A
+%------------------------------------------------------------------------------------------
+% Examples:
+%
+% plotStrategyFigs(res)
+%------------------------------------------------------------------------------------------
+% Dependencies:
+%       Used by runUnivSort()
+%------------------------------------------------------------------------------------------
+% Copyright (c) 2023 All rights reserved. 
+%       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
+%       Mihail Velikov <velikov@psu.edu>
+% 
+%  References
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 if lower(res.w) == 'e'
     www = 'Equally-weighted ';

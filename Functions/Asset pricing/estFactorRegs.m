@@ -1,8 +1,8 @@
-function Res = estFactorRegs(pret,dates,factorModel,varargin) 
+function Res = estFactorRegs(pret, dates, factorModel, varargin) 
 % PURPOSE: Calculates factor model regressions
 %------------------------------------------------------------------------------------------
 % USAGE:      
-%      Res = estFactorRegs(pret,dates,factorModel,varargin)
+%      Res = estFactorRegs(pret, dates, factorModel, varargin) 
 %------------------------------------------------------------------------------------------
 % Required Inputs:
 %        -pret - a matrix of portfolio returns                                  
@@ -39,147 +39,161 @@ function Res = estFactorRegs(pret,dates,factorModel,varargin)
 % Dependencies:
 %       Uses calcPtfRets(), estFactorRegs(), prtSortResults(), plotStrategyFigs(), TCE_sub()
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2021 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2021, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
-p=inputParser;
-validNum=@(x) isnumeric(x);
-validScalarNum=@(x) isnumeric(x) && isscalar(x);
-addRequired(p,'pret',validNum);
-addRequired(p,'dates',validNum);
-addRequired(p,'factorModel',validNum);
-addOptional(p,'addLongShort',1,validScalarNum);
-addOptional(p,'inputIsExcessRets',0,validScalarNum);
-parse(p,pret,dates,factorModel,varargin{:});
+% Parse the inputs
+p = inputParser;
+validNum = @(x) isnumeric(x);
+validScalarNum = @(x) isnumeric(x) && isscalar(x);
+addRequired(p, 'pret', validNum);
+addRequired(p, 'dates', validNum);
+addRequired(p, 'factorModel', validNum);
+addOptional(p, 'addLongShort', 1, validScalarNum);
+addOptional(p, 'inputIsExcessRets', 0, validScalarNum);
+parse(p, pret, dates, factorModel, varargin{:});
 
+
+% Store the number of portfolios
+numPtfs = size(pret, 2);
 
 % Check if daily dates
-datesLength=length(num2str(dates(1)));
+datesLength = length(num2str(dates(1)));
 switch datesLength
     case 6 % monthly
         load ff
     case 8 % daily
         load dff
-        rf=drf;
-        ffdates=dffdates;
-        mkt=dmkt;
-        smb=dsmb;
-        smb2=dsmb2;
-        hml=dhml;
-        umd=dumd;
-        cma=dcma;
-        rmw=drmw;                
+        rf = drf;
+        ffdates = dffdates;
+        mkt = dmkt;
+        smb = dsmb;
+        smb2 = dsmb2;
+        hml = dhml;
+        umd = dumd;
+        cma = dcma;
+        rmw = drmw;                
     otherwise
         error('Unknown dates format for factor regressions.');    
 end
 
 % Adjust the size of the risk-free rate vector (rf) if necessary
-[~,~,indDates]=intersect(dates,ffdates);
+[~, ~, indDates] = intersect(dates, ffdates);
 rf = rf(indDates);
 
 % Choose the factors
-const=ones(size(dates));
-if length(factorModel)==1 % Means one of the FF ones
+const = ones(size(dates));
+if length(factorModel)==1  
+    % One of the pre-defined FF factor models
     switch factorModel
         case 1
-            heads={'mkt'}; % CAPM           
-            x=[const mkt(indDates)]; % CAPM           
+            heads = {'mkt'}; % CAPM           
+            x = [const mkt(indDates)]; % CAPM           
         case 3
-            heads={'mkt','smb','hml'}; % FF3
-            x=[const mkt(indDates) smb(indDates) hml(indDates)]; % FF3
+            heads = {'mkt','smb','hml'}; % FF3
+            x = [const mkt(indDates) smb(indDates) hml(indDates)]; % FF3
         case 4
-            heads={'mkt','smb','hml','umd'}; % FF4
-            x=[const mkt(indDates) smb(indDates) hml(indDates) umd(indDates)]; % FF4
+            heads = {'mkt','smb','hml','umd'}; % FF4
+            x = [const mkt(indDates) smb(indDates) hml(indDates) umd(indDates)]; % FF4
         case 5
-            heads={'mkt','smb','hml','rmw','cma'}; % FF5
-            x=[const mkt(indDates) smb2(indDates) hml(indDates) rmw(indDates) cma(indDates)]; % FF5
+            heads = {'mkt','smb','hml','rmw','cma'}; % FF5
+            x = [const mkt(indDates) smb2(indDates) hml(indDates) rmw(indDates) cma(indDates)]; % FF5
         case 6
-            heads={'mkt','smb','hml','rmw','cma','umd'}; % FF6
-            x=[const mkt(indDates) smb2(indDates) hml(indDates) rmw(indDates) cma(indDates) umd(indDates)]; % FF6
+            heads = {'mkt','smb','hml','rmw','cma','umd'}; % FF6
+            x = [const mkt(indDates) smb2(indDates) hml(indDates) rmw(indDates) cma(indDates) umd(indDates)]; % FF6
     end
-    nFactors=factorModel;
+    nFactors = factorModel;
 else
-    x  = [const factorModel]; % User-defined factor model
-    nFactors=size(factorModel,2);
-    heads={};
+    % User-defined factor model
+    x  = [const factorModel]; 
+    nFactors = size(factorModel, 2);
+    heads = cell(1, nFactors);
     for i=1:nFactors
-        heads=[heads {['reg ',char(num2str(i))]}];
+        heads(i) = {['reg ',char(num2str(i))]};
     end    
 end
 
-
-factorLoadings=struct;
+% Create the factor loading structure
+factorLoadings = struct;
 for i=1:nFactors
-    factorLoadings(i,1).label=heads(i);
-    factorLoadings(i,1).factor=x(:,i+1);
+    factorLoadings(i,1).label = heads(i);
+    factorLoadings(i,1).factor = x(:,i+1);
 end
     
-numPtfs=size(pret,2);
+
 
 % Check is user input excess or raw returns
 if p.Results.inputIsExcessRets~=0 % That means input is raw returns
-    ptfXRets=pret; 
+    ptfXRets = pret; 
 else    
-    ptfXRets=pret-repmat(rf,1,numPtfs);
+    ptfXRets = pret-repmat(rf,1,numPtfs);
 end
 
+% Check if we need to add the long/short portfolio
 if p.Results.addLongShort~=0    
-    longShortPtf=pret(:,end)-pret(:,1);
-    pret(:,numPtfs+1)=longShortPtf;
-    ptfXRets(:,numPtfs+1)=longShortPtf;
-    numPtfs=numPtfs+1;
+    longShortPtf = pret(:,end) - pret(:,1);
+    pret(:, numPtfs+1) = longShortPtf;
+    ptfXRets(:, numPtfs+1) = longShortPtf;
+    numPtfs = numPtfs+1;
 end
 
-resid=nan(size(pret));
-
+% Calculate the regressions
+resid = nan(size(pret));
 for i=1:(numPtfs)
     
-    y=ptfXRets(:,i);
-    resx = nanols(y,x);
+    % Store this portfolio's returns
+    y = ptfXRets(:,i);
+
+    % Regress those on the factors
+    resx = nanols(y, x);
     
-    indFinite=isfinite(sum([y x],2));
+    % Check if we have any finite observations & store the output
+    indFinite = isfinite(sum([y x],2));
     if sum(indFinite)>0
+
+        % Alpha (in %) & t-stat
         alpha(i,1) = resx.beta(1)*100;
         talpha(i,1) = resx.tstat(1);
-
-        sharpe(i,1) = sqrt(12)*nanmean(y)/nanstd(y); 
+    
+        % Annualized Sharpe and information rations
+        sharpe(i,1) = sqrt(12)*mean(y, 'omitnan')/std(y, 'omitnan'); 
         info(i,1) = sqrt(12)*alpha(i)/(100*sqrt(resx.sige));
 
+        % R2
         R2(i,1) = resx.rbar;
 
+        % Factor loadings
         for k=1:nFactors
-            factorLoadings(k,1).b(i,1)=resx.beta(k+1);
-            factorLoadings(k,1).t(i,1)=resx.tstat(k+1);        
+            factorLoadings(k,1).b(i,1) = resx.beta(k+1);
+            factorLoadings(k,1).t(i,1) = resx.tstat(k+1);        
         end
 
+        % Regression residuals
         resid(indFinite,i)=resx.resid;
 
-        resc = nanols(y,ones(size(y)));
+        % Average excess return (%) & t-stat
+        resc = nanols(y, ones(size(y)));
         xret(i,1) = resc.beta*100;
         txret(i,1) = resc.tstat;
     end
 end
 
+% Store the output structure
 Res = struct;
-
-Res.xret = xret;
-Res.txret = txret;
-
-Res.alpha = alpha;
-Res.talpha = talpha;
-
-Res.sharpe = sharpe;
-Res.info = info;
- 
-Res.pret = pret;                                       % Add the long-short portfolio time-series to pret
-
-Res.factorModel = factorModel;
-Res.nFactors = nFactors;
+Res.xret           = xret;
+Res.txret          = txret;
+Res.alpha          = alpha;
+Res.talpha         = talpha;
+Res.sharpe         = sharpe;
+Res.info           = info;
+Res.pret           = pret;                                      
+Res.factorModel    = factorModel;
+Res.nFactors       = nFactors;
 Res.factorLoadings = factorLoadings;
-Res.r2 = R2;
-Res.resid = resid;
+Res.r2             = R2;
+Res.resid          = resid;
 

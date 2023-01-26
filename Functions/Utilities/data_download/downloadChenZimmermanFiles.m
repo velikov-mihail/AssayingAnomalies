@@ -22,19 +22,19 @@ function downloadChenZimmermanFiles(signalFileID, docFileID)
 % Dependencies:
 %       Used by getChenZimmermanAnomalies()
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 
 % Find the directory for this function
 functionPath = mfilename('fullpath');
 dirSepIndex = strfind(functionPath, 'Functions');                                  
 
-filePath = regexprep([functionPath(1:dirSepIndex-1),'Data\Anomalies\'], '\', '/');
+filePath = [functionPath(1:dirSepIndex-1), 'Data', filesep, 'Anomalies', filesep];
 
 % Get the anomaly signal data first    
 fileName = 'signed_predictors_dl_wide.zip';

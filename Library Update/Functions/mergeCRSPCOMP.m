@@ -11,12 +11,11 @@ function mergeCRSPCOMP(Params)
 %             -Params.directory - directory where the setup_library.m was unzipped
 %             -Params.username - WRDS username
 %             -Params.pass - WRDS password 
-%             -Params.domesticCommonEquityShareFlag - flag indicating whether to leave domestic common share equity (share code 10 or 11) only
 %             -Params.SAMPLE_START - sample start date
 %             -Params.SAMPLE_END - sample end dates
-%             -Params.COMPUSTATVariablesFileName - Either name of file ('COMPUSTAT Variable Names.csv' included with library) or 'All' to download all ~1000 COMPUSTAT variables.
-%             -Params.driverLocation - location of WRDS PostgreSQL JDBC Driver (included with library)
-%             -Params.tcosts - type of trading costs to construct: 'full' - low-freq 4-measures combo + TAQ + ISSM; 'lf_combo' - low-freq 4-measures combo; 'gibbs' - just gibbs
+%             -Params.domComEqFlag - flag indicating whether to leave domestic common share equity (share code 10 or 11) only
+%             -Params.COMPVarNames - Either name of file ('COMPUSTAT Variable Names.csv' included with library) or 'All' to download all ~1000 COMPUSTAT variables.
+%             -Params.tcostsType - type of trading costs to construct: 'full' - low-freq 4-measures combo + TAQ + ISSM; 'lf_combo' - low-freq 4-measures combo; 'gibbs' - just gibbs
 %------------------------------------------------------------------------------------------
 % Output:
 %        -None
@@ -28,19 +27,21 @@ function mergeCRSPCOMP(Params)
 % Dependencies:
 %       Uses makeCOMPUSTATVariables()
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 % Timekeeping
 fprintf('\n\n\nNow working on merging CRSP and annual COMPUSTAT. Run started at %s.\n',char(datetime('now')));
 
 % Read the linking file
-opts                = detectImportOptions('crsp_ccmxpf_lnkhist.csv');
-crsp_ccmxpf_lnkhist = readtable('crsp_ccmxpf_lnkhist.csv', opts);
+fileName = [Params.directory, filesep, 'Data', filesep, 'CRSP', filesep, 'crsp_ccmxpf_lnkhist.csv'];
+opts       = detectImportOptions(fileName);
+opts.VariableTypes(ismember(opts.VariableNames, {'gvkey'})) = {'char'};
+crsp_ccmxpf_lnkhist = readtable(fileName, opts);
 
 % Filter based on the CCM link
 % Leave only link types LC or LU
@@ -56,8 +57,10 @@ crsp_ccmxpf_lnkhist.linkenddt(indNatEndDate) = datetime(Params.SAMPLE_END, 12, 3
 
 
 % Load the annual COMPUSTAT file 
-opts       = detectImportOptions('Data/COMPUSTAT/comp_funda.csv');
-comp_funda = readtable('Data/COMPUSTAT/comp_funda.csv', opts);
+fileName = [Params.directory, filesep, 'Data', filesep, 'COMPUSTAT', filesep, 'comp_funda.csv'];
+opts       = detectImportOptions(fileName);
+opts.VariableTypes(ismember(opts.VariableNames, {'gvkey'})) = {'char'};
+comp_funda = readtable(fileName, opts);
 
 % Drop observations outside of our sample
 idxToDrop = comp_funda.datadate > datetime(Params.SAMPLE_END, 12, 31) | ...
@@ -97,7 +100,7 @@ comp_funda_linked = sortrows(comp_funda_linked,{'permno','datadate'});
 adj_comp_funda_linked = varfun(@(x) x(end), comp_funda_linked, 'GroupingVariables', {'permno','dates'}); 
 
 % Count the number of permno-years with more than 1 row & print
-nduplicates=sum(adj_comp_funda_linked.GroupCount > 1); 
+nduplicates = sum(adj_comp_funda_linked.GroupCount > 1); 
 fprintf('There were %d cases of permno-years in which companies moved their fiscal year end.\n', nduplicates); 
 
 % Fix the names
@@ -123,8 +126,10 @@ fprintf('CRSP and Annual COMPUSTAT merge ended at %s.\n', char(datetime('now')))
 fprintf('\n\n\nNow working on merging CRSP and quarterly COMPUSTAT. Run started at %s.\n', char(datetime('now')));
 
 % Load the quarterly COMPUSTAT file 
-opts       = detectImportOptions('Data/COMPUSTAT/comp_fundq.csv');
-comp_fundq = readtable('Data/COMPUSTAT/comp_fundq.csv', opts);
+fileName = [Params.directory, filesep, 'Data', filesep, 'COMPUSTAT', filesep, 'comp_fundq.csv'];
+opts       = detectImportOptions(fileName);
+opts.VariableTypes(ismember(opts.VariableNames, {'gvkey'})) = {'char'};
+comp_fundq = readtable(fileName, opts);
 
 % Drop observations with no RDQ or outside of our sample
 idxToDrop = isnat(comp_fundq.rdq) | ...

@@ -33,21 +33,22 @@ function [cumRets] = ibbots(rets,dates,varargin)
 % Dependencies:
 %       Uses calcPtfRets()
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2021 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2021, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
-p=inputParser;
-validNum=@(x) isnumeric(x);
-addRequired(p,'rets',validNum);
-addRequired(p,'dates',validNum);
-addOptional(p,'timePeriod',[dates(1) dates(end)],validNum);
-addOptional(p,'linPlotInd',0,validNum);
-addOptional(p,'legendLabels',{''});
-parse(p,rets,dates,varargin{:});
+% Parse the inputs
+p = inputParser;
+validNum = @(x) isnumeric(x);
+addRequired(p, 'rets', validNum);
+addRequired(p, 'dates', validNum);
+addOptional(p, 'timePeriod', [dates(1) dates(end)],validNum);
+addOptional(p, 'linPlotInd', 0, validNum);
+addOptional(p, 'legendLabels', {''});
+parse(p, rets, dates, varargin{:});
 
 % Check if user entered a subsample
 if ~isequal(p.Results.timePeriod, [dates(1) dates(end)])
@@ -68,35 +69,42 @@ else
     x = floor(dates/100) + mod(dates,100)/12;
 end
 
-
+% Adjust the x axis and returns
 x = [2*x(1)-x(2); x];
-
 rets(isnan(rets)) = 0;
+
+% Cumulate the returns
 y = cumprod(1+[zeros(1,size(rets,2)); rets]);
 
-
+% Check if linear or log plot
 if p.Results.linPlotInd == 1
-    plot(repmat(x,1,size(y,2)),(y-1),'LineWidth',2.5)
+    % Linear scale
+    plot(repmat(x,1,size(y,2)), (y-1), 'LineWidth', 2.5);
     xlim([x(1) x(end)])
     ylim([(0.9*min(min(y))-1) (1.1*max(max(y))-1)])
-    title(['Cumulative gains (%)'],'FontName','Times New Roman','FontSize',12)
+    title('Cumulative gains (%)', 'FontName', 'Times New Roman', ...
+                                  'FontSize', 12)
 else
-    semilogy(repmat(x,1,size(y,2)),y,'LineWidth',2.5)
+    % Log scale
+    semilogy(repmat(x,1,size(y,2)), y, 'LineWidth', 2.5);
     xlim([x(1) x(end)])
     ylim([0.8*min(min(y)) 1.4*max(max(y))])
-    title(['Performance of $1 (log scale)'],'FontName','Times New Roman','FontSize',12)
-    set(gca,'YTick',10.^[0:8])
-    set(gca,'YTickLabel',{'$1';'$10';'$100';'$1,000';'$10,000';'$100,000';'$1,000,000';'$100,000,000'})
+    title('Performance of $1 (log scale)', 'FontName', 'Times New Roman', ...
+                                           'FontSize', 12);
+    set(gca,'YTick',10.^(0:8));
+    set(gca,'YTickLabel', {'$1';'$10';'$100';'$1,000';'$10,000';'$100,000';'$1,000,000';'$100,000,000'});
 end
 
-set(gca,'FontSize',12)
-set(gca,'FontName','Times New Roman')
+% Set font name and size
+set(gca,'FontSize',12, ...
+        'FontName','Times New Roman')
 
+% Add labels if specified by user
 if ~isempty(p.Results.legendLabels{1})
     if size(rets,2) ~= length(p.Results.legendLabels)
         error('Wrong number of legend labels.');
     end
-    legend(p.Results.legendLabels,'Location','Northwest');
+    legend(p.Results.legendLabels, 'Location', 'Northwest');
 end
 
 

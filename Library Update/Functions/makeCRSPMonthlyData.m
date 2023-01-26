@@ -11,12 +11,11 @@ function makeCRSPMonthlyData(Params)
 %             -Params.directory - directory where the setup_library.m was unzipped
 %             -Params.username - WRDS username
 %             -Params.pass - WRDS password 
-%             -Params.domesticCommonEquityShareFlag - flag indicating whether to leave domestic common share equity (share code 10 or 11) only
 %             -Params.SAMPLE_START - sample start date
 %             -Params.SAMPLE_END - sample end dates
-%             -Params.COMPUSTATVariablesFileName - Either name of file ('COMPUSTAT Variable Names.csv' included with library) or 'All' to download all ~1000 COMPUSTAT variables.
-%             -Params.driverLocation - location of WRDS PostgreSQL JDBC Driver (included with library)
-%             -Params.tcosts - type of trading costs to construct: 'full' - low-freq 4-measures combo + TAQ + ISSM; 'lf_combo' - low-freq 4-measures combo; 'gibbs' - just gibbs
+%             -Params.domComEqFlag - flag indicating whether to leave domestic common share equity (share code 10 or 11) only
+%             -Params.COMPVarNames - Either name of file ('COMPUSTAT Variable Names.csv' included with library) or 'All' to download all ~1000 COMPUSTAT variables.
+%             -Params.tcostsType - type of trading costs to construct: 'full' - low-freq 4-measures combo + TAQ + ISSM; 'lf_combo' - low-freq 4-measures combo; 'gibbs' - just gibbs
 %------------------------------------------------------------------------------------------
 % Output:
 %        -None
@@ -28,18 +27,18 @@ function makeCRSPMonthlyData(Params)
 % Dependencies:
 %       N/A
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 % Timekeeping
-fprintf('\n\n\nNow working on making variables from CRSP. Run started at %s.\n', char(datetime('now')));
+fprintf('\n\n\nNow working on making variables from CRSP. Run started at %s.\n\n', char(datetime('now')));
 
 % Store the CRSP directory path
-crspDirPath = [Params.directory, 'Data/CRSP/'];
+crspDirPath = [Params.directory, 'Data', filesep, 'CRSP', filesep];
 
 % Read the CRSP monthly stock file
 crspMSFPath = [crspDirPath, 'crsp_msf.csv'];
@@ -68,7 +67,7 @@ crsp_msf.date = [];
 
 % Check to see if we should only keep share codes 10 or 11 (domestic common
 % equity)
-if Params.domComEqFlag == 1
+if Params.domComEqFlag
     idxToKeep = crsp_msf.shrcd==10 | crsp_msf.shrcd==11;
     crsp_msf  = crsp_msf(idxToKeep,:);
     fprintf('Removed %d observations from CRSP_MSF which didn''t have share codes 10 or 11.\n', sum(~idxToKeep));
@@ -83,10 +82,13 @@ fprintf('Removed %d observations from CRSP_MSF that were before the start date o
 % Rename returns to indicate they are without delisting adjustment
 crsp_msf.Properties.VariableNames{'ret'} = 'ret_x_dl';
 
+% Rename volume to indicate it is without adjustment for NASDAQ
+crsp_msf.Properties.VariableNames{'vol'} = 'vol_x_adj';
+
 % Choose variables to convert into matrices
 varNames = {'shrcd','exchcd', 'siccd', 'prc', 'bid', 'ask', 'bidlo', ...
-            'askhi', 'vol', 'ret_x_dl', 'shrout', 'cfacpr', 'cfacshr', ...
-            'spread', 'retx'};
+            'askhi', 'vol_x_adj', 'ret_x_dl', 'shrout', 'cfacpr', ...
+             'cfacshr', 'spread', 'retx'};
 nVarNames = length(varNames);
 
 % Save the link file for the COMPUSTAT matrices creation
@@ -111,7 +113,7 @@ for i = 1:nVarNames
     fprintf('Now working on variable %s, which is %d out of %d.\n', thisVarName, i, nVarNames);
     
     % Take only a table with permno, dates, and the current variable
-    tempTable = crsp_msf(:,{'permno', 'dates', thisVarName}); 
+    tempTable = crsp_msf(:, {'permno', 'dates', thisVarName}); 
     
     % Unstack the table - that creates the matrix we want
     unstackedTempTable = unstack(tempTable, thisVarName, 'dates'); 
@@ -133,4 +135,4 @@ for i = 1:nVarNames
 end
 
 
-fprintf('CRSP monthly variables run ended at %s.\n', char(datetime('now')));
+fprintf('\nCRSP monthly variables run ended at %s.\n', char(datetime('now')));

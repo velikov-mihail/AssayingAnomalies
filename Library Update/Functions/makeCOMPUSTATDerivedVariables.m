@@ -11,12 +11,11 @@ function makeCOMPUSTATDerivedVariables(Params)
 %             -Params.directory - directory where the setup_library.m was unzipped
 %             -Params.username - WRDS username
 %             -Params.pass - WRDS password 
-%             -Params.domesticCommonEquityShareFlag - flag indicating whether to leave domestic common share equity (share code 10 or 11) only
 %             -Params.SAMPLE_START - sample start date
 %             -Params.SAMPLE_END - sample end dates
-%             -Params.COMPUSTATVariablesFileName - Either name of file ('COMPUSTAT Variable Names.csv' included with library) or 'All' to download all ~1000 COMPUSTAT variables.
-%             -Params.driverLocation - location of WRDS PostgreSQL JDBC Driver (included with library)
-%             -Params.tcosts - type of trading costs to construct: 'full' - low-freq 4-measures combo + TAQ + ISSM; 'lf_combo' - low-freq 4-measures combo; 'gibbs' - just gibbs
+%             -Params.domComEqFlag - flag indicating whether to leave domestic common share equity (share code 10 or 11) only
+%             -Params.COMPVarNames - Either name of file ('COMPUSTAT Variable Names.csv' included with library) or 'All' to download all ~1000 COMPUSTAT variables.
+%             -Params.tcostsType - type of trading costs to construct: 'full' - low-freq 4-measures combo + TAQ + ISSM; 'lf_combo' - low-freq 4-measures combo; 'gibbs' - just gibbs
 %------------------------------------------------------------------------------------------
 % Output:
 %        -None
@@ -28,18 +27,18 @@ function makeCOMPUSTATDerivedVariables(Params)
 % Dependencies:
 %       N/A
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 % Timekeeping
 fprintf('\n\n\nNow working on making variables derived from COMPUSTAT. Run started at %s.\n',char(datetime('now')));
 
 % Store the general data path
-dataPath = [Params.directory, 'Data/'];
+dataPath = [Params.directory, 'Data', filesep];
 
 % Make Operating costs 
 load COGS
@@ -224,7 +223,7 @@ save([dataPath, 'bm.mat'],'bm');
 save([dataPath, 'FinFirms.mat'],'FinFirms');
 clearvars -except dataPath Params
 
-% Replicate hml
+% Replicate HML
 load ret
 load me
 load bm
@@ -235,11 +234,11 @@ const = .01*ones(size(hml));
 
 % Fama and French kick out negative book-equity firms (the most growth-y
 bm(bm < 0) = nan; 
-ind = makeBivSortInd(me,2,bm,[30 70],'breaksFilter',NYSE);   
+ind = makeBivSortInd(me, 2, bm, [30 70], 'breaksFilter', NYSE);   
 
 % Carries over all {'Name','Value'} optional inputs from runUnivSort 
 % without 'addLongShort'
-[res,~] = runBivSort(ret,ind,2,3,dates,me,'printResults',0); 
+[res, ~] = runBivSort(ret, ind, 2, 3, dates, me, 'printResults', 0); 
 
 % Replicate HML from the corner portfolios 
 hmlrep = ( res.pret(:,3) + res.pret(:,6) ...
@@ -253,17 +252,20 @@ hmlrep = ( res.pret(:,3) + res.pret(:,6) ...
 % details don't "matter" for getting a real "exposure" to value
 
 % Let the user know of the check
-fprintf('Compare our HML with HML from Ken French''s website:\n');
+fprintf('Now let''s compare our HML with the HML from Ken French''s website:\n');
 
 % Correlation shoud be >95%
 index = isfinite(sum([hmlrep hml],2));
-corrcoef([hmlrep(index) hml(index)]) 
+temp = corrcoef([hmlrep(index) hml(index)]); 
+fprintf('The correlation between HML from Ken French and replicated HML is %.2f%%.\n', 100*temp(1,2));
 
 % Mean return to either factor should be ~0.31 %/mo.
-prt(nanols(hml,[const])) 
-prt(nanols(hmlrep,[const]))
+fprintf('\nCompare the average return HML from Ken French and replicated HML:\n');
+prt(nanols(hml,const)) 
+prt(nanols(hmlrep,const))
 
 % Should see high R-squared
+fprintf('Regress the two on each other:\n');
 prt(nanols(hml,[const hmlrep]))
 prt(nanols(hmlrep,[const hml]))
 
@@ -372,7 +374,7 @@ for i = startDate:nMonths
     % Take the standard deviation for those for which we have more than
     % qmin observations out of these 8
     stemp = sum(isfinite(temp),1);
-    temp = nanstd(temp);
+    temp = std(temp, 'omitnan');
     temp(stemp < qmin) = nan;
     temp(temp == 0) = nan;
     
@@ -398,7 +400,7 @@ load dates
 load IBQ
 SUE2 = nan(size(IBQ));
 for i = max(find(dates >= 197101, 1, 'first'),25):size(IBQ, 1)
-    SUE2(i,:) = (IBQ(i,:)-IBQ(i-12,:))./nanstd(IBQ(i-24:3:i-3,:));
+    SUE2(i,:) = (IBQ(i,:)-IBQ(i-12,:))./std(IBQ(i-24:3:i-3,:), 'omitnan');
 end
 save([dataPath, 'SUE2.mat'],'SUE2');
 clearvars -except dataPath Params
@@ -413,7 +415,7 @@ dROA = nan(size(IBQ));
 startDate = find(dates==197101);
 nMonths = size(IBQ,1);
 for i = startDate:nMonths
-    dROA(i,:) = IBQ(i,:) - nanmean(IBQ(i-12:i-1,:));
+    dROA(i,:) = IBQ(i,:) - mean(IBQ(i-12:i-1,:), 'omitnan');
 end
 dROA = dROA./ATQ;
 save([dataPath, 'dROA.mat'],'dROA');

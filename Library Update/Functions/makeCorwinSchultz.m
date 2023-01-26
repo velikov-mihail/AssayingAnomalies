@@ -1,6 +1,6 @@
 function hl = makeCorwinSchultz()
 % PURPOSE: This function creates the Corwin and Schultz (JF, 2012) 
-% effective spread estimate as used in Chen and Velikov (JFQA, 2022)
+% effective spread estimate as used in Chen and Velikov (JFQA, 2021)
 %------------------------------------------------------------------------------------------
 % USAGE:   
 % hl = makeCorwinSchultz()              
@@ -23,9 +23,9 @@ function hl = makeCorwinSchultz()
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Chen, A. and M. Velikov, 2022, Zeroing in on the expected return on 
+%  1. Chen, A. and M. Velikov, 2021, Zeroing in on the expected return on 
 %  anomalies, Journal of Financial and Quantitative Analysis, Forthcoming.
-%  2. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  2. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 %  3. Corwin, S. and P. Schultz, 2012, A simple way to estimate bid-ask
 %  spreads from daily high and low prices, Journal of Finance, 67 (2):
 %  719-760

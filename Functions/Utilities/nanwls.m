@@ -1,19 +1,44 @@
 function res = nanwls(y,x,w)
-% PURPOSE: weighted least-squares regression 
-%---------------------------------------------------
-% USAGE: results = nanwls(y,x)
-% Same as caling lscov(x,y,w), however it removes all rows in [y x] that contain nan's
+% PURPOSE: Utility function to estimated weighted-least squares regression.
+% Output is the same as caling lscov(x,y,w), however it removes all rows in 
+% [y x] that contain nan's
+%------------------------------------------------------------------------------------------
+% USAGE:   
+% results = nanwls(y,x)
+%------------------------------------------------------------------------------------------
+% Required Inputs:
+%        -x - a matrix of independent, RHS variables                                  
+%        -y - a vector of dependent, LHS variable
+%        -w - a vector of weights
+%------------------------------------------------------------------------------------------
+% Output:
+%        -res - a structure with WLS regression results 
+%------------------------------------------------------------------------------------------
+% Examples:
+%
+% OC = res = nanwls(y,x,w)
+%------------------------------------------------------------------------------------------
+% Dependencies:
+%       N/A
+%------------------------------------------------------------------------------------------
+% Copyright (c) 2023 All rights reserved. 
+%       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
+%       Mihail Velikov <velikov@psu.edu>
+% 
+%  References
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
-ind=isnan([y x w]);                       % Get all the nan's
-ind = sum(ind,2)==0 ;                   % Get the rows with nan's in them
+% Get the rows with nan's in them
+ind = isnan([y x w]);                       
+ind = sum(ind,2)==0;                   
 
-
+% Subset
 y = y(ind);
 x = x(ind,:);
 w = w(ind);
 
-nobs=length(y);
-nvar=size(x,2);
+nobs = length(y);
+nvar = size(x,2);
 
 [beta,bstde,mse] = lscov(x,y,w);
 

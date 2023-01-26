@@ -1,33 +1,11 @@
-function [anoms, labels, anomaly_summary]=getChenZimmermanAnomalies()
-% PURPOSE: This function runs a univariate sort and calculates portfolio
-% average returns and estimates alphas and loadings on a factor model
+function [anoms, labels, anomaly_summary] = getChenZimmermanAnomalies()
+% PURPOSE: This function (downloads and) loads the anomaly signals from the
+% Chen and Zimmerman (2022) open-source asset pricing library
 %------------------------------------------------------------------------------------------
 % USAGE:   
-% [anoms,labels,anomaly_summary]=getChenZimmermanAnomalies()                                            
-%------------------------------------------------------------------------------------------
-% Required Inputs:
-%------------------------------------------------------------------------------------------
-% Output:
-%        -anoms - a 3-d numeric array corredsponding to (nmonths x nstocks x nanoms)
-%       -labels - a vector of Acronyms for each anomaly
-%        -anomaly_summary - a table with documentation for anomalies (publication dates, 
-%                           sample periods, etc.)
-%------------------------------------------------------------------------------------------
-% Examples:
-%
-% [anoms,labels,anomaly_summary]=getChenZimmermanAnomalies();                                     
-%------------------------------------------------------------------------------------------
-% Dependencies:
-%       Uses getAnomalySignals(), getGoogleDriveData()
-%------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
-%       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
-%       Mihail Velikov <velikov@psu.edu>
-% 
-%  References
-%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
-%
-% The function checks whether one of the following two pairs of files were 
+% [anoms, labels, anomaly_summary] = getChenZimmermanAnomalies()     
+% The function checks whether one of the following two pairs of files from
+% the Chen and Zimmerman (2022) open-source asset pricing library were 
 % downloaded: 
 % 
 % April 2021 release:
@@ -39,6 +17,32 @@ function [anoms, labels, anomaly_summary]=getChenZimmermanAnomalies()
 % https://drive.google.com/file/d/1PDFl3pKwbY8DH5S9PWH_Op16HPo2wZL1/view?usp=sharing
 % If not it download the March 2022 release programatically, although the 
 % file ID's are hard coded, so they need to be updated manually every year. 
+%------------------------------------------------------------------------------------------
+% Required Inputs:
+%------------------------------------------------------------------------------------------
+% Output:
+%        - anoms - a 3-d numeric array corresponding to (nMonths x nStocks x nAnoms)
+%        - labels - a vector of Acronyms for each anomaly
+%        - anomaly_summary - a table with documentation for anomalies (publication dates, 
+%                           sample periods, etc.)
+%------------------------------------------------------------------------------------------
+% Examples:
+%
+% [anoms, labels, anomaly_summary] = getChenZimmermanAnomalies();                                     
+%------------------------------------------------------------------------------------------
+% Dependencies:
+%       Uses getAnomalySignals(), getGoogleDriveData()
+%------------------------------------------------------------------------------------------
+% Copyright (c) 2023 All rights reserved. 
+%       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
+%       Mihail Velikov <velikov@psu.edu>
+% 
+%  References
+%  1. Chen, A. and T. Zimmermann, 2022, Open source cross-sectional asset
+%  pricing, Critical Finance Review, 27 (2), 207-264
+%  2. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
+
+
 
 % Check if the two files were downloaded
 if  ~exist('signed_predictors_dl_wide.csv', 'file') || ...
@@ -65,22 +69,9 @@ end
 [anoms, labels] = getAnomalySignals('signed_predictors_dl_wide.csv', 'permno', 'yyyymm');
 fprintf('Done getting signals at at %s.\n',char(datetime('now')));
 
-% % Alternatively, you can download 1 at a time and store them
-% opts=detectImportOptions('signed_predictors_dl_wide.csv');
-% anomNames=opts.VariableNames(~ismember(opts.VariableNames,{'permno','yyyymm'}))';
-% for i=1:length(anomNames)    
-%     thisLabel=anomNames(i);
-%     tic;
-%     [thisAnom, ~]=getAnomalySignals('signed_predictors_dl_wide.csv','permno','yyyymm','Name',thisLabel);
-%     toc;
-%     tempStruct.(char(thisLabel))=thisAnom;
-%     save(['Data/Anomalies/',char(thisLabel),'.mat'],'-struct','tempStruct',char(thisLabel));
-% end
-    
-
 
 % WRDS doesn't let CZ share these three anomalies, so we need to add them
-nAnoms = size(anoms,3);
+nAnoms = size(anoms, 3);
 load prc
 load ret
 load me
@@ -92,17 +83,25 @@ labels(nAnoms+2) = {'STreversal'};
 labels(nAnoms+3) = {'Size'};
 
 if exist('SignalDocumentation.xlsx','file')
-    % Read in the anomaly documentation into a table called anomaly_summary
+    % Read in the anomaly documentation "BasicInfo" sheet
     opts = detectImportOptions('SignalDocumentation.xlsx','Sheet','BasicInfo');
     data = readtable('SignalDocumentation.xlsx',opts);
-    anomaly_summary=data(ismember(data.Cat_Signal,{'Predictor'}),:);
-    opts=detectImportOptions('SignalDocumentation.xlsx','Sheet','AddInfo');
-    data=readtable('SignalDocumentation.xlsx',opts);
-    opts.VariableTypes(strcmp(opts.VariableNames,'LSQuantile'))={'double'};
-    data=data(ismember(data.Cat_SignalFormula,{'Predictor'}),:);
-    data=data(:,{'Acronym','StockWeight','LSQuantile','PortfolioPeriod','StartMonth','Filter','QuantileFilter'});
-    anomaly_summary=outerjoin(anomaly_summary,data,'MergeKeys',1,'Type','Left');
-    anomaly_summary.LSQuantile=str2double(anomaly_summary.LSQuantile);
+    
+    % Store it in a table called anomaly_summary
+    anomaly_summary = data(ismember(data.Cat_Signal,{'Predictor'}),:);
+    
+    % Read in the "AddInfo" sheet
+    opts = detectImportOptions('SignalDocumentation.xlsx','Sheet','AddInfo');
+    data = readtable('SignalDocumentation.xlsx',opts);
+    
+    % Add data on weighting, portfolios, etc. to the anomaly_summary table
+    opts.VariableTypes(strcmp(opts.VariableNames,'LSQuantile')) = {'double'};
+    data = data(ismember(data.Cat_SignalFormula,{'Predictor'}),:);
+    colList = {'Acronym','StockWeight','LSQuantile','PortfolioPeriod','StartMonth','Filter','QuantileFilter'};
+    data = data(:,colList);
+    anomaly_summary = outerjoin(anomaly_summary, data, 'MergeKeys', 1, ...
+                                                       'Type', 'Left');
+    anomaly_summary.LSQuantile = str2double(anomaly_summary.LSQuantile);
 else
     % Read the summary spreadsheet
     opts = detectImportOptions('SignalDoc.csv');    

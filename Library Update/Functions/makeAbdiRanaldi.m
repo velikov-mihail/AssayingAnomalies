@@ -1,6 +1,6 @@
 function chl = makeAbdiRanaldi()
 % PURPOSE: This function creates the Abdi and Ranaldo (RFS, 2017) effective
-% spread estimate as used in Chen and Velikov (JFQA, 2022)
+% spread estimate as used in Chen and Velikov (JFQA, 2021)
 %------------------------------------------------------------------------------------------
 % USAGE:   
 % chl = makeAbdiRanaldi()              
@@ -18,7 +18,7 @@ function chl = makeAbdiRanaldi()
 % Dependencies:
 %       N/A
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
@@ -26,9 +26,9 @@ function chl = makeAbdiRanaldi()
 %  1. Abdi, F. and A. Ranaldo, 2017, A simple estimation of bid-ask spreads
 %  from daily close, high, and low prices, Review of Financial Studies, 30
 %  (12): 4437-4480
-%  2. Chen, A. and M. Velikov, 2022, Zeroing in on the expected return on 
+%  2. Chen, A. and M. Velikov, 2021, Zeroing in on the expected return on 
 %  anomalies, Journal of Financial and Quantitative Analysis, Forthcoming.
-%  3. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  3. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 % Timekeeping
 fprintf('Now working on Abdi and Ranaldo CHL effective spread construction. Run started at %s.\n', char(datetime('now')));

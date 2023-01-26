@@ -28,14 +28,14 @@ function [ptfTC, ptfTO, dW] = calcTcosts(tcosts, ind, me, varargin)
 % Dependencies:
 %       Used by makeFFTcosts()
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Detzel, A., Novy-Marx, R., and M. Velikov, 2022, Model Comparison 
-%  with Trading Costs, Working paper.
-%  2. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  1. Detzel, A., Novy-Marx, R., and M. Velikov, 2023, Model Comparison 
+%  with Trading Costs, Journal of Finance, Forthcoming.
+%  2. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 % Parse the inputs
 p = inputParser;

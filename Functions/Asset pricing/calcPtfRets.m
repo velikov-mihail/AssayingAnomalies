@@ -1,4 +1,4 @@
-function [ptfRet,nStocks,ptfMarketCap] = calcPtfRets(ret,ind,mcap,hper,weighting)
+function [ptfRet, ptfNumStocks, ptfMarketCap] = calcPtfRets(ret, ind, mcap, hper, weighting)
 % PURPOSE: Calculates portfolio returns, number of stocks, and market
 % capitalizations for each portfolio indicated by ind
 %------------------------------------------------------------------------------------------
@@ -12,25 +12,23 @@ function [ptfRet,nStocks,ptfMarketCap] = calcPtfRets(ret,ind,mcap,hper,weighting
 %        -weighting - weighting scheme (one of {'V','v', 'E','e'})
 % Output:
 %        -pret - matrix of RAW value-weighted portfolio returns      
-%        -nStocks - matrix of number of firms in each portfolio               
+%        -ptfNumStocks - matrix of number of firms in each portfolio               
 %        -ptfMarketCap - matrix of total market capitalization of each portfolio              
 %------------------------------------------------------------------------------------------
 % Examples:
 %
-% [ptfRet,nStocks,ptfMarketCap] = calcPtfRets(ret,ind,me,1,'e') % Equal-weighted returns 
-%                                                               with 1-month holding period                               
+% [ptfRet, ptfNumStocks, ptfMarketCap] = calcPtfRets(ret, ind, me, 1, 'e') % Equal-weighted returns 
+%                                                                            with 1-month holding period                               
 %------------------------------------------------------------------------------------------
 % Dependencies:
 %       N/A
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2021 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2021, Assaying anomalies, Working paper.
-
-
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 % Lag market cap and the portfolio index
 lmcap = lag(mcap,1,nan);                                                        
@@ -43,42 +41,64 @@ else
     weightingMcap = lmcap;    
 end
 
-
 % Store a couple of variables
-nPtfs=max(max(ind));    
-nMonths=size(ret,1);
+nPtfs = max(max(ind));    
+[nMonths, nStocks] = size(ret);
 
 % Carry over the index in case we are not rebalancing every month
-for i=find(sum(lind>0,2)>0,1,'first')+1:nMonths
-    if sum(lind(i,:)>0)==0
-        lind(i,:)=lind(i-1,:);
+nNonZero = sum(lind>0, 2);
+indReb = find(nNonZero);
+rebFreq = mode(indReb - lag(indReb, 1, nan));
+startMonth = find(nNonZero>0, 1, 'first') + 1;
+endMonth = min(find(nNonZero>0, 1, 'last') + rebFreq, nMonths);
+for i=startMonth:endMonth
+    if nNonZero(i)==0
+        lind(i,:) = lind(i-1,:);
     end
 end
 
+% Initialize the output matrices
+ptfNumStocks = nan(nMonths, nPtfs);
+ptfMarketCap = nan(nMonths, nPtfs);
+ptfRet = nan(nMonths, nPtfs);
+
+% Loop over the portfolios
 for i=1:nPtfs
-    ptfInd=(lind==i);
+    % For this portfolio
+    ptfInd = (lind==i);
+
+    % Carry over the index if holding period higher than 1
     if hper>1
         for h=1:hper-1
-            ptfInd=ptfInd | (lag(lind,h,0)==i);
+            ptfInd = ptfInd | (lag(lind,h,0)==i);
         end
     end
-    ptfInd=1*(ptfInd  & isfinite(lmcap)  & isfinite(ret));
-    ptfInd(ptfInd==0)=nan;
+
+    % Make sure we are only using stock-months with available lagged market
+    % cap & return observations
+    ptfInd = 1 * (ptfInd           & ...
+                  isfinite(lmcap)  & ...
+                  isfinite(ret));
+    ptfInd(ptfInd==0) = nan;
+
+    % Calculate the number of stocks
+    ptfNumStocks(:, i) = sum(isfinite(ptfInd),2);
     
-    nStocks(:,i)=sum(isfinite(ptfInd),2);
+    % Calculate the portfolio return
+    sumWghtMcap = sum(weightingMcap.*ptfInd, 2, 'omitnan');    
+    rptdSumWghtMcap = repmat (sumWghtMcap, 1, nStocks);
+    ptfRet(:,i) = sum( ptfInd.*ret.*weightingMcap ./ ...
+                       rptdSumWghtMcap, ...
+                       2, 'omitnan');
     
-    sumWeightingMcap=nansum(weightingMcap.*ptfInd,2);    
-    ptfRet(:,i)=nansum( ptfInd.*ret.*weightingMcap ./ ...
-                      repmat(sumWeightingMcap,1,size(weightingMcap,2)) ...
-                      ,2);
+    % Calculate the portfolio market cap
+    ptfMarketCap(:,i) = sum(lmcap.*ptfInd, 2, 'omitnan');       
     
-    ptfMarketCap(:,i)=nansum(lmcap.*ptfInd,2);     
-    
-    ptfHasNoStocks=(nStocks(:,i)==0);
-    
-    nStocks(ptfHasNoStocks,i)=nan;
-    ptfMarketCap(ptfHasNoStocks,i)=nan;   
-    ptfRet(ptfHasNoStocks,i)=nan;
+    % Set to NaN stock-months with no stocks in the portfolio
+    ptfHasNoStocks = (ptfNumStocks(:,i)==0);    
+    ptfNumStocks(ptfHasNoStocks, i) = nan;
+    ptfMarketCap(ptfHasNoStocks, i) = nan;   
+    ptfRet(ptfHasNoStocks, i) = nan;
     
 end
 

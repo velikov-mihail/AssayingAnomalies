@@ -1,75 +1,87 @@
-function indout = make_sS(indin, NN, indin2)
+function indOut = make_sS(indIn, sSThresholds, indInMargin)
 % PURPOSE: Creates a buy/hold indicator
 %------------------------------------------------------------------------------------------
-% USAGE: indout = make_sS(indin, NN, indin2);
+% USAGE: indOut = make_sS(indin, sSThresholds, indInMargin);
 %------------------------------------------------------------------------------------------
 % Inputs:
-%        -indin - an index matrix, specifying the portfolio each stock/month corresponds to                          
-%        -NN - Number of portfolios to buy
+%        -indIn - an index matrix specifying the portfolio before banding
+%        -sSThresholds - Number of portfolios to buy
+%        -indInMargin - an index matrix, specifying the portfolio ...
 % Output:
-%        -indout - an index matrix, accounting for buy/hold  
+%        -indOut - an index matrix specifying the portfolio after banding 
 %------------------------------------------------------------------------------------------
 % Examples:
 %
-% indout = make_sS(indin, Nprts); make sS holding top Nprts
-% indout = make_sS(indin, Nprts, indin2); delays sales (short covers) on the margin if indin2 looks good (bad)
+% indOut = make_sS(indIn, Nprts); make sS holding top Nprts
+% indOut = make_sS(indIn, Nprts, indInMargin); delays sales (short covers) on the margin if indInMargin looks good (bad)
 %   can also be used to make an sS strategy using a second indicator to determine the s boundary  
-% indout = make_sS(indin, [Nprt1 Nprt2], indin2); trades indin2 on the boundary of indin trades
+% indOut = make_sS(indIn, [Nprt1 Nprt2], indInMargin); trades indInMargin on the boundary of indin trades
 %   accelerates buys if in top Nprt1 of indin and in top Nprt2 of indin2
 %------------------------------------------------------------------------------------------
 % Dependencies:
 %       N/A
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 
-% 
-% 
-% 
+% Assign the output index
+indOut = indIn; 
 
-% disp(['test']);
-indt = indin; N = max(max(indt));
+% Store the total number of portfolios & number of months
+nPtfs = max(max(indIn));
 
+% Figure out if we are doing trading on the margin
 if nargin == 3
-    indtt = indin2; N2 = max(max(indtt));
+    tempIndMargin = indInMargin; 
+    N2 = max(max(tempIndMargin));
 else
-    indtt = indt; N2 = N;
+    tempIndMargin = indOut; 
+    N2 = nPtfs;
 end
 
-M = max(size(NN));
+% Determine the buy/hold thresholds
+M = max(size(sSThresholds));
 if M == 1
     Nprt1 = 0;
-    Nprt2 = NN;
+    Nprt2 = sSThresholds;
 else % this delays sales (short covers) on the margin
-    Nprt1 = NN(1);
-    Nprt2 = NN(2);
+    Nprt1 = sSThresholds(1);
+    Nprt2 = sSThresholds(2);
 end
 
-index = find(sum(indt,2)>0);
-for i = 2:rows(index)
+% Loop through the months with data
+indFin = find(sum(indOut,2)>0);
+nMonthsWithData = length(indFin);
+for i = 2:nMonthsWithData
     
-    index2 = (indt(index(i-1),:) >= N - Nprt1 & indtt(index(i),:) >= N2 + 1 - Nprt2);
-    indt(index(i),index2 == 1) = N; % slow sales / speeds purchases
+    % Slows sales/speeds purchases
+    horInd = (indOut(indFin(i-1),:)     >= nPtfs - Nprt1    & ...
+              tempIndMargin(indFin(i),:) >= N2 + 1 - Nprt2   );
+    indOut(indFin(i), horInd == 1) = nPtfs; 
     
-    index2 = (indt(index(i-1),:) <= 1 + Nprt1 & indt(index(i-1),:) > 0 ...
-              & indtt(index(i),:) <= Nprt2 & indtt(index(i),:) > 0);
-    indt(index(i),index2 == 1) = 1; % slow short covers / speeds shorting
+    % Slows short covers / speeds shorting
+    horInd = (indOut(indFin(i-1),:) <= 1 + Nprt1 & ...
+              indOut(indFin(i-1),:) > 0          & ...
+              tempIndMargin(indFin(i),:) <= Nprt2 & ...
+              tempIndMargin(indFin(i),:) > 0      );
+    indOut(indFin(i),horInd == 1) = 1; 
         
-    index2 = (indt(index(i-1),:) < N & indt(index(i),:) == N ...
-        & indtt(index(i),:) <= Nprt2 & indtt(index(i),:) > 0);
-    indt(index(i),index2 == 1) = N-1; % slow buys
+    % Slows buys
+    horInd = (indOut(indFin(i-1),:) < nPtfs      & ...
+              indOut(indFin(i),:) == nPtfs       & ...
+              tempIndMargin(indFin(i),:) <= Nprt2 & ...
+              tempIndMargin(indFin(i),:) > 0      );
+    indOut(indFin(i),horInd == 1) = nPtfs-1; 
     
-    index2 = (indt(index(i-1),:) > 1 & indt(index(i),:) == 1 ...
-        & indtt(index(i),:) >= N2 + 1 - Nprt2);
-    indt(index(i),index2 == 1) = 2; % slow shorting
+    % Slows shorting
+    horInd = (indOut(indFin(i-1),:) > 1                   & ...
+              indOut(indFin(i),:) == 1                    & ...
+              tempIndMargin(indFin(i),:) >= N2 + 1 - Nprt2 );
+    indOut(indFin(i),horInd == 1) = 2; 
         
-end
-
-indout = indt;
-
 end

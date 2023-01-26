@@ -1,8 +1,8 @@
 function vov = makeKyleObizhaeva()
-% PURPOSE: This functions creates the VoV Effective Spread (!!!) measure 
+% PURPOSE: This functions creates the VoV Effective Spread measure 
 % from Kyle and Obizhaeva (ECTA, 2016) following the implementation of 
 % Fong, Holden, and Tobek (WP, 2018). Also used as one of the four 
-% low-freqency effective spread measures in Chen and Velikov (JFQA, 2022)
+% low-freqency effective spread measures in Chen and Velikov (JFQA, 2021)
 %------------------------------------------------------------------------------------------
 % USAGE:   
 % vov = makeKyleObizhaeva()              
@@ -20,18 +20,18 @@ function vov = makeKyleObizhaeva()
 % Dependencies:
 %       N/A
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Chen, A. and M. Velikov, 2022, Zeroing in on the expected return on 
+%  1. Chen, A. and M. Velikov, 2021, Zeroing in on the expected return on 
 %  anomalies, Journal of Financial and Quantitative Analysis, Forthcoming.
 %  2. Fong, K., C. Holden, and O. Tobek, 2018, Are volatility over volume
 %  liquidity proxies useful for global or US research, Working paper.
 %  3. Kyle, A. and A. Obizhaeva, 2016, Market microstructure invariance:
 %  Empirical hypotheses, Econometrica, 84 (4): 1345-1404
-%  4. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  4. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 % Timekeeping
 fprintf('Now working on Kyle and Obizhaeva''s (2016) volume-over-volatility effective spread construction. Run started at %s.\n', char(datetime('now')));
@@ -89,7 +89,7 @@ for i = 1:nMonths
 
     % Calculate the VoV 
     retStd = std(dret(monthInd, stocksInd), 0, 1, 'omitnan');
-    volMean = mean(dvol(monthInd,stocksInd),1,'omitnan') / cpi(i);
+    volMean = mean(dvol(monthInd,stocksInd), 1, 'omitnan') / cpi(i);
     num = a * (retStd .^ b);    
     den = (volMean) .^ c;
     vov(i, stocksInd) = (num)./(den);

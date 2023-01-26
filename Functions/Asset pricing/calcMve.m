@@ -11,6 +11,23 @@ function [weights, SR] = calcMve(rets)
 %                   efficient portfolio (1 x nAssets)
 %        -SR - scalar indicating the Sharpe ratio of the mean-variance
 %                   efficient portfolio (1 x 1)
+%------------------------------------------------------------------------------------------
+% Examples:
+%
+% [weights, SR] = calcMve(rets) 
+%                     
+%------------------------------------------------------------------------------------------
+% Dependencies:
+%       N/A
+%------------------------------------------------------------------------------------------
+% Copyright (c) 2023 All rights reserved. 
+%       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
+%       Mihail Velikov <velikov@psu.edu>
+% 
+%  References
+%  1. Detzel, A., R. Novy-Marx, and M. Velikov, 2023, Model comparison with
+%  transaction costs, Journal of Finance, Forthcoming.
+%  2. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 % Drop the rows (e.g., months) in which we
 indFinite = isfinite(sum(rets,2));

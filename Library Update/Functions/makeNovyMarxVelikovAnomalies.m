@@ -10,12 +10,11 @@ function makeNovyMarxVelikovAnomalies(Params)
 %             -Params.directory - directory where the setup_library.m was unzipped
 %             -Params.username - WRDS username
 %             -Params.pass - WRDS password 
-%             -Params.domesticCommonEquityShareFlag - flag indicating whether to leave domestic common share equity (share code 10 or 11) only
 %             -Params.SAMPLE_START - sample start date
 %             -Params.SAMPLE_END - sample end dates
-%             -Params.COMPUSTATVariablesFileName - Either name of file ('COMPUSTAT Variable Names.csv' included with library) or 'All' to download all ~1000 COMPUSTAT variables.
-%             -Params.driverLocation - location of WRDS PostgreSQL JDBC Driver (included with library)
-%             -Params.tcosts - type of trading costs to construct: 'full' - low-freq 4-measures combo + TAQ + ISSM; 'lf_combo' - low-freq 4-measures combo; 'gibbs' - just gibbs
+%             -Params.domComEqFlag - flag indicating whether to leave domestic common share equity (share code 10 or 11) only
+%             -Params.COMPVarNames - Either name of file ('COMPUSTAT Variable Names.csv' included with library) or 'All' to download all ~1000 COMPUSTAT variables.
+%             -Params.tcostsType - type of trading costs to construct: 'full' - low-freq 4-measures combo + TAQ + ISSM; 'lf_combo' - low-freq 4-measures combo; 'gibbs' - just gibbs
 %------------------------------------------------------------------------------------------
 % Output:
 %        -None
@@ -27,14 +26,14 @@ function makeNovyMarxVelikovAnomalies(Params)
 % Dependencies:
 %       N/A
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2021 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
 %  1. Novy-Marx, R. and M. Velikov, 2016, A taxonomy of anomalies and their
 %  trading costs, Review of Financial Studies, 29 (1): 104-147
-%  2. Novy-Marx, R. and M. Velikov, 2021, Assaying anomalies, Working paper.
+%  2. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 % Timekeeping
 fprintf('\n\n\nNow working on making anomaly signals from Novy-Marx and Velikov (RFS, 2016). Run started at %s.\n', char(datetime('now')));
@@ -352,9 +351,9 @@ clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 % Industry momentum
 load FF49
-load iret
-load ireta
-industryMomentum = assignToPtf(ireta,sort(iret,2)); 
+load iFF49ret
+load iFF49reta
+industryMomentum = assignToPtf(iFF49reta, sort(iFF49ret,2)); 
 industryMomentum(industryMomentum == 0) = nan; 
 industryMomentum = industryMomentum./repmat(max(industryMomentum')',1,size(ret,2));
 anoms(:,:,18) = industryMomentum;
@@ -363,8 +362,8 @@ clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 % Industry-Relative Reversals
 load FF49
-load ireta
-IRR = tiedrank(ireta'-ret')'; 
+load iFF49reta
+IRR = tiedrank(iFF49reta'-ret')'; 
 industryRelativeReversal = IRR./repmat(max(IRR')',1,cols(ret));
 anoms(:,:,19) = industryRelativeReversal;
 labels(19) = {'industryRelativeReversal'};
@@ -372,11 +371,11 @@ clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 
 % High freq Combo
-load iret
-load ireta
-IRR = tiedrank(ireta'-ret')'; 
+load iFF49ret
+load iFF49reta
+IRR = tiedrank(iFF49reta'-ret')'; 
 IRR = IRR./repmat(max(IRR')',1,cols(ret));
-IMOM = assignToPtf(ireta,sort(iret,2)); 
+IMOM = assignToPtf(iFF49reta,sort(iFF49ret,2)); 
 IMOM(IMOM == 0) = nan; 
 IMOM = IMOM./repmat(max(IMOM')',1,size(ret,2));
 highFrequencyCombo = IRR + IMOM;
@@ -403,11 +402,11 @@ clearvars -except Params anoms ret me dates labels nMonths nStocks
 
 
 % IRRLowVOl
-load IVOL
-load ireta
+load IffVOL3
+load iFF49reta
 load NYSE
-ind = makeUnivSortInd(IVOL,2,NYSE);
-IRR = tiedrank(ireta'-ret')'; 
+ind = makeUnivSortInd(IffVOL3, 2, NYSE);
+IRR = tiedrank(iFF49reta'-ret')'; 
 IRR = IRR./repmat(max(IRR')',1,cols(ret));
 industryRelativeReversalLowVol = IRR;
 industryRelativeReversalLowVol(ind==2) = nan;
@@ -437,7 +436,7 @@ outputData = array2table(outputData);
 outputData.Properties.VariableNames = [{'permno','dates'},labels];
 
 % Store the general data path
-dataPath = [Params.directory, 'Data/'];
+dataPath = [Params.directory, 'Data', filesep];
 
 % Check if the Data/Anomalies directory exists
 if ~exist([dataPath,'Anomalies'], 'dir')
@@ -446,8 +445,8 @@ end
 addpath(genpath(pwd));
 
 % Output the data to a .csv
-fileName = [dataPath,'Anomalies/novyMarxVelikovAnomalies.csv'];
+fileName = [dataPath,'Anomalies', filesep, 'novyMarxVelikovAnomalies.csv'];
 writetable(outputData, fileName);
 
 % Timekeeping
-fprintf('Run ended, anomaly signal data exported at %s.\n', char(datetime('now')));
+fprintf('Anomaly signal run ended, data exported at %s.\n', char(datetime('now')));

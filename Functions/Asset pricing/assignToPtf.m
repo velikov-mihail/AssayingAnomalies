@@ -4,7 +4,7 @@ function ind = assignToPtf(x, bPtsMat)
 % portfolio.
 %------------------------------------------------------------------------------------------
 % USAGE: 
-% index = assign(x,pp)
+% index = assign(x, bPtsMat)
 %------------------------------------------------------------------------------------------
 % Inputs
 %        -x -matrix based on which we want to assign the bins 
@@ -14,17 +14,17 @@ function ind = assignToPtf(x, bPtsMat)
 %------------------------------------------------------------------------------------------
 % Examples:
 %
-% ind = assignToPtf(me,prctile(me,[20 40 60 80],2)) % Quintile sort on size
+% ind = assignToPtf(me, prctile(me,[20 40 60 80],2)) % Quintile sort on size
 %------------------------------------------------------------------------------------------
 % Dependencies:
 %       Uses N/A
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 % Store several dimensions
 nStocks = size(x, 2);

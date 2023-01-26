@@ -1,4 +1,4 @@
-function makeFFTcosts()
+function makeFFTcosts(dataPath)
 % PURPOSE: This function creates the trading costs for the FF factors
 % following Detzel, Novy-Marx, and Velikov (2022)
 %------------------------------------------------------------------------------------------
@@ -6,7 +6,7 @@ function makeFFTcosts()
 % makeTCosts(Params)              % Creates the trading costs measures
 %------------------------------------------------------------------------------------------
 % Required Inputs:
-%        -None
+%        -dataPath - Path to the /Data/ directory
 %------------------------------------------------------------------------------------------
 % Output:
 %        -None
@@ -18,15 +18,17 @@ function makeFFTcosts()
 % Dependencies:
 %       Uses makeBivSortInd(), makeFactorTcosts(), runUnivSort()
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
 %  1. Detzel, A., Novy-Marx, R., and M. Velikov, 2022, Model Comparison 
 %  with Trading Costs, Working paper.
-%  2. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  2. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
+% Timekeeping
+fprintf('Now working on the FF factors trading costs construction. Run started at %s.\n', char(datetime('now')));
 
 % Load the variables necessary for replication
 load ret
@@ -217,12 +219,14 @@ ff5_tc = [ff3_tc rmw_tc cma_tc];
 ff6_tc = [ff5_tc umd_tc];
 
 % Save the replicated factors, tcosts, and dWs in the /Data/ folder
-save Data/ff_rep mkt smb_rep hml_rep rmw_rep cma_rep umd_rep
-save Data/ff_tc mkt_tc hml_tc smb_tc rmw_tc cma_tc umd_tc  hml_TO smb_TO rmw_TO cma_TO umd_TO ff3_tc ff4_tc ff5_tc ff6_tc
+% save Data/ff_rep mkt smb_rep hml_rep rmw_rep cma_rep umd_rep
+% save Data/ff_tc mkt_tc hml_tc smb_tc rmw_tc cma_tc umd_tc  hml_TO smb_TO rmw_TO cma_TO umd_TO ff3_tc ff4_tc ff5_tc ff6_tc
+save([dataPath, 'ff_rep.mat'], 'mkt','smb_rep','hml_rep','rmw_rep','cma_rep','umd_rep');
+save([dataPath, 'ff_tc.mat'], 'mkt_tc','hml_tc','smb_tc','rmw_tc','cma_tc','umd_tc','hml_TO','smb_TO','rmw_TO','cma_TO','umd_TO','ff3_tc','ff4_tc','ff5_tc','ff6_tc');
 
-% Check the replication quality (should see >95% R2)
-prt(nanols(smb, [const smb_rep]))
-prt(nanols(hml, [const hml_rep]))
-prt(nanols(rmw, [const rmw_rep]))
-prt(nanols(cma, [const cma_rep]))
-prt(nanols(umd, [const umd_rep]))
+% % Check the replication quality (should see >95% R2)
+% prt(nanols(smb, [const smb_rep]))
+% prt(nanols(hml, [const hml_rep]))
+% prt(nanols(rmw, [const rmw_rep]))
+% prt(nanols(cma, [const cma_rep]))
+% prt(nanols(umd, [const umd_rep]))

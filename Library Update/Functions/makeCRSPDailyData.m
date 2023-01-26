@@ -11,12 +11,11 @@ function makeCRSPDailyData(Params)
 %             -Params.directory - directory where the setup_library.m was unzipped
 %             -Params.username - WRDS username
 %             -Params.pass - WRDS password 
-%             -Params.domesticCommonEquityShareFlag - flag indicating whether to leave domestic common share equity (share code 10 or 11) only
 %             -Params.SAMPLE_START - sample start date
 %             -Params.SAMPLE_END - sample end dates
-%             -Params.COMPUSTATVariablesFileName - Either name of file ('COMPUSTAT Variable Names.csv' included with library) or 'All' to download all ~1000 COMPUSTAT variables.
-%             -Params.driverLocation - location of WRDS PostgreSQL JDBC Driver (included with library)
-%             -Params.tcosts - type of trading costs to construct: 'full' - low-freq 4-measures combo + TAQ + ISSM; 'lf_combo' - low-freq 4-measures combo; 'gibbs' - just gibbs
+%             -Params.domComEqFlag - flag indicating whether to leave domestic common share equity (share code 10 or 11) only
+%             -Params.COMPVarNames - Either name of file ('COMPUSTAT Variable Names.csv' included with library) or 'All' to download all ~1000 COMPUSTAT variables.
+%             -Params.tcostsType - type of trading costs to construct: 'full' - low-freq 4-measures combo + TAQ + ISSM; 'lf_combo' - low-freq 4-measures combo; 'gibbs' - just gibbs
 %------------------------------------------------------------------------------------------
 % Output:
 %        -None
@@ -28,21 +27,21 @@ function makeCRSPDailyData(Params)
 % Dependencies:
 %       N/A
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  1. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 % Timekeeping
 fprintf('\n\n\nNow working on making variables from daily CRSP. Let''s read the files in first. Run started at %s.\n', char(datetime('now')));
 
 % Store the daily CRSP data path
-dailyCRSPPath = [Params.directory, 'Data/CRSP/daily/'];
+dailyCRSPPath = [Params.directory, 'Data', filesep, 'CRSP', filesep, 'daily', filesep];
 
 % Store the daily CRSP directory contents and number of files
-dailyCrspFiles = dir([Params.directory, '/Data/CRSP/daily/crsp_dsf*.csv']);
+dailyCrspFiles = dir([Params.directory, 'Data', filesep, 'CRSP', filesep, 'daily', filesep, 'crsp_dsf*.csv']);
 nFiles = length(dailyCrspFiles);
 
 % Initiate the crsp_dsf table
@@ -72,20 +71,20 @@ nDays = length(ddates);
 nStocks = length(permno);
 
 % Initialize the variables
-dret_x_dl = nan(nDays, nStocks);
-dask      = nan(nDays, nStocks);
-daskhi    = nan(nDays, nStocks);
-dbid      = nan(nDays, nStocks);
-dbidlo    = nan(nDays, nStocks);
-dshrout   = nan(nDays, nStocks);
-dvol      = nan(nDays, nStocks);
-dprc      = nan(nDays, nStocks);
-dopen     = nan(nDays, nStocks);
-dnumtrd   = nan(nDays, nStocks);
-dcfacshr  = nan(nDays, nStocks);
-dcfacpr   = nan(nDays, nStocks);
+dret_x_dl  = nan(nDays, nStocks);
+dask       = nan(nDays, nStocks);
+daskhi     = nan(nDays, nStocks);
+dbid       = nan(nDays, nStocks);
+dbidlo     = nan(nDays, nStocks);
+dshrout    = nan(nDays, nStocks);
+dvol_x_adj = nan(nDays, nStocks);
+dprc       = nan(nDays, nStocks);
+dopen      = nan(nDays, nStocks);
+dnumtrd    = nan(nDays, nStocks);
+dcfacshr   = nan(nDays, nStocks);
+dcfacpr    = nan(nDays, nStocks);
 
-fprintf('\n\n\nNow working on assigning the data to our familiar daily matrices. Run started at %s. This step takes a couple of hours.\n', char(datetime('now')));
+fprintf('\nNow working on assigning the data to our familiar daily matrices. Run started at %s. This step takes a couple of hours.\n', char(datetime('now')));
 
 % Loop through all firms and find the relevant dates, assign to the
 % corresponding matrices
@@ -100,26 +99,26 @@ for c = 1:nStocks
     indInTable = thisStockInd(tempIndex);
     
     % Assign the variables
-    dret_x_dl(rowIndex, c) = crsp_dsf.ret(indInTable);
-    dask(rowIndex, c)      = crsp_dsf.ask(indInTable);
-    daskhi(rowIndex, c)    = crsp_dsf.askhi(indInTable);
-    dbid(rowIndex, c)      = crsp_dsf.bid(indInTable);
-    dbidlo(rowIndex, c)    = crsp_dsf.bidlo(indInTable);
-    dshrout(rowIndex, c)   = crsp_dsf.shrout(indInTable);
-    dvol(rowIndex, c)      = crsp_dsf.vol(indInTable);
-    dprc(rowIndex, c)      = crsp_dsf.prc(indInTable);
-    dopen(rowIndex, c)     = crsp_dsf.openprc(indInTable);
-    dnumtrd(rowIndex, c)   = crsp_dsf.numtrd(indInTable);
-    dcfacshr(rowIndex, c)  = crsp_dsf.cfacshr(indInTable);
-    dcfacpr(rowIndex, c)   = crsp_dsf.cfacpr(indInTable);
+    dret_x_dl(rowIndex, c)  = crsp_dsf.ret(indInTable);
+    dask(rowIndex, c)       = crsp_dsf.ask(indInTable);
+    daskhi(rowIndex, c)     = crsp_dsf.askhi(indInTable);
+    dbid(rowIndex, c)       = crsp_dsf.bid(indInTable);
+    dbidlo(rowIndex, c)     = crsp_dsf.bidlo(indInTable);
+    dshrout(rowIndex, c)    = crsp_dsf.shrout(indInTable);
+    dvol_x_adj(rowIndex, c) = crsp_dsf.vol(indInTable);
+    dprc(rowIndex, c)       = crsp_dsf.prc(indInTable);
+    dopen(rowIndex, c)      = crsp_dsf.openprc(indInTable);
+    dnumtrd(rowIndex, c)    = crsp_dsf.numtrd(indInTable);
+    dcfacshr(rowIndex, c)   = crsp_dsf.cfacshr(indInTable);
+    dcfacpr(rowIndex, c)    = crsp_dsf.cfacpr(indInTable);
 end
 
 % Timekeeping
-fprintf('CRSP daily variables assigned at %s. Now storing them.\n', char(datetime('now')));
+fprintf('CRSP daily variables assigned at %s. Now storing them.\n\n', char(datetime('now')));
 
 % Store all the variables
 save([dailyCRSPPath,'dprc.mat'], 'dprc', '-v7.3');
-save([dailyCRSPPath,'dvol.mat'], 'dvol', '-v7.3');
+save([dailyCRSPPath,'dvol_x_adj.mat'], 'dvol_x_adj', '-v7.3');
 save([dailyCRSPPath,'dbid.mat'], 'dbid', '-v7.3');
 save([dailyCRSPPath,'dask.mat'], 'dask', '-v7.3');
 save([dailyCRSPPath,'dbidlo.mat'], 'dbidlo', '-v7.3');

@@ -1,6 +1,6 @@
 function hf_spreads = makeHighFreqEffSpreads(fileName)
 % PURPOSE: This function creates the high-frequency effective
-% spread estimate as used in Chen and Velikov (JFQA, 2022)
+% spread estimate as used in Chen and Velikov (JFQA, 2021)
 %------------------------------------------------------------------------------------------
 % USAGE:   
 % hf_spreads = makeHighFreqEffSpreads(fileName)              
@@ -9,7 +9,8 @@ function hf_spreads = makeHighFreqEffSpreads(fileName)
 %        -fileName - path to file with high-frequency effective spread estimates
 %------------------------------------------------------------------------------------------
 % Output:
-%        -chl - a matrix with the effective spread estimates 
+%        -hf_spreads - a structure with the high-frequency effective spread 
+%                     estimates 
 %------------------------------------------------------------------------------------------
 % Examples:
 %
@@ -18,18 +19,18 @@ function hf_spreads = makeHighFreqEffSpreads(fileName)
 % Dependencies:
 %       N/A
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
-%  1. Chen, A. and M. Velikov, 2022, Zeroing in on the expected return on 
+%  1. Chen, A. and M. Velikov, 2021, Zeroing in on the expected return on 
 %  anomalies, Journal of Financial and Quantitative Analysis, Forthcoming.
-%  2. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
+%  2. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 
 % Timekeeping
-fprintf('Starting TAQ+ISSM construction at %s.\n', char(datetime('now')));
+fprintf('Now working on TAQ+ISSM effective spread construction. Run started at %s.\n', char(datetime('now')));
 
 % Read in the stored estimates
 opts = detectImportOptions(fileName);

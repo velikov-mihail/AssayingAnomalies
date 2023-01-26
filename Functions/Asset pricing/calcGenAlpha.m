@@ -52,15 +52,14 @@ function [alpha_res, w_x_y, w_x] = calcGenAlpha(anomRet, anomTcosts, factorRets,
 % Dependencies:
 %       Uses calcNetMve(), nanols().
 %------------------------------------------------------------------------------------------
-% Copyright (c) 2022 All rights reserved. 
+% Copyright (c) 2023 All rights reserved. 
 %       Robert Novy-Marx <robert.novy-marx@simon.rochester.edu>
 %       Mihail Velikov <velikov@psu.edu>
 % 
 %  References
 %  1. Novy-Marx, R. and M. Velikov, 2016, A Taxonomy of Anomalies and Their
 %  Trading Costs, Review of Financial Studies, 29 (1): 104-147
-%  2. Novy-Marx, R. and M. Velikov, 2022, Assaying anomalies, Working paper.
-
+%  2. Novy-Marx, R. and M. Velikov, 2023, Assaying anomalies, Working paper.
 
 
 % Check if they are same size
