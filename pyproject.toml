@@ -1,0 +1,93 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "assayinganomalies"
+version = "0.9.0"
+description = "Python toolkit for downloading, organizing, and analyzing anomaly data."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "Mihail Velikov", email = "assayinganomalies@gmail.com" },
+    { name = "Robert Novy-Marx" },
+]
+maintainers = [
+    { name = "Mihail Velikov", email = "assayinganomalies@gmail.com" },
+]
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = [
+    "asset pricing",
+    "anomalies",
+    "cross-section of returns",
+    "portfolio sorts",
+    "Fama-MacBeth",
+    "transaction costs",
+    "CRSP",
+    "Compustat",
+    "WRDS",
+    "finance",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business :: Financial :: Investment",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Typing :: Typed",
+]
+dependencies = [
+    "click>=8.2",  # CliRunner keeps stderr separate
+    "duckdb>=0.10",
+    "keyring>=24.0",
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "platformdirs>=3.0",  # where the saved project folder lives
+    "psutil>=5.9",
+    "pyarrow>=14.0",
+    "requests>=2.31",
+    "sqlalchemy>=2.0",
+    "wrds>=3.1",
+]
+
+[project.optional-dependencies]
+analytics = [
+    "matplotlib>=3.8",
+    "seaborn>=0.13",
+    "jinja2>=3.1",
+    # Combination methods and report figures import these lazily
+    # (analytics/results.py: LassoCV/KFold, scipy.cluster.hierarchy;
+    # analytics/sorts.py: scipy.stats).
+    "scipy>=1.11",
+    "scikit-learn>=1.3",
+]
+
+[project.urls]
+Homepage = "https://assayinganomalies.com"
+Documentation = "https://assayinganomalies.com"
+Repository = "https://github.com/velikov-mihail/AssayingAnomalies"
+Issues = "https://github.com/velikov-mihail/AssayingAnomalies/issues"
+Changelog = "https://github.com/velikov-mihail/AssayingAnomalies/blob/main/CHANGELOG.md"
+Paper = "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4338007"
+
+[project.scripts]
+aa = "assayinganomalies.cli:main"
+
+[tool.setuptools.package-data]
+# The bib is the fallback print_bibliography_file copies next to the report
+# .tex when the MATLAB reference tree is absent (always, in an installed wheel).
+# The CSV is the default Compustat variable list (AssayConfig.compustat_variables).
+assayinganomalies = ["py.typed", "reporting/bib/*.bib", "ingest/data/*.csv"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.ruff]
+line-length = 100
+

@@ -1,0 +1,46 @@
+cff-version: 1.2.0
+message: >-
+  If you use this software, please cite the paper below (preferred citation)
+  and the software itself.
+title: AssayingAnomalies
+type: software
+version: 0.9.0
+license: MIT
+repository-code: "https://github.com/velikov-mihail/AssayingAnomalies"
+url: "https://assayinganomalies.com"
+abstract: >-
+  Python toolkit for building a CRSP/Compustat research database from WRDS and
+  testing cross-sectional return anomalies: portfolio sorts, Fama-MacBeth
+  regressions, trading-cost-adjusted performance and the full anomaly-testing
+  protocol of Novy-Marx and Velikov.
+keywords:
+  - asset pricing
+  - anomalies
+  - cross-section of stock returns
+  - portfolio sorts
+  - Fama-MacBeth
+  - transaction costs
+  - CRSP
+  - Compustat
+authors:
+  - family-names: Velikov
+    given-names: Mihail
+    affiliation: Pennsylvania State University
+  - family-names: Novy-Marx
+    given-names: Robert
+    affiliation: University of Rochester
+contact:
+  - name: Assaying Anomalies
+    email: assayinganomalies@gmail.com
+preferred-citation:
+  type: article
+  title: Assaying Anomalies
+  authors:
+    - family-names: Novy-Marx
+      given-names: Robert
+    - family-names: Velikov
+      given-names: Mihail
+  year: 2026
+  journal: SSRN Working Paper
+  doi: 10.2139/ssrn.4338007
+  url: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4338007"

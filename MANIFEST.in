@@ -1,0 +1,4 @@
+# Extra files for the sdist.
+include CHANGELOG.md
+include CITATION.cff
+prune tests

@@ -1,0 +1,65 @@
+# CI for the AssayingAnomalies repo. The repo ships no tests, so
+# this job checks that the package lints, builds, installs and imports on every
+# supported OS and Python.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  AA_NO_PROMPT: "1"   # never prompt for WRDS credentials
+
+defaults:
+  run:
+    shell: bash       # one syntax on all three runners (Git Bash on Windows)
+
+jobs:
+  build:
+    name: build (${{ matrix.os }}, py${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Ruff
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "ruff>=0.1.9,<0.14"
+          ruff check src/
+
+      - name: Build sdist and wheel
+        run: |
+          python -m pip install build
+          python -m build
+
+      - name: Install the wheel into a fresh venv
+        run: |
+          python -m venv "$RUNNER_TEMP/venv"
+          if [ "$RUNNER_OS" = "Windows" ]; then BIN=Scripts; else BIN=bin; fi
+          echo "VBIN=$RUNNER_TEMP/venv/$BIN" >> "$GITHUB_ENV"
+          "$RUNNER_TEMP/venv/$BIN/python" -m pip install --upgrade pip
+          "$RUNNER_TEMP/venv/$BIN/python" -m pip install dist/*.whl
+
+      - name: Import and CLI smoke test
+        # Run outside the checkout so the import cannot pick up src/.
+        working-directory: ${{ runner.temp }}
+        run: |
+          "$VBIN/python" -c "import assayinganomalies as aa; print(aa.__version__, aa.__file__)"
+          "$VBIN/aa" --version
+          "$VBIN/aa" --help
+          # The data files the package reads at run time are in the wheel
+          "$VBIN/python" -c "from importlib.resources import files; p = files('assayinganomalies'); need = [p / 'py.typed', p / 'ingest' / 'data' / 'compustat_variables.csv', p / 'reporting' / 'bib' / 'newSignalTestBib.bib']; missing = [str(f) for f in need if not f.is_file()]; assert not missing, missing"

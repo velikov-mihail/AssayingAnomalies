@@ -1,0 +1,27 @@
+# Python build and cache files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+
+# A project folder inside a clone: the database, extracts and outputs are
+# built from licensed data and never belong in the repository. The leading
+# slash matters: on a case-insensitive file system (macOS, Windows) a bare
+# "Data/" also ignores src/assayinganomalies/ingest/data/, which holds the
+# packaged Compustat variable list.
+/Data/
+/Scratch/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
