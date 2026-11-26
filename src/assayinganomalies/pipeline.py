@@ -266,10 +266,10 @@ class PipelineContext:
         ``demo=True`` is the opt-in that gets None back and falls through to
         this module's deterministic placeholder for ``purpose``.
         """
-        client = self.get_wrds_client(prompt=True)
-        if client is not None:
-            return client
         if not self.demo:
+            client = self.get_wrds_client(prompt=True)
+            if client is not None:
+                return client
             raise missing_credentials_error(purpose)
         self.logger.warning(
             "DEMO MODE: %s has no WRDS credentials; writing synthetic "
